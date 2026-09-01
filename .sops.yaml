@@ -1,0 +1,34 @@
+keys:
+  - &apex age1zpxu9saum6mjevwf7m504g38lgpr6h385t32rkaua409j2lz7vus5f35ky
+  - &gaia age16hcrlzqd6q3g6jds3jtxf43n0tcnakqcafztsvddph65nzlp39dq4mlwg6
+  - &cargo age1tvs9e8l0qr7sreu6lxcnkdj6w7ueaeeq9wp7kh37el8e3s30epes5mr4ua
+  - &hermes age18ea93p8rz46074zfnky0e3k2ffp7zwaeq9h5c7nquhz908ll7v3qpkfe3e
+  - &recovery age1ae7sz9dru5fvpm0v9gp03s5dkthx0vltjsnmn64vftfn0jkl55jqqt6e77
+  # Add the provisioned public age1yubikey... recipient here before rekeying.
+  # - &yubikey age1yubikey...
+
+creation_rules:
+  - path_regex: modules/den/aspects/apex/secrets\.yml$
+    key_groups:
+      - age:
+          - *apex
+          - *recovery
+          # - *yubikey
+  - path_regex: modules/den/aspects/gaia/secrets\.yml$
+    key_groups:
+      - age:
+          - *gaia
+          - *recovery
+          # - *yubikey
+  - path_regex: modules/den/aspects/cargo/secrets\.yml$
+    key_groups:
+      - age:
+          - *cargo
+          - *recovery
+          # - *yubikey
+  - path_regex: modules/den/aspects/hermes/secrets\.yml$
+    key_groups:
+      - age:
+          - *hermes
+          - *recovery
+          # - *yubikey
