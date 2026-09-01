@@ -1,0 +1,17 @@
+# Nix
+result
+result-*
+.pre-commit-config.yaml
+.dirlocal
+.env
+.direnv
+*.drv
+/key.txt
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
