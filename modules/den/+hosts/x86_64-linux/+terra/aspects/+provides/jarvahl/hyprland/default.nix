@@ -2,34 +2,53 @@
 {
   den.aspects.terra = {
     provides.jarvahl = {
-      hjem = { pkgs, ... }: {
-        files.".config/hypr/hyprland.lua".source =
-          pkgs.writeText "hyprland.lua" (import ./_hyprland.lua.nix { inherit pkgs; });
+      hjem = { lib, pkgs, ... }:
+        let
+          hyprlandFiles = lib.filterAttrs
+            (name: type:
+              type == "regular"
+              && (lib.hasSuffix ".lua" name || lib.hasSuffix ".lua.nix" name))
+            (builtins.readDir ./.);
 
-        files.".config/foot/foot.ini".text = ''
-          [main]
-          pad=16x16
-          font=monospace:size=12
-        '';
+          hyprlandFileName = name:
+            lib.removePrefix "_"
+              (if lib.hasSuffix ".lua.nix" name then lib.removeSuffix ".nix" name else name);
 
-        packages = [
-          pkgs.foot
-          pkgs.swaybg
-        ];
+          hyprlandFile = name: _: {
+            name = ".config/hypr/${hyprlandFileName name}";
+            value.source =
+              if lib.hasSuffix ".lua.nix" name
+              then pkgs.writeText (hyprlandFileName name) (import ./${name} { inherit pkgs; })
+              else ./${name};
+          };
+        in
+        {
+          files = lib.mapAttrs' hyprlandFile hyprlandFiles // {
+            ".config/foot/foot.ini".text = ''
+              [main]
+              pad=16x16
+              font=monospace:size=12
+            '';
+          };
 
-        systemd.services.swaybg = {
-          description = "Hyprland background";
-          wantedBy = [ "graphical-session.target" ];
-          partOf = [ "graphical-session.target" ];
-          wants = [ "wayland-session-waitenv.service" ];
-          after = [ "wayland-session-waitenv.service" ];
+          packages = [
+            pkgs.foot
+            pkgs.swaybg
+          ];
 
-          serviceConfig = {
-            ExecStart = "${pkgs.swaybg}/bin/swaybg -c '#c8c0b4'";
-            Restart = "on-failure";
+          systemd.services.swaybg = {
+            description = "Hyprland background";
+            wantedBy = [ "graphical-session.target" ];
+            partOf = [ "graphical-session.target" ];
+            wants = [ "wayland-session-waitenv.service" ];
+            after = [ "wayland-session-waitenv.service" ];
+
+            serviceConfig = {
+              ExecStart = "${pkgs.swaybg}/bin/swaybg -c '#c8c0b4'";
+              Restart = "on-failure";
+            };
           };
         };
-      };
 
       nixos = { pkgs, ... }: {
         programs.hyprland = {
