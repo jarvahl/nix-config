@@ -23,31 +23,7 @@
           };
         in
         {
-          files = lib.mapAttrs' hyprlandFile hyprlandFiles // {
-            ".config/foot/foot.ini".text = ''
-              [main]
-              pad=16x16
-              font=monospace:size=12
-            '';
-          };
-
-          packages = [
-            pkgs.foot
-            pkgs.swaybg
-          ];
-
-          systemd.services.swaybg = {
-            description = "Hyprland background";
-            wantedBy = [ "graphical-session.target" ];
-            partOf = [ "graphical-session.target" ];
-            wants = [ "wayland-session-waitenv.service" ];
-            after = [ "wayland-session-waitenv.service" ];
-
-            serviceConfig = {
-              ExecStart = "${pkgs.swaybg}/bin/swaybg -c '#c8c0b4'";
-              Restart = "on-failure";
-            };
-          };
+          files = lib.mapAttrs' hyprlandFile hyprlandFiles;
         };
 
       nixos = { pkgs, ... }: {
