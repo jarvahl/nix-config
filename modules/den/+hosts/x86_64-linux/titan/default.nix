@@ -21,9 +21,7 @@
         };
       };
 
-      includes = [
-        (den.batteries.unfree [ "n8n" ])
-      ];
+      includes = [ (den.batteries.unfree [ "n8n" ]) ];
     }
     {
       nixos = { pkgs, ... }: {
@@ -63,9 +61,7 @@
         networking.firewall.allowedTCPPorts = [ 80 ];
       };
 
-      includes = [
-        (den.batteries.unfree [ "open-webui" ])
-      ];
+      includes = [ (den.batteries.unfree [ "open-webui" ]) ];
     }
   ];
 
