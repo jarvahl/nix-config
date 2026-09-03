@@ -53,21 +53,17 @@ lib.mkMerge [
           services.displayManager.gdm.enable = false;
           services.desktopManager.gnome.enable = true;
 
-          services.getty = {
-            autologinUser = "jarvahl";
-            autologinOnce = true;
-          };
+          services.greetd = {
+            enable = true;
+            settings = rec {
+              initial_session = {
+                command = "${pkgs.uwsm}/bin/uwsm start -- hyprland-uwsm.desktop";
+                user = "jarvahl";
+              };
 
-          environment.loginShellInit = lib.mkAfter ''
-            if [ "''${USER-}" = jarvahl ] \
-              && [ "''${XDG_VTNR-}" = 1 ] \
-              && [ "$(tty 2>/dev/null)" = /dev/tty1 ] \
-              && [ -n "''${XDG_SESSION_ID-}" ] \
-              && [ "$(loginctl show-session "$XDG_SESSION_ID" -p Active --value 2>/dev/null)" = yes ] \
-              && [ "$(loginctl show-session "$XDG_SESSION_ID" -p Remote --value 2>/dev/null)" = no ]; then
-              exec uwsm start hyprland-uwsm.desktop
-            fi
-          '';
+              default_session = initial_session;
+            };
+          };
         };
       }
       {
