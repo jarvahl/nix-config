@@ -54,6 +54,16 @@ den.aspects.terra = {
 };
 ```
 
+### 3.1 Includes Placement
+
+Keep host-wide includes, such as `with den.aspects; [ podman fonts zscaler ]`, in the host's `default.nix`.
+
+Keep service-specific includes, such as `den.batteries.unfree`, next to the service aspect that needs them.
+
+Keep user-specific includes, such as `primary-user`, `user-shell`, and `development`, in the corresponding `aspects/+provides/<user>/default.nix` provider.
+
+If a host aspect is intentionally kept in the host's `default.nix`, its includes remain there as well.
+
 ### 4. Inline Plugin Package Definitions
 
 For plugin-oriented aspects such as `zsh` and `tmux`, keep package fetches/builds inline with the plugin declaration that uses them. Do not hoist plugin packages into a shared outer `let` unless the same derivation is intentionally reused by multiple plugin entries or non-plugin settings.

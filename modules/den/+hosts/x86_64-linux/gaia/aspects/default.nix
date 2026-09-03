@@ -1,4 +1,4 @@
-{ den, ... }:
+{ ... }:
 {
   den.aspects.gaia = {
     nixos = { config, ... }: {
@@ -48,6 +48,5 @@
       };
     };
 
-    includes = with den.aspects; [ podman fonts zscaler ];
   };
 }

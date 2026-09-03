@@ -19,14 +19,6 @@
         };
       };
 
-      includes =
-        (with den.aspects; [
-          tailscale
-          ssh
-          podman
-          fonts
-        ])
-        ++ [ (den.batteries.import-tree ./_modules) ];
     }
     {
       nixos = { pkgs, ... }: {
