@@ -1,4 +1,4 @@
-{ ... }:
+{ den, ... }:
 {
   den.aspects.iter = {
     nixos.sops.defaultSopsFile = ../secrets.yml;
