@@ -34,7 +34,7 @@ Within a `den.aspects.<name> = { ... }` block, order attributes as follows:
 
 When an aspect has any `provides` entries, declare `provides` as a nested key inside the `den.aspects.<name> = { ... }` block, even if there is only one provision.
 
-Host-specific guest container provisions belong in the host's `default.nix`, not in a separate sibling file named after the guest. Use `lib.mkMerge` for the host file, and keep both the `provides.<guest>.container` entry and the matching `den.hosts.<system>.<host>.guests.<guest>` declaration in the final merge block at the end of the host `default.nix`.
+Host-specific guest container configuration belongs in the host's `default.nix`, not in a separate sibling file such as `guests.nix` or one named after the guest. Attach `lib.mkMerge` at the file's top level and keep the complete guest configuration in its own attrset, separate from the host's base configuration. Keep both the guest's aspect configuration and its matching host relation (such as `nixosContainers` or `den.hosts.<system>.<host>.guests.<guest>`) together in that attrset.
 
 When consolidating multiple fragments of a host aspect, attach `lib.mkMerge` directly to `den.aspects.<host>`. Always place merge blocks containing `provides` before blocks containing other aspect classes or settings. Keep `den.hosts.<system>.<host>` declarations outside that aspect-level merge.
 
