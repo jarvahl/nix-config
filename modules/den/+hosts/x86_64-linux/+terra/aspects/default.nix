@@ -7,7 +7,6 @@
 
         networking.networkmanager.enable = true;
 
-        services.atd.enable = true;
         services.upower.enable = true;
         services.power-profiles-daemon.enable = true;
 
@@ -19,6 +18,12 @@
         };
       };
 
+    }
+    {
+      nixos = { pkgs, ... }: {
+        services.atd.enable = true;
+        environment.systemPackages = [ pkgs.at ];
+      };
     }
     {
       nixos = {
