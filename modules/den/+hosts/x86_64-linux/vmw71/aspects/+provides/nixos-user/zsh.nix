@@ -2,7 +2,7 @@
 , ...
 }:
 {
-  den.aspects.gaia = {
+  den.aspects.vmw71 = {
     provides.nixos-user = { user, ... }: {
       zsh = { pkgs, ... }: {
         integrations = {

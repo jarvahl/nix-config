@@ -1,6 +1,6 @@
 { ... }:
 {
-  den.aspects.gaia = {
+  den.aspects.vmw71 = {
     nixos = { config, ... }: {
       sops = {
         defaultSopsFile = ../secrets.yml;
