@@ -17,6 +17,6 @@ host: module -> short description
 Examples:
 
 ```text
-terra: add audio support
-terra: niri -> extract config
+thinkbook: add audio support
+thinkbook: niri -> extract config
 ```

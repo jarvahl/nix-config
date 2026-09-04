@@ -1,6 +1,6 @@
 { ... }:
 {
-  den.aspects.terra = {
+  den.aspects.thinkbook = {
     provides.jarvahl = {
       hjem = { pkgs, ... }: {
         files.".config/foot/foot.ini".text = ''

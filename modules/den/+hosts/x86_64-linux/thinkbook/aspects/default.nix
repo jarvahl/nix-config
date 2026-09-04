@@ -1,6 +1,6 @@
 { den, lib, ... }:
 {
-  den.aspects.terra = lib.mkMerge [
+  den.aspects.thinkbook = lib.mkMerge [
     {
       nixos = {
         sops.defaultSopsFile = ../secrets.yml;

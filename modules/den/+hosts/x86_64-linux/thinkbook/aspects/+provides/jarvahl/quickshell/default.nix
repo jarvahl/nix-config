@@ -1,6 +1,6 @@
 { ... }:
 {
-  den.aspects.terra = {
+  den.aspects.thinkbook = {
     provides.jarvahl.hjem = { config, lib, pkgs, ... }:
       let
         quickshellConfig = builtins.path {

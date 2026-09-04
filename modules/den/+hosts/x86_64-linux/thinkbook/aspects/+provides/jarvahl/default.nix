@@ -3,7 +3,7 @@
 , ...
 }:
 {
-  den.aspects.terra = lib.mkMerge [
+  den.aspects.thinkbook = lib.mkMerge [
     {
       provides.jarvahl = {
         nvim = { ... }: {
