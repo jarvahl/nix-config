@@ -36,6 +36,8 @@ Inside `den.aspects.<name>`, use this order:
 - Keep host-wide includes in the host `default.nix`, service-specific includes beside the service aspect, and user-specific includes in `aspects/+provides/<user>/default.nix`.
 - Treat host-wide catch-all routing such as `to-users` as a provision under the host aspect; matching files stay at host level.
 
+Details: [`references/den-routing.md`](references/den-routing.md).
+
 ## Hosts and guests
 
 - Keep host-specific guest container configuration in the host `default.nix`, not a sibling `guests.nix` or guest-named file.
@@ -48,6 +50,10 @@ Inside `den.aspects.<name>`, use this order:
 - For simple console tools, prefer `hjem.packages` plus `zsh.initConfig`; add custom `rum.programs.<tool>` or `hjem.extraModules` only for reusable, conditional, or non-trivial integration.
 - For host-specific Neovim tooling, group related LSP presets, server overrides, and language declarations with `lib.mkMerge` by host role, such as `frontend` and `backend`.
 
+Details: [`references/tool-integrations.md`](references/tool-integrations.md).
+
 ## Validation
 
 Inspect the diff and run the narrowest relevant Nix evaluation or check after structural changes. Before any Nix operation, stage only newly created, untracked files that the flake must see; tracked modifications are already visible to flakes.
+
+Workflow: [`references/validation-workflow.md`](references/validation-workflow.md).
