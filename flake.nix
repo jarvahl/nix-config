@@ -49,7 +49,6 @@
       url = "github:numtide/treefmt-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    tuicr.url = "github:agavra/tuicr";
     zsh-nix = {
       url = "github:jarvahl/zsh.nix";
       inputs.nixpkgs.follows = "nixpkgs";
