@@ -1,7 +1,7 @@
 keys:
   - &thinkbook age1zpxu9saum6mjevwf7m504g38lgpr6h385t32rkaua409j2lz7vus5f35ky
   - &vmw71 age16hcrlzqd6q3g6jds3jtxf43n0tcnakqcafztsvddph65nzlp39dq4mlwg6
-  - &gaia age16hcrlzqd6q3g6jds3jtxf43n0tcnakqcafztsvddph65nzlp39dq4mlwg6
+  - &probook age1tvs9e8l0qr7sreu6lxcnkdj6w7ueaeeq9wp7kh37el8e3s30epes5mr4ua
   - &titan age1tdd44wjlhcd4t4cklvqkte65vp5twdwn4mvs5tdczr99qcgrzcxqcqa6ya
   - &recovery age1ae7sz9dru5fvpm0v9gp03s5dkthx0vltjsnmn64vftfn0jkl55jqqt6e77
 
@@ -16,10 +16,10 @@ creation_rules:
       - age:
           - *vmw71
           - *recovery
-  - path_regex: modules/den/\+hosts/x86_64-linux/gaia/secrets\.yml$
+  - path_regex: modules/den/\+hosts/x86_64-linux/probook/secrets\.yml$
     key_groups:
       - age:
-          - *gaia
+          - *probook
           - *recovery
   - path_regex: modules/den/\+hosts/x86_64-linux/titan/secrets\.yml$
     key_groups:

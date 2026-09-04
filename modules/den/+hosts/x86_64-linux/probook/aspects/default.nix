@@ -1,6 +1,6 @@
 { den, ... }:
 {
-  den.aspects.iter = {
+  den.aspects.probook = {
     nixos.sops.defaultSopsFile = ../secrets.yml;
 
     includes = [ den.aspects.zscaler ];
