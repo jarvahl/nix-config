@@ -1,6 +1,6 @@
 { den, ... }:
 {
-  den.aspects.terra = {
+  den.aspects.thinkbook = {
     includes =
       (with den.aspects; [
         tailscale
@@ -11,7 +11,7 @@
       ++ [ (den.batteries.import-tree ./aspects/_modules) ];
   };
 
-  den.hosts.x86_64-linux.terra = {
+  den.hosts.x86_64-linux.thinkbook = {
     users.jarvahl = { };
   };
 }
