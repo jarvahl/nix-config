@@ -3,7 +3,7 @@
 , ...
 }:
 {
-  den.aspects.gaia = lib.mkMerge [
+  den.aspects.vmw71 = lib.mkMerge [
     {
       provides.nixos-user =
         { user, ... }:
