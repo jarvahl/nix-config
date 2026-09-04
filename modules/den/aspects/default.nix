@@ -182,24 +182,6 @@ lib.mkMerge [
   }
 
   {
-    den.aspects.tuicr = {
-      hjem = { pkgs, ... }: {
-        packages = [ pkgs.tuicr ];
-      };
-
-      nixos = { ... }: {
-        nixpkgs.overlays = [
-          (final: _prev: {
-            tuicr = inputs.tuicr.packages.${final.stdenv.hostPlatform.system}.default;
-          })
-        ];
-      };
-    };
-
-    flake-file.inputs.tuicr.url = "github:agavra/tuicr";
-  }
-
-  {
     den.aspects.worktrunk = {
       zsh = { lib, pkgs, ... }: {
         initConfig =
