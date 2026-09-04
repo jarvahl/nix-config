@@ -5,7 +5,7 @@ keys:
   - &recovery age1ae7sz9dru5fvpm0v9gp03s5dkthx0vltjsnmn64vftfn0jkl55jqqt6e77
 
 creation_rules:
-  - path_regex: modules/den/\+hosts/x86_64-linux/thinkbook/secrets\.yml$
+  - path_regex: modules/den/\+hosts/x86_64-linux/\+thinkbook/secrets\.yml$
     key_groups:
       - age:
           - *thinkbook
