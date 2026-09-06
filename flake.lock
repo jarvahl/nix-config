@@ -197,7 +197,6 @@
     "flake-parts_3": {
       "inputs": {
         "nixpkgs-lib": [
-          "zsh-nix",
           "nixpkgs"
         ]
       },
@@ -241,7 +240,6 @@
         "flake-compat": "flake-compat_4",
         "gitignore": "gitignore",
         "nixpkgs": [
-          "zsh-nix",
           "nixpkgs"
         ]
       },
@@ -262,7 +260,6 @@
     "gitignore": {
       "inputs": {
         "nixpkgs": [
-          "zsh-nix",
           "git-hooks-nix",
           "nixpkgs"
         ]
@@ -561,8 +558,7 @@
         "nvf": "nvf",
         "pi": "pi",
         "sops-nix": "sops-nix",
-        "treefmt-nix": "treefmt-nix_2",
-        "zsh-nix": "zsh-nix"
+        "treefmt-nix": "treefmt-nix_2"
       }
     },
     "sops-nix": {
@@ -645,7 +641,6 @@
     "treefmt-nix_3": {
       "inputs": {
         "nixpkgs": [
-          "zsh-nix",
           "nixpkgs"
         ]
       },
@@ -660,32 +655,6 @@
       "original": {
         "owner": "numtide",
         "repo": "treefmt-nix",
-        "type": "github"
-      }
-    },
-    "zsh-nix": {
-      "inputs": {
-        "dag": "dag",
-        "flake-file": "flake-file_2",
-        "flake-parts": "flake-parts_3",
-        "git-hooks-nix": "git-hooks-nix_2",
-        "import-tree": "import-tree_2",
-        "nixpkgs": [
-          "nixpkgs"
-        ],
-        "treefmt-nix": "treefmt-nix_3"
-      },
-      "locked": {
-        "lastModified": 1787578347,
-        "narHash": "sha256-+auUDzGNY5d7fTNQC2CLQlwsMhAtUqjezy2LPLVqWOo=",
-        "owner": "jarvahl",
-        "repo": "zsh.nix",
-        "rev": "cb7fecfa31beedaecbd1b91de4af7dbeaec17465",
-        "type": "github"
-      },
-      "original": {
-        "owner": "jarvahl",
-        "repo": "zsh.nix",
         "type": "github"
       }
     }

@@ -5,11 +5,6 @@
   den.aspects.vmw71 = {
     provides.nixos-user = { user, ... }: {
       zsh = { pkgs, ... }: {
-        integrations = {
-          mvn.enable = true;
-          npm.enable = true;
-        };
-
         initConfig =
           let
             ocCompletion = pkgs.runCommand "oc-zsh-completion" { } ''
@@ -20,11 +15,13 @@
           in
           lib.mkAfter ''
             source "${ocCompletion}/share/zsh/plugins/oc/oc.plugin.zsh"
+            zsh-defer source "${pkgs.oh-my-zsh}/share/oh-my-zsh/plugins/npm/npm.plugin.zsh"
+            zsh-defer source "${pkgs.oh-my-zsh}/share/oh-my-zsh/plugins/mvn/mvn.plugin.zsh"
           '';
       };
 
       nixos = { config, ... }: {
-        hjem.users.${user.userName}.integrations.zsh-nix.initConfig = lib.mkBefore ''
+        hjem.users.${user.userName}.rum.programs.zsh.initConfig = lib.mkBefore ''
           set -a
           if [ -r "${config.sops.templates.proxy-environment.path}" ]; then
             source "${config.sops.templates.proxy-environment.path}"
