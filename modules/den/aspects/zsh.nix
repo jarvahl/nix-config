@@ -1,57 +1,44 @@
-{ den, inputs, lib, ... }:
+{ den, lib, ... }:
 {
   den.aspects.zsh = {
     zsh = { pkgs, ... }: {
       enable = true;
 
-      history = {
-        file = "\${ZDOTDIR:-$HOME}/.zsh_history";
-        size = 100000;
-        save = 100000;
-        integrations.fzf.enable = true;
-      };
-
-      setopt = [
-        "append_history"
-        "extended_history"
-        "hist_ignore_dups"
-        "hist_ignore_space"
-        "hist_reduce_blanks"
-        "share_history"
-      ];
-
-      completion = {
-        enable = true;
-        integrations.fzf.enable = true;
-      };
-
-      vi.enable = true;
-      autosuggestion.enable = true;
-      syntaxHighlighting.integrations.patina.enable = true;
-
-      integrations = {
-        git.enable = true;
-        docker.enable = true;
-      };
-
-      zsh.startPlugins = {
-        dirhistory = {
-          package = pkgs.oh-my-zsh;
-          source = "share/oh-my-zsh/plugins/dirhistory/dirhistory.plugin.zsh";
-        };
-
-        colored-man-pages = {
-          package = pkgs.oh-my-zsh;
-          source = "share/oh-my-zsh/plugins/colored-man-pages/colored-man-pages.plugin.zsh";
-        };
-
-        autoenv = {
-          package = pkgs.zsh-autoenv;
-          source = "share/zsh-autoenv/autoenv.plugin.zsh";
-        };
-      };
-
       initConfig = ''
+        setopt append_history
+        setopt extended_history
+        setopt hist_ignore_dups
+        setopt hist_ignore_space
+        setopt hist_reduce_blanks
+        setopt share_history
+
+        autoload -Uz compinit
+        compinit
+
+        HISTFILE="''${ZDOTDIR:-$HOME}/.zsh_history"
+        HISTSIZE=100000
+        SAVEHIST=100000
+        [[ -d "''${HISTFILE:h}" ]] || mkdir -p "''${HISTFILE:h}"
+
+        source "${pkgs.zsh-defer}/share/zsh-defer/zsh-defer.plugin.zsh"
+
+        zsh-defer source "${pkgs.zsh-fzf-tab}/share/fzf-tab/fzf-tab.plugin.zsh"
+        zsh-defer enable-fzf-tab
+        zsh-defer source "${pkgs.zsh-fzf-history-search}/share/zsh-fzf-history-search/zsh-fzf-history-search.plugin.zsh"
+        zsh-defer source "${pkgs.oh-my-zsh}/share/oh-my-zsh/lib/git.zsh"
+        zsh-defer source "${pkgs.oh-my-zsh}/share/oh-my-zsh/plugins/git/git.plugin.zsh"
+        zsh-defer source "${pkgs.oh-my-zsh}/share/oh-my-zsh/plugins/docker/docker.plugin.zsh"
+        zsh-defer -c 'fpath+=("${pkgs.oh-my-zsh}/share/oh-my-zsh/plugins/docker/completions" $fpath)'
+        zsh-defer source "${pkgs.oh-my-zsh}/share/oh-my-zsh/plugins/docker-compose/docker-compose.plugin.zsh"
+
+        source "${pkgs.oh-my-zsh}/share/oh-my-zsh/plugins/dirhistory/dirhistory.plugin.zsh"
+        source "${pkgs.oh-my-zsh}/share/oh-my-zsh/plugins/colored-man-pages/colored-man-pages.plugin.zsh"
+        source "${pkgs.zsh-autoenv}/share/zsh-autoenv/autoenv.plugin.zsh"
+        source "${pkgs.zsh-vi-mode}/share/zsh-vi-mode/zsh-vi-mode.plugin.zsh"
+        source "${pkgs.zsh-autosuggestions}/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
+        bindkey -v
+        eval "$(${pkgs.zsh-patina}/bin/zsh-patina activate)"
+
         ZSH_CACHE_DIR="''${XDG_CACHE_HOME:-$HOME/.cache}/oh-my-zsh"
         mkdir -p "$ZSH_CACHE_DIR/completions"
         chmod u+w "$ZSH_CACHE_DIR"/completions/*(.N) 2>/dev/null || true
@@ -69,7 +56,6 @@
           [[ -r "$f" ]] && source "$f";
         done
         set +a
-
       '';
     };
 
@@ -78,23 +64,17 @@
     ];
   };
 
-  den.default.nixos.hjem.extraModules = lib.mkAfter [
-    inputs.zsh-nix.hjemModules.default
-  ];
-
   den.schema.user.includes = [
     ({ user }:
       den.batteries.forward {
         each = lib.singleton user;
         fromClass = _: "zsh";
         intoClass = _: "hjem";
-        intoPath = _: [ "integrations" "zsh-nix" ];
+        intoPath = _: [ "rum" "programs" "zsh" ];
         fromAspect = u: u.aspect;
-        adaptArgs = args: { inherit (args) pkgs; inherit lib; };
+        adaptArgs = args: {
+          inherit (args) pkgs lib;
+        };
       })
   ];
-  flake-file.inputs.zsh-nix = {
-    url = "github:jarvahl/zsh.nix";
-    inputs.nixpkgs.follows = "nixpkgs";
-  };
 }
