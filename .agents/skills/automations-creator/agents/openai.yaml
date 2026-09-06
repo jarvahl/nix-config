@@ -1,0 +1,4 @@
+interface:
+  display_name: "Automations Creator"
+  short_description: "Create host-routed Den automations"
+  default_prompt: "Use $automations-creator to add or update a host-routed Den automation."
