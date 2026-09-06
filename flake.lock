@@ -30,6 +30,21 @@
     },
     "dag": {
       "locked": {
+        "lastModified": 1786636402,
+        "narHash": "sha256-RI2Elc4c9SZt11z10bUeNirFF20vH0cAkIyLfr38Bjw=",
+        "owner": "denful",
+        "repo": "dag",
+        "rev": "81620ad3bcc943a4ac140d52b09812de8fea4394",
+        "type": "github"
+      },
+      "original": {
+        "owner": "denful",
+        "repo": "dag",
+        "type": "github"
+      }
+    },
+    "dag_2": {
+      "locked": {
         "lastModified": 1776409857,
         "narHash": "sha256-Oe2lNRE1RyjVu1xZ3PK5uYEFszIEWEpch7c/NLKvjvM=",
         "owner": "denful",
@@ -547,6 +562,7 @@
     },
     "root": {
       "inputs": {
+        "dag": "dag",
         "den": "den",
         "flake-file": "flake-file",
         "flake-parts": "flake-parts",
@@ -665,7 +681,7 @@
     },
     "zsh-nix": {
       "inputs": {
-        "dag": "dag",
+        "dag": "dag_2",
         "flake-file": "flake-file_2",
         "flake-parts": "flake-parts_3",
         "git-hooks-nix": "git-hooks-nix_2",

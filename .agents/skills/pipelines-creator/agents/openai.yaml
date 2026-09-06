@@ -1,0 +1,4 @@
+interface:
+  display_name: "Pipelines Creator"
+  short_description: "Create host-routed Den pipelines"
+  default_prompt: "Use $pipelines-creator to add or update a host-routed Den pipeline."
