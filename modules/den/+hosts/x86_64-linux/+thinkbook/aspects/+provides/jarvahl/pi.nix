@@ -70,11 +70,13 @@
 
             export PI_CODING_AGENT_DIR="$config_dir"
             export PI_SKIP_VERSION_CHECK=1
+            export PI_TELEMETRY=0
 
             mkdir -p "$state_dir/sessions"
 
             pi_args=(
               --session-dir "$state_dir/sessions"
+              --tui-mode fullscreen
 
               # RTK
               --extension "${pkgs.rtk.src}/hooks/pi/rtk.ts"
@@ -105,17 +107,11 @@
       {
         packages = [ pi ];
 
-        files.".config/pi/settings.json".text = builtins.toJSON {
-          enableInstallTelemetry = false;
-          quietStartup = true;
-          tuiMode = "fullscreen";
-        };
-
         files.".config/pi/zentui.json".text = builtins.toJSON {
           components = {
             editor = {
               enabled = true;
-              style = "accent-rail";
+              style = "opencode";
             };
             userMessages = {
               enabled = true;
