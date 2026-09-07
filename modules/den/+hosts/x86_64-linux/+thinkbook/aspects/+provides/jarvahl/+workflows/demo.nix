@@ -17,7 +17,6 @@
           };
 
           splitMessages = {
-            needs = [ "fetchInbox" ];
             package = pkgs.writeShellApplication {
               name = "${name}-split-messages";
               runtimeInputs = [ pkgs.jq ];
@@ -26,10 +25,10 @@
                 jq -c '.messages[]'
               '';
             };
+            needs = [ "fetchInbox" ];
           };
 
           classifyMessages = {
-            needs = [ "splitMessages" ];
             package = pkgs.writeShellApplication {
               name = "${name}-classify-messages";
               runtimeInputs = [ pkgs.jq ];
@@ -44,10 +43,10 @@
                 }'
               '';
             };
+            needs = [ "splitMessages" ];
           };
 
           summarizeTriage = {
-            needs = [ "classifyMessages" ];
             package = pkgs.writeShellApplication {
               name = "${name}-summarize-triage";
               runtimeInputs = [ pkgs.jq ];
@@ -60,6 +59,7 @@
                 }' > /dev/null
               '';
             };
+            needs = [ "classifyMessages" ];
           };
         };
 
