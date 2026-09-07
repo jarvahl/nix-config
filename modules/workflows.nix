@@ -1,41 +1,16 @@
-{ dag, lib, ... }:
+{ lib, ... }:
 {
   _module.args.workflow =
     { name
-    , nodes
-    , pkgs
+    , text
+    , runtimeInputs ? [ ]
     , at
+    , pkgs
     ,
     }:
     let
-      entries = lib.mapAttrs
-        (
-          nodeName: node:
-            dag.entryAfter (node.needs or [ ]) {
-              inherit nodeName;
-              inherit (node) package;
-            }
-        )
-        nodes;
-
-      sorted = dag.topoSort entries;
-
-      orderedNodes =
-        if sorted ? result then
-          sorted.result
-        else
-          throw "Could not compile workflow '${name}': dependency cycle";
-
       package = pkgs.writeShellApplication {
-        inherit name;
-
-        text = ''
-          set -euo pipefail
-
-          ${lib.concatStringsSep " |\n" (map (node: lib.getExe node.data.package) orderedNodes)}
-        '';
-
-        passthru.nodes = lib.mapAttrs (_: node: node.package) nodes;
+        inherit name text runtimeInputs;
         passthru.at = at;
       };
     in
