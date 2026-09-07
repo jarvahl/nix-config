@@ -1,4 +1,5 @@
 { inputs
+, workflow
 , ...
 }:
 {
@@ -10,7 +11,7 @@
       ];
 
       nixos.hjem.specialArgs = {
-        inherit inputs;
+        inherit inputs workflow;
       };
 
       nixos.hjem.clobberByDefault = true;
