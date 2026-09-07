@@ -31,6 +31,16 @@
           hash = "sha256-tu+m1UIBg09+RiqKBRxokJQy4g00Sckq/NmfVrMDxZE=";
         };
 
+        piCodingAgent = pkgs.pi-coding-agent.overrideAttrs (old: {
+          postPatch = (old.postPatch or "") + ''
+            settings_manager=packages/coding-agent/src/core/settings-manager.ts
+            substituteInPlace "$settings_manager" \
+              --replace-fail \
+                'return this.settings.quietStartup ?? false;' \
+                'return this.settings.quietStartup ?? process.env.PI_QUIET_STARTUP === "1";'
+          '';
+        });
+
         piMcpAdapter = pkgs.buildNpmPackage {
           pname = "pi-mcp-adapter";
           version = "2.32.1";
@@ -71,6 +81,7 @@
             export PI_CODING_AGENT_DIR="$config_dir"
             export PI_SKIP_VERSION_CHECK=1
             export PI_TELEMETRY=0
+            export PI_QUIET_STARTUP=1
 
             mkdir -p "$state_dir/sessions"
 
@@ -100,7 +111,7 @@
               --theme "${piThemes}/pi-themes/themes"
             )
 
-            exec ${pkgs.pi-coding-agent}/bin/pi "''${pi_args[@]}" "$@"
+            exec ${piCodingAgent}/bin/pi "''${pi_args[@]}" "$@"
           '';
         };
       in
