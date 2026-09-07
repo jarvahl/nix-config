@@ -11,6 +11,7 @@
         set -g renumber-windows on
         set -g history-limit 50000
         set -g prefix2 Home
+        set -g extended-keys on
 
         # Window and pane splitting
         bind | split-window -h
