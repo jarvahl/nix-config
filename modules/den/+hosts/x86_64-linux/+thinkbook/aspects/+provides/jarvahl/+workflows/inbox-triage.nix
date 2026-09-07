@@ -4,7 +4,7 @@
   den.aspects.thinkbook = {
     provides.jarvahl.hjem = { pkgs, workflow, ... }:
       workflow {
-        name = "workflow-demo";
+        name = "inbox-triage";
         text = ''
           set -euo pipefail
 

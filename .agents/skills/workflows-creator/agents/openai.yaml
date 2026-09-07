@@ -1,4 +1,0 @@
-interface:
-  display_name: "Workflows Creator"
-  short_description: "Create host-routed Den workflows"
-  default_prompt: "Use $workflows-creator to add or update a host-routed Den workflow."

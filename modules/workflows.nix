@@ -9,13 +9,15 @@
     ,
     }:
     let
+      unitName = "workflow-${name}";
       package = pkgs.writeShellApplication {
-        inherit name text runtimeInputs;
+        name = unitName;
+        inherit text runtimeInputs;
         passthru.at = at;
       };
     in
     {
-      systemd.services.${name} = {
+      systemd.services.${unitName} = {
         description = "Run the ${name} workflow";
         serviceConfig = {
           Type = "oneshot";
@@ -23,12 +25,12 @@
         };
       };
 
-      systemd.timers.${name} = {
+      systemd.timers.${unitName} = {
         wantedBy = [ "timers.target" ];
         timerConfig = {
           OnCalendar = at;
           Persistent = true;
-          Unit = "${name}.service";
+          Unit = "${unitName}.service";
         };
       };
     };
