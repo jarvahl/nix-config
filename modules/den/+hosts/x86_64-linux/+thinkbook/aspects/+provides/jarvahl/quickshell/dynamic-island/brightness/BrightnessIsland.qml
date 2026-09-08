@@ -1,6 +1,8 @@
 import QtQuick
 
 Item {
+    property var data: ({})
+
     implicitWidth: 120
     implicitHeight: 17
 
@@ -21,14 +23,14 @@ Item {
             anchors.verticalCenter: parent.verticalCenter
             width: 96
             height: 4
-            color: "#292a2f"
             radius: height / 2
+            color: "#292a2f"
 
             Rectangle {
-                width: parent.width * Brightness.value
+                width: parent.width * Math.max(0, Math.min(1, data.value))
                 height: parent.height
-                color: "#d7d8dc"
                 radius: parent.radius
+                color: "#d7d8dc"
 
                 Behavior on width {
                     NumberAnimation {

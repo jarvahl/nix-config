@@ -1,21 +1,37 @@
 import QtQuick
 import Quickshell
-import "osd" as Osd
-import "osd/brightness" as Brightness
-import "osd/clock" as Clock
-import "osd/volume" as Volume
+import "dynamic-island" as Island
+import "dynamic-island/brightness" as Brightness
+import "dynamic-island/clock" as Clock
+import "dynamic-island/volume" as Volume
 
 Scope {
     Component {
-        id: clockComponent
+        id: clockIsland
 
-        Clock.ClockWidget {}
+        Clock.ClockIsland {}
     }
 
-    Osd.OsdHost {
-        idleComponent: clockComponent
+    Component {
+        id: volumeIsland
+
+        Volume.VolumeIsland {}
     }
 
-    Brightness.BrightnessOsd {}
-    Volume.VolumeOsd {}
+    Component {
+        id: brightnessIsland
+
+        Brightness.BrightnessIsland {}
+    }
+
+    Island.DynamicIsland {
+        idleComponent: clockIsland
+        registry: ({
+            volume: volumeIsland,
+            brightness: brightnessIsland
+        })
+    }
+
+    Brightness.BrightnessSource {}
+    Volume.VolumeSource {}
 }

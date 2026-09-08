@@ -7,13 +7,11 @@ import Quickshell.Io
 Singleton {
     id: root
 
-    readonly property string deviceName: internalDeviceName
-    readonly property bool ready: baselineReady
     readonly property real value: maximum > 0 && current >= 0
         ? Math.max(0, Math.min(1, current / maximum))
         : 0
 
-    property string internalDeviceName: ""
+    property string deviceName: ""
     property real current: -1
     property real maximum: -1
     property bool baselineReady: false
@@ -27,7 +25,7 @@ Singleton {
             const candidate = line.split(",")[0].trim();
 
             if (candidate !== "" && candidate !== ".." && !candidate.includes("/")) {
-                internalDeviceName = candidate;
+                deviceName = candidate;
                 return;
             }
         }

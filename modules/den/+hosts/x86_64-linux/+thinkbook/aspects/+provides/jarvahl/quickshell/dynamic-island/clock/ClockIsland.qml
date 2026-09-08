@@ -2,12 +2,13 @@ import QtQuick
 import Quickshell
 
 Item {
+    property var data: ({})
+
     implicitWidth: 88
     implicitHeight: 17
 
     SystemClock {
         id: clock
-
         precision: SystemClock.Seconds
     }
 

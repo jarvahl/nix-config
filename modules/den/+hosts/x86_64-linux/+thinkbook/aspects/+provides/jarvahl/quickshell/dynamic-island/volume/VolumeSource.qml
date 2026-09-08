@@ -1,7 +1,7 @@
 import QtQuick
 import Quickshell
 import Quickshell.Services.Pipewire
-import ".." as Osd
+import ".." as Island
 
 Scope {
     id: root
@@ -18,22 +18,16 @@ Scope {
             return;
         }
 
-        Osd.OsdBus.show(volumeComponent);
+        Island.DynamicIslandBus.show("volume", {
+            value: root.volume,
+            muted: root.muted
+        });
     }
 
     onSinkChanged: baselineReady = false
 
     PwObjectTracker {
         objects: root.sink ? [root.sink] : []
-    }
-
-    Component {
-        id: volumeComponent
-
-        VolumeWidget {
-            muted: root.muted
-            value: root.volume
-        }
     }
 
     Connections {

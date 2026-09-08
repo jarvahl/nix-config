@@ -1,10 +1,7 @@
 import QtQuick
 
 Item {
-    id: root
-
-    required property bool muted
-    required property real value
+    property var data: ({})
 
     implicitWidth: 120
     implicitHeight: 17
@@ -19,21 +16,21 @@ Item {
             font.family: "JetBrainsMono Nerd Font"
             font.pixelSize: 12
             font.weight: Font.Medium
-            text: root.muted || root.value <= 0.001 ? "󰝟" : "󰝞"
+            text: data.muted || data.value <= 0.001 ? "󰝟" : "󰝞"
         }
 
         Rectangle {
             anchors.verticalCenter: parent.verticalCenter
             width: 96
             height: 4
-            color: "#292a2f"
             radius: height / 2
+            color: "#292a2f"
 
             Rectangle {
-                width: parent.width * Math.max(0, Math.min(1, root.value))
+                width: parent.width * Math.max(0, Math.min(1, data.value))
                 height: parent.height
-                color: "#d7d8dc"
                 radius: parent.radius
+                color: "#d7d8dc"
 
                 Behavior on width {
                     NumberAnimation {
