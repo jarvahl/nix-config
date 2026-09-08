@@ -72,6 +72,7 @@
           name = "pi";
           runtimeInputs = [
             pkgs.coreutils
+            pkgs.mcp-nixos
             pkgs.rtk
           ];
           text = ''
@@ -118,6 +119,13 @@
       {
         packages = [ pi ];
 
+        files.".config/mcp/mcp.json".text = builtins.toJSON {
+          mcpServers.nixos = {
+            command = "mcp-nixos";
+            lifecycle = "lazy";
+          };
+        };
+
         files.".config/pi/zentui.json".text = builtins.toJSON {
           components = {
             editor = {
@@ -139,6 +147,11 @@
         };
       };
 
-    nixos.nixpkgs.overlays = [ inputs.pi.overlays.default ];
+    nixos.nixpkgs.overlays = [
+      inputs.pi.overlays.default
+      inputs.mcp-nixos.overlays.default
+    ];
   };
+
+  flake-file.inputs.mcp-nixos.url = "github:utensils/mcp-nixos";
 }
