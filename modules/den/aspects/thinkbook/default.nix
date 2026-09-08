@@ -3,7 +3,7 @@
   den.aspects.thinkbook = lib.mkMerge [
     {
       nixos = {
-        sops.defaultSopsFile = ../secrets.yml;
+        sops.defaultSopsFile = ./secrets.yml;
 
         networking.networkmanager.enable = true;
 
@@ -148,6 +148,16 @@
           "steam-unwrapped"
         ])
       ];
+    }
+    {
+      includes =
+        (with den.aspects; [
+          tailscale
+          ssh
+          podman
+          fonts
+        ])
+        ++ [ (den.batteries.import-tree ./_modules) ];
     }
   ];
 }

@@ -82,5 +82,11 @@
         packages = [ pkgs.codex ];
       };
     }
+
+    {
+      provides.jarvahl.hjem = { pkgs, ... }: {
+        packages = [ pkgs.openspec ];
+      };
+    }
   ];
 }

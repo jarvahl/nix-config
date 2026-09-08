@@ -1,7 +1,4 @@
-{ den
-, lib
-, ...
-}:
+{ inputs, ... }:
 {
   den.aspects.wsl = {
     provides.to-users = {
@@ -11,21 +8,16 @@
       };
     };
 
-    wsl = {
-      interop.register = true;
-    };
-
     nixos = {
+      imports = [ inputs.nixos-wsl.nixosModules.default ];
+      wsl = {
+        enable = true;
+        interop.register = true;
+      };
+      boot.loader.grub.enable = false;
       programs.nix-ld.enable = true;
     };
   };
-
-  # Policy: if wsl is enabled, include our extra settings automatically
-  den.policies.wsl-extras =
-    { host, ... }:
-    lib.optional ((host.wsl or { }).enable or false) (den.lib.policy.include den.aspects.wsl);
-
-  den.schema.host.includes = [ den.policies.wsl-extras ];
 
   flake-file.inputs.nixos-wsl.url = "github:nix-community/nixos-wsl";
 }

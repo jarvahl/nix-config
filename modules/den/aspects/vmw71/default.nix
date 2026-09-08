@@ -1,9 +1,11 @@
-{ ... }:
+{ den, ... }:
 {
   den.aspects.vmw71 = {
+    includes = with den.aspects; [ wsl podman fonts zscaler ];
+
     nixos = { config, ... }: {
       sops = {
-        defaultSopsFile = ../secrets.yml;
+        defaultSopsFile = ./secrets.yml;
 
         secrets = {
           "proxy/http" = { };
