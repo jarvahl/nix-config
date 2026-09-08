@@ -1,15 +1,15 @@
 { ... }:
 {
   den.hosts.x86_64-linux = {
-    probook = {
+    cargo = {
       users.nixos-user.userName = "nixos";
     };
 
-    thinkbook = {
+    apex = {
       users.jarvahl = { };
     };
 
-    vmw71 = {
+    gaia = {
       users.nixos-user.userName = "nixos";
     };
   };

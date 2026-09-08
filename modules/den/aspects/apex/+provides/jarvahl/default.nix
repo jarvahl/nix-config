@@ -3,7 +3,7 @@
 , ...
 }:
 {
-  den.aspects.thinkbook = lib.mkMerge [
+  den.aspects.apex = lib.mkMerge [
     {
       provides.jarvahl = {
         nvim = { ... }: {

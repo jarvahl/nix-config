@@ -2,7 +2,7 @@
 , ...
 }:
 {
-  den.aspects.vmw71 = {
+  den.aspects.gaia = {
     provides.nixos-user = {
       nvim = { pkgs, ... }: lib.mkMerge [
         {

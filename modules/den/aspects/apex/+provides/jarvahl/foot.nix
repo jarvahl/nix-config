@@ -1,6 +1,6 @@
 { ... }:
 {
-  den.aspects.thinkbook = {
+  den.aspects.apex = {
     provides.jarvahl = {
       hjem = { pkgs, ... }: {
         files.".config/foot/foot.ini".text = ''

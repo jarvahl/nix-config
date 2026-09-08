@@ -1,6 +1,6 @@
 { den, ... }:
 {
-  den.aspects.vmw71 = {
+  den.aspects.gaia = {
     includes = with den.aspects; [ wsl podman fonts zscaler ];
 
     nixos = { config, ... }: {

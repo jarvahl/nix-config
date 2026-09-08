@@ -1,6 +1,6 @@
 { ... }:
 {
-  den.aspects.thinkbook = {
+  den.aspects.apex = {
     provides.jarvahl.hjem = { config, pkgs, ... }: {
       packages = [ pkgs.hypridle ];
 

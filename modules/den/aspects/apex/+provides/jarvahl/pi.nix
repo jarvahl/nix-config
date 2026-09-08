@@ -1,6 +1,6 @@
 { inputs, ... }:
 {
-  den.aspects.thinkbook.provides.jarvahl = {
+  den.aspects.apex.provides.jarvahl = {
     hjem = { pkgs, ... }:
       let
         piCaveman = pkgs.fetchFromGitHub {

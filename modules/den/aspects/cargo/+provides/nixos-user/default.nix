@@ -1,6 +1,6 @@
 { den, ... }:
 {
-  den.aspects.probook = {
+  den.aspects.cargo = {
     provides.nixos-user = { user, ... }:
       let
         passwordSecret = "users/${user.userName}/hashedPassword";
