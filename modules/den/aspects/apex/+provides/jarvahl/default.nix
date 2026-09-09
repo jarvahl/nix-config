@@ -18,7 +18,7 @@
             initConfig = lib.mkAfter ''
               set -g status-style "bg=#161616,fg=#f2f4f8"
               set -g status-left "#[fg=#3ddbd9,bold] #S"
-              set -g status-right "#[fg=#42be65] #(whoami)#[fg=#525252]@#[fg=#78a9ff]#H"
+              set -g status-right "#[fg=#42be65] #(whoami)#[fg=#525252]@#[fg=#78a9ff]#H #(${pkgs.tmuxPlugins.continuum}/share/tmux-plugins/continuum/scripts/continuum_save.sh)"
 
               set -g window-status-format "#[fg=#525252]  #I:#W  "
               set -g window-status-current-format "#[fg=#3ddbd9,bold]  #I:#W  "

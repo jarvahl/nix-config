@@ -1,4 +1,4 @@
-{ lib, den, ... }:
+{ lib, ... }:
 {
   den.aspects.tmux = {
     hjem = lib.mkMerge [
@@ -60,7 +60,7 @@
 
           # Session persistence. Initial restore is performed by systemd.
           set -g @resurrect-dir "~/.local/state/tmux/resurrect"
-          set -g @resurrect-capture-pane-contents "off"
+          set -g @resurrect-capture-pane-contents "on"
           set -g @continuum-save-interval "1"
           set -g @continuum-restore "off"
           run-shell '${pkgs.tmuxPlugins.sensible}/share/tmux-plugins/sensible/sensible.tmux'
@@ -191,6 +191,10 @@
                 runtimeInputs = [ pkgs.tmux ];
                 text = ''
                   restore_script="${pkgs.tmuxPlugins.resurrect}/share/tmux-plugins/resurrect/scripts/restore.sh"
+
+                  # Resurrect uses $TMUX to select the server socket.
+                  socket="$(tmux display-message -p '#{socket_path}')"
+                  export TMUX="$socket,0,0"
 
                   if tmux has-session 2>/dev/null; then
                     printf 'tmux-restore-sessions: sessions already exist\n'
