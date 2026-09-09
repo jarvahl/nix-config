@@ -11,7 +11,7 @@ let
       packageFiles);
 in
 {
-  flake.overlays.default = overlay;
+  den.default.nixos.nixpkgs.overlays = [ overlay ];
 
   perSystem = { system, ... }: {
     _module.args.pkgs = import inputs.nixpkgs {
