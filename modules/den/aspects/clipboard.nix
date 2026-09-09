@@ -1,8 +1,8 @@
 { den, lib, ... }:
 {
   den.aspects.clipboard = {
-    nvim = {
-      luaConfigPost = ''
+    hjem = { pkgs, ... }: {
+      nvf.vim.luaConfigRC.clipboard = ''
         vim.g.clipboard = {
           name = 'pbcopy/pbpaste',
           copy = {
@@ -17,10 +17,8 @@
         }
         vim.opt.clipboard = 'unnamedplus'
       '';
-    };
 
-    tmux = {
-      initConfig = lib.mkAfter ''
+      tmux.initConfig = lib.mkAfter ''
         set -g set-clipboard on
         bind-key -T copy-mode-vi y send-keys -X copy-pipe-and-cancel "pbcopy"
         bind-key -T copy-mode-vi Enter send-keys -X copy-pipe-and-cancel "pbcopy"

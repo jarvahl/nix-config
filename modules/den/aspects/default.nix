@@ -2,13 +2,10 @@
 lib.mkMerge [
   {
     den.aspects.bat = {
-      zsh = { lib, pkgs, ... }: {
-        initConfig = ''
+      hjem = { lib, pkgs, ... }: {
+        rum.programs.zsh.initConfig = ''
           alias cat='${lib.getExe pkgs.bat}'
         '';
-      };
-
-      hjem = { pkgs, ... }: {
         packages = [ pkgs.bat ];
       };
     };
@@ -47,8 +44,8 @@ lib.mkMerge [
 
   {
     den.aspects.eza = {
-      zsh = { lib, pkgs, ... }: {
-        initConfig =
+      hjem = { lib, pkgs, ... }: {
+        rum.programs.zsh.initConfig =
           let
             flags = "--group-directories-first --icons=always";
           in
@@ -58,9 +55,6 @@ lib.mkMerge [
             alias la="${lib.getExe pkgs.eza} -la ${flags}"
             alias tree="${lib.getExe pkgs.eza} --tree ${flags}"
           '';
-      };
-
-      hjem = { pkgs, ... }: {
         packages = [ pkgs.eza ];
       };
     };
@@ -118,14 +112,11 @@ lib.mkMerge [
 
   {
     den.aspects.lazygit = {
-      nvim = { ... }: {
-        terminal.toggleterm = {
+      hjem = { pkgs, ... }: {
+        nvf.vim.terminal.toggleterm = {
           enable = true;
           lazygit.enable = true;
         };
-      };
-
-      hjem = { pkgs, ... }: {
         packages = with pkgs; [ lazygit ];
       };
 
@@ -183,8 +174,8 @@ lib.mkMerge [
 
   {
     den.aspects.worktrunk = {
-      zsh = { lib, pkgs, ... }: {
-        initConfig =
+      hjem = { lib, pkgs, ... }: {
+        rum.programs.zsh.initConfig =
           let
             shellIntegration = pkgs.runCommand "worktrunk-zsh-integration" { } ''
               plugin_dir=$out/share/zsh/plugins/worktrunk
@@ -195,9 +186,6 @@ lib.mkMerge [
           ''
             source "${shellIntegration}/share/zsh/plugins/worktrunk/worktrunk.plugin.zsh"
           '';
-      };
-
-      hjem = { pkgs, ... }: {
         packages = [ pkgs.worktrunk ];
       };
     };
@@ -205,13 +193,10 @@ lib.mkMerge [
 
   {
     den.aspects.zoxide = {
-      zsh = { lib, pkgs, ... }: {
-        initConfig = ''
+      hjem = { lib, pkgs, ... }: {
+        rum.programs.zsh.initConfig = ''
           eval "$(${lib.getExe pkgs.zoxide} init zsh)"
         '';
-      };
-
-      hjem = { pkgs, ... }: {
         packages = [ pkgs.zoxide ];
       };
     };

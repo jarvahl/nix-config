@@ -4,8 +4,8 @@
 {
   den.aspects.gaia = {
     provides.nixos-user = { user, ... }: {
-      zsh = { pkgs, ... }: {
-        initConfig =
+      hjem = { pkgs, ... }: {
+        rum.programs.zsh.initConfig =
           let
             ocCompletion = pkgs.runCommand "oc-zsh-completion" { } ''
               plugin_dir=$out/share/zsh/plugins/oc
