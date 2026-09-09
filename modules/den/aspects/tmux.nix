@@ -177,6 +177,7 @@
                 runtimeInputs = with pkgs; [
                   tmux
                   coreutils
+                  bash
                   gawk
                   gnugrep
                   gnused
