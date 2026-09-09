@@ -13,6 +13,7 @@
           set -g history-limit 50000
           set -g prefix2 Home
           set -g extended-keys on
+          set -g extended-keys-format csi-u
 
           # Window and pane splitting
           bind | split-window -h -c "#{pane_current_path}"
