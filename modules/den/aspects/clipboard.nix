@@ -1,7 +1,7 @@
 { den, lib, ... }:
 {
   den.aspects.clipboard = {
-    hjem = { pkgs, ... }: {
+    hjem = { ... }: {
       nvf.vim.luaConfigRC.clipboard = ''
         vim.g.clipboard = {
           name = 'pbcopy/pbpaste',
