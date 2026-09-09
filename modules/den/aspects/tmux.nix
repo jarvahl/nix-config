@@ -192,14 +192,16 @@
                 text = ''
                   restore_script="${pkgs.tmuxPlugins.resurrect}/share/tmux-plugins/resurrect/scripts/restore.sh"
 
-                  # Resurrect uses $TMUX to select the server socket.
-                  socket="$(tmux display-message -p '#{socket_path}')"
-                  export TMUX="$socket,0,0"
-
                   if tmux has-session 2>/dev/null; then
                     printf 'tmux-restore-sessions: sessions already exist\n'
                     exit 0
                   fi
+
+                  # Keep the configured server alive long enough for Resurrect
+                  # to read @resurrect-dir and restore into the right socket.
+                  tmux -f "$HOME/.config/tmux/tmux.conf" new-session -Ad -s 0
+                  socket="$(tmux display-message -p '#{socket_path}')"
+                  export TMUX="$socket,0,0"
 
                   if [ -x "$restore_script" ]; then
                     printf 'tmux-restore-sessions: restoring saved sessions\n'
