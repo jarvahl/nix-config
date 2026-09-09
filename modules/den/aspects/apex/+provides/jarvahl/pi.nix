@@ -54,9 +54,6 @@
               --extension "${pkgs.pi-mcp-adapter}/index.ts"
               --skill "${pkgs.pi-mcp-adapter}/skills"
 
-              # Background jobs
-              --extension "${pkgs.pi-background-jobs}/extensions/background-jobs.ts"
-
               # Themes
               --theme "${pkgs.pi-themes}/pi-themes/themes"
             )
