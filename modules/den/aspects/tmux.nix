@@ -174,7 +174,15 @@
             let
               script = pkgs.writeShellApplication {
                 name = "tmux-restore-sessions";
-                runtimeInputs = [ pkgs.tmux ];
+                runtimeInputs = with pkgs; [
+                  tmux
+                  coreutils
+                  gawk
+                  gnugrep
+                  gnused
+                  gnutar
+                  gzip
+                ];
                 text = ''
                   restore_script="${pkgs.tmuxPlugins.resurrect}/share/tmux-plugins/resurrect/scripts/restore.sh"
 
