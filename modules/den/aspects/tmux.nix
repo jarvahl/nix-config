@@ -182,6 +182,7 @@
                   gnugrep
                   gnused
                   gnutar
+                  inetutils
                   gzip
                 ];
                 text = ''
