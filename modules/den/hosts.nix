@@ -9,6 +9,10 @@
       users.jarvahl = { };
     };
 
+    hermes = {
+      users.nixos-user.userName = "nixos";
+    };
+
     gaia = {
       users.nixos-user.userName = "nixos";
     };

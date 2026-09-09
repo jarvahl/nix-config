@@ -117,6 +117,38 @@
       ];
     }
     {
+      nixos = {
+        systemd.tmpfiles.rules = [
+          "d /var/lib/hermes 0755 root root -"
+          "d /var/lib/hermes/n8n 0755 root root -"
+          "d /var/lib/hermes/grafana 0755 root root -"
+          "d /var/lib/hermes/sops 0750 root root -"
+        ];
+
+        containers.hermes = {
+          autoStart = true;
+          config = den.hosts.x86_64-linux.hermes.mainModule;
+
+          bindMounts = {
+            "/var/lib/private/n8n" = {
+              hostPath = "/var/lib/hermes/n8n";
+              isReadOnly = false;
+            };
+
+            "/var/lib/grafana" = {
+              hostPath = "/var/lib/hermes/grafana";
+              isReadOnly = false;
+            };
+
+            "/var/lib/sops-nix/key.txt" = {
+              hostPath = "/var/lib/hermes/sops/key.txt";
+              isReadOnly = true;
+            };
+          };
+        };
+      };
+    }
+    {
       includes =
         (with den.aspects; [
           tailscale

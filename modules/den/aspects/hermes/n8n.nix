@@ -1,6 +1,6 @@
 { den, ... }:
 {
-  den.aspects.apex = {
+  den.aspects.hermes = {
     nixos.services.n8n = {
       enable = true;
       openFirewall = false;

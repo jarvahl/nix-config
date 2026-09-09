@@ -7,6 +7,7 @@ result-*
 .direnv
 *.drv
 /key.txt
+/hermes-key.txt
 
 # Editor
 .vscode/

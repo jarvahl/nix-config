@@ -1,6 +1,6 @@
 { ... }:
 {
-  den.aspects.apex.nixos =
+  den.aspects.hermes.nixos =
     { config, ... }:
     {
       services.grafana = {
