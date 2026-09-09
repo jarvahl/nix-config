@@ -51,12 +51,6 @@
           zstyle ':completion:*' list-colors "''${(s.:.)LS_COLORS}"
 
           PROMPT="%B%F{magenta}#%f%b "
-
-          set -a
-          for f in /etc/environment.d/[0-9][0-9]-session-env-*.conf(N); do
-            [[ -r "$f" ]] && source "$f";
-          done
-          set +a
         '';
       };
     };
