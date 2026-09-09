@@ -41,6 +41,13 @@
           '';
         });
 
+        piBackgroundJobs = pkgs.fetchFromGitHub {
+          owner = "onlyjq04";
+          repo = "pi-background-jobs";
+          rev = "0841bc5a7d8a21cfa68147e5456aac646f05f69b";
+          hash = "sha256-j+bPb7Y8HJKd2DgDJWC4Fld/rtK5JOpz0eulBM7iSpg=";
+        };
+
         piMcpAdapter = pkgs.buildNpmPackage {
           pname = "pi-mcp-adapter";
           version = "2.32.1";
@@ -107,6 +114,9 @@
               # MCP adapter
               --extension "${piMcpAdapter}/index.ts"
               --skill "${piMcpAdapter}/skills"
+
+              # Background jobs
+              --extension "${piBackgroundJobs}/extensions/background-jobs.ts"
 
               # Themes
               --theme "${piThemes}/pi-themes/themes"
