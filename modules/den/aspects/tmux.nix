@@ -136,20 +136,6 @@
             text = ''
               unset TMUX TMUX_TMPDIR
 
-              uid="$(id -u)"
-              runtime_dir="/run/user/$uid"
-              if [ ! -d "$runtime_dir" ]; then
-                runtime_dir="''${XDG_RUNTIME_DIR:-/tmp}"
-              fi
-              export XDG_RUNTIME_DIR="$runtime_dir"
-
-              lock="$runtime_dir/tmux-sessions.lock"
-              exec 9>"$lock"
-              if ! flock -n 9; then
-                printf 'tmux-session-wrapper: lock is busy: %s\n' "$lock"
-                exit 0
-              fi
-
               exec "$@"
             '';
           };
