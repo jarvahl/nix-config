@@ -14,9 +14,16 @@ For host-specific module changes under `modules/config/+machines/<host>/`, use t
 host: module -> short description
 ```
 
+For aspect provisions under `modules/den/aspects/<host>/+provides/<user>/`, include both the host and user in the scope:
+
+```text
+host(user): module -> short description
+```
+
 Examples:
 
 ```text
 thinkbook: add audio support
 thinkbook: niri -> extract config
+apex(jarvahl): pi -> add background jobs extension
 ```
