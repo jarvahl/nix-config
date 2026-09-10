@@ -42,7 +42,8 @@
 
           files.".ssh/config.d/github".text = ''
             Host github.com
-              HostName github.com
+              HostName ssh.github.com
+              Port 443
               User git
               IdentityFile ${sops.secrets."users/${user.userName}/github/ssh-key".path}
               IdentitiesOnly yes
