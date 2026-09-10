@@ -1,12 +1,9 @@
-{ den, ... }:
+{ ... }:
 {
-  den.aspects.cargo = {
+  den.aspects.hermes = {
     provides.nixos-user = { user, ... }:
-      let
-        passwordSecret = "users/${user.userName}/hashedPassword";
-      in
       {
-        hjem = { sops, user, ... }: {
+        hjem = { sops, ... }: {
           files.".ssh/config".text = ''
             Include ~/.ssh/config.d/*
           '';
@@ -20,23 +17,12 @@
           '';
         };
 
-        nixos = { config, ... }: {
-          sops.secrets.${passwordSecret}.neededForUsers = true;
-
+        nixos = { ... }: {
           sops.secrets."users/${user.userName}/github/ssh-key" = {
             owner = user.userName;
             mode = "0400";
           };
-
-          users.users.${user.userName}.hashedPasswordFile =
-            config.sops.secrets.${passwordSecret}.path;
         };
-
-        includes = [
-          den.batteries.primary-user
-          (den.batteries.user-shell "zsh")
-          den.aspects.development
-        ];
       };
   };
 }

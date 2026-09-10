@@ -16,6 +16,11 @@
             {
               sops.secrets.${passwordSecret}.neededForUsers = true;
 
+              sops.secrets."users/${user.userName}/github/ssh-key" = {
+                owner = user.userName;
+                mode = "0400";
+              };
+
               users.users.${user.userName}.hashedPasswordFile =
                 config.sops.secrets.${passwordSecret}.path;
             };
@@ -30,7 +35,19 @@
 
     {
       provides.nixos-user = {
-        hjem = { pkgs, ... }: {
+        hjem = { pkgs, sops, user, ... }: {
+          files.".ssh/config".text = ''
+            Include ~/.ssh/config.d/*
+          '';
+
+          files.".ssh/config.d/github".text = ''
+            Host github.com
+              HostName github.com
+              User git
+              IdentityFile ${sops.secrets."users/${user.userName}/github/ssh-key".path}
+              IdentitiesOnly yes
+          '';
+
           packages = with pkgs; [ glab openshift ];
 
           rum.programs.git.settings.include.path = "/etc/gitconfig.d/proxy.conf";
