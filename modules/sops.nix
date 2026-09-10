@@ -1,7 +1,7 @@
 { inputs, ... }:
 {
   den.default.nixos =
-    { pkgs, ... }:
+    { config, pkgs, ... }:
     {
       environment.systemPackages = [ pkgs.sops ];
       environment.variables.SOPS_AGE_KEY_FILE = "/var/lib/sops-nix/key.txt";
@@ -9,6 +9,8 @@
       imports = [ inputs.sops-nix.nixosModules.sops ];
 
       sops.age.keyFile = "/var/lib/sops-nix/key.txt";
+
+      hjem.specialArgs.sops = config.sops;
 
       systemd.tmpfiles.rules = [
         "d /var/lib/sops-nix 0750 root sops -"

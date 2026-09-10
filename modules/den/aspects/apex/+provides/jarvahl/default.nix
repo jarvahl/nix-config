@@ -6,7 +6,7 @@
   den.aspects.apex = lib.mkMerge [
     {
       provides.jarvahl = {
-        hjem = { pkgs, ... }: {
+        hjem = { pkgs, sops, ... }: {
           nvf.vim = {
             theme = {
               name = "oxocarbon";
@@ -46,6 +46,14 @@
             '';
           };
 
+          files.".ssh/config.d/github".text = ''
+            Host github.com
+              HostName github.com
+              User git
+              IdentityFile ${sops.secrets."users/jarvahl/github/ssh-key".path}
+              IdentitiesOnly yes
+          '';
+
           packages = with pkgs;
             [
               wget
@@ -62,6 +70,11 @@
           in
           {
             sops.secrets.${passwordSecret}.neededForUsers = true;
+
+            sops.secrets."users/jarvahl/github/ssh-key" = {
+              owner = "jarvahl";
+              mode = "0400";
+            };
 
             users.users.jarvahl.hashedPasswordFile = config.sops.secrets.${passwordSecret}.path;
 
