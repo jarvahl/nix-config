@@ -47,6 +47,8 @@
               User git
               IdentityFile ${sops.secrets."users/${user.userName}/github/ssh-key".path}
               IdentitiesOnly yes
+              StrictHostKeyChecking accept-new
+              UserKnownHostsFile ~/.ssh/known_hosts
               ProxyCommand sh -c '. ${sops.templates."proxy-environment".path}; proxy="''${http_proxy#*://}"; exec ${pkgs.netcat}/bin/nc -X connect -x "$proxy" "$1" "$2"' _ %h %p
           '';
 
