@@ -1,7 +1,7 @@
 ## Rules
 
-- **IMPORTANT!** Every `.nix` file under `modules/` is auto-imported by `inputs.import-tree ./modules` in `flake.nix`; each file **MUST** therefore be a valid flake-parts module!
-- **IMPORTANT!** NEVER make changes without confirmation! First propose, then wait for explicit acceptance, then implement! Until explicit acceptance, end every response with: `> Changes have not been approved yet.`
+- **IMPORTANT!** Every `.nix` file under `modules/` is auto-imported by `inputs.import-tree ./modules` in `flake.nix`; each file **MUST** therefore be a valid flake-parts module! New files **MUST** be added to Git tracking with `git add` or marked with intent-to-add using `git add -N`, so `import-tree` can see them.
+- **IMPORTANT!** NEVER make changes, commits, or pushes without confirmation! First propose, then wait for explicit acceptance, then implement or commit! Until explicit acceptance, end every response with: `> Changes have not been approved yet.`
 - When splitting host or user aspect configuration into multiple files, each file MUST remain a valid auto-imported flake-parts module and MUST be named after the main application/aspect it configures, not a generic concern.
 
 ## Commit conventions
