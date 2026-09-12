@@ -1,8 +1,5 @@
 { den, ... }:
 {
-  den.aspects.cargo = {
-    nixos.sops.defaultSopsFile = ./secrets.yml;
-
-    includes = with den.aspects; [ wsl zscaler ];
-  };
+  den.aspects.cargo.includes = with den.aspects; [ wsl zscaler ];
 }
+
