@@ -19,6 +19,7 @@
             pkgs.bash
             pkgs.coreutils
             pkgs.mcp-nixos
+            pkgs.herdr
             pkgs.rtk
           ];
           text = ''
@@ -49,6 +50,9 @@
               # Ponytail
               --extension "${pkgs.ponytail}/pi-extension/index.js"
               --skill "${pkgs.ponytail}/skills"
+
+              # Herdr
+              --skill "${pkgs.herdr.src}/skills/herdr"
 
               # MCP adapter
               --extension "${pkgs.pi-mcp-adapter}/index.ts"
