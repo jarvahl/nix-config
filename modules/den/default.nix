@@ -18,8 +18,9 @@
     sudo
   ]);
 
-  den.default.nixos = {
+  den.default.nixos = { pkgs, ... }: {
     system.stateVersion = "25.11";
+    environment.systemPackages = with pkgs; [ curl wget ];
   };
 
   flake-file.inputs = {
