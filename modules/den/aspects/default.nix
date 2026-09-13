@@ -125,32 +125,17 @@ lib.mkMerge [
   }
 
   {
-    den.aspects.nix = {
-      hjem = { pkgs, ... }: {
-        programs.mcp.servers.nixos = {
-          command = "${pkgs.mcp-nixos}/bin/mcp-nixos";
-          lifecycle = "lazy";
-        };
-      };
+    den.aspects.nix.nixos = {
+      nix.settings.experimental-features = [
+        "nix-command"
+        "flakes"
+        "pipe-operators"
+      ];
 
-      nixos = {
-        nix.settings.experimental-features = [
-          "nix-command"
-          "flakes"
-          "pipe-operators"
-        ];
-
-        nix.settings.trusted-users = [
-          "root"
-          "@wheel"
-        ];
-
-        nixpkgs.overlays = [ inputs.mcp-nixos.overlays.default ];
-      };
-    };
-
-    flake-file.inputs.mcp-nixos = {
-      url = "github:utensils/mcp-nixos";
+      nix.settings.trusted-users = [
+        "root"
+        "@wheel"
+      ];
     };
   }
 

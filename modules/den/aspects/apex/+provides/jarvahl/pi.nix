@@ -65,6 +65,24 @@ in
         };
       in
       {
+        programs.mcp = {
+          enable = true;
+
+          servers = {
+            nixos = {
+              command = "${pkgs.mcp-nixos}/bin/mcp-nixos";
+              lifecycle = "lazy";
+            };
+
+            "n8n-mcp" = {
+              type = "http";
+              url = "http://localhost:5678/mcp-server/http";
+              bearerToken =
+                "!cat /run/secrets/users/jarvahl/n8n/mcp/token";
+            };
+          };
+        };
+
         programs.pi = {
           enable = true;
 
@@ -88,12 +106,21 @@ in
       };
 
     nixos = {
+      sops.secrets."users/jarvahl/n8n/mcp/token" = {
+        owner = "jarvahl";
+        mode = "0400";
+      };
+
       nixpkgs.overlays = [
         inputs.pi.overlays.default
         piCodingAgentOverlay
+        inputs.mcp-nixos.overlays.default
       ];
     };
   };
 
-  flake-file.inputs.pi.url = "github:lukasl-dev/pi.nix";
+  flake-file.inputs = {
+    mcp-nixos.url = "github:utensils/mcp-nixos";
+    pi.url = "github:lukasl-dev/pi.nix";
+  };
 }
