@@ -1,7 +1,7 @@
 ## Rules
 
 - **IMPORTANT!** Every `.nix` file under `modules/` is auto-imported by `inputs.import-tree ./modules` in `flake.nix`; each file **MUST** therefore be a valid flake-parts module. See [New-file tracking](#new-file-tracking).
-- **IMPORTANT!** `modules/flakelight.nix` evaluates the shared `nix/` tree through Flakelight's `mkFlake` with `nixDir = ../nix`. Flakelight automatically loads `nix/packages` and exposes the resulting packages through its default overlay as `pkgs.<package-name>`, with the overlaid `pkgs` provided via `perSystem`. Package definitions **MUST** be importable by Flakelight's `nixDir` loader: use `nix/packages/<name>.nix` for standalone definitions, or `nix/packages/<name>/default.nix` when supporting files are needed. Package definitions **MUST NOT** be manually imported with `callPackage` from other modules.
+- **IMPORTANT!** `modules/flakelight.nix` evaluates the shared `nix.d/` tree through Flakelight's `mkFlake` with `nixDir = ../nix.d`. Flakelight automatically loads `nix.d/packages` and exposes the resulting packages through its default overlay as `pkgs.<package-name>`, with the overlaid `pkgs` provided via `perSystem`. Package definitions **MUST** be importable by Flakelight's `nixDir` loader: use `nix.d/packages/<name>.nix` for standalone definitions, or `nix.d/packages/<name>/default.nix` when supporting files are needed. Package definitions **MUST NOT** be manually imported with `callPackage` from other modules.
 
 ### New-file tracking
 
@@ -36,7 +36,7 @@ commit: `<module name>: <short description>`
 
 commit: `ai: <short description>`
 
-### `nix/packages/`
+### `nix.d/packages/`
 
 commit: `packages: <package name> -> <short description>`
 

@@ -18,7 +18,7 @@ let
 
             config = {
               inherit inputs;
-              nixDir = ../nix;
+              nixDir = ../nix.d;
               nixDirPathAttrs = [ "hjemModules" ];
               outputs.hjemModules = config.hjemModules;
             };
