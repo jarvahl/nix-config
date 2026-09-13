@@ -91,13 +91,9 @@ in
       nixpkgs.overlays = [
         inputs.pi.overlays.default
         piCodingAgentOverlay
-        inputs.mcp-nixos.overlays.default
       ];
     };
   };
 
-  flake-file.inputs = {
-    mcp-nixos.url = "github:utensils/mcp-nixos";
-    pi.url = "github:lukasl-dev/pi.nix";
-  };
+  flake-file.inputs.pi.url = "github:lukasl-dev/pi.nix";
 }
