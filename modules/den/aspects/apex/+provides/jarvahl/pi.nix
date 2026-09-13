@@ -14,59 +14,86 @@ let
 in
 {
   den.aspects.apex.provides.jarvahl = {
-    hjem = { pkgs, sops, ... }: {
-      programs.pi = {
-        enable = true;
-
-        environment.PI_QUIET_STARTUP = "1";
-
-        extensions = {
-          rtk = "${pkgs.rtk.src}/hooks/pi/rtk.ts";
-          plan-build = "${pkgs.pi-plan-build}/index.ts";
-          caveman = "${pkgs.pi-caveman}/extensions/caveman/index.ts";
-          ponytail = "${pkgs.ponytail}/pi-extension/index.js";
-          mcp-adapter = "${pkgs.pi-mcp-adapter}/index.ts";
+    hjem = { pkgs, ... }:
+      let
+        caveman = pkgs.fetchFromGitHub {
+          owner = "v2nic";
+          repo = "pi-caveman";
+          rev = "2480692ffabddc3d1efec8eb822e664ff7e0e5ef";
+          hash = "sha256-J9Kbvp6Ln3W8QIwCIzC6E6MjeyZqCU2ucYPSUrsmJg0=";
         };
 
-        skills = {
-          caveman = "${pkgs.pi-caveman}/skills/caveman";
-          ponytail = "${pkgs.ponytail}/skills";
-          herdr = "${pkgs.herdr.src}/skills/herdr";
-          mcp-adapter = "${pkgs.pi-mcp-adapter}/skills";
+        planBuild = pkgs.fetchFromGitHub {
+          owner = "janvitos";
+          repo = "pi-plan-build";
+          rev = "8d8bb9d9ebc849f52d4771a9ca4d6bda163fa416";
+          hash = "sha256-Uc/7D/HrBq87qhXMOTe5l9hrUSAGt+1I45iNVVvuUVw=";
         };
-      };
 
-      files.".config/mcp/mcp.json".source = sops.templates."pi-mcp.json".path;
-    };
+        ponytail = pkgs.fetchFromGitHub {
+          owner = "DietrichGebert";
+          repo = "ponytail";
+          rev = "356918eba965ee1eac64bd3a7f0dd02108350de5";
+          hash = "sha256-LPNMyHsri3+eeDmphEAKL1JgoRE4dLIPfZ4XZ+xu5UY=";
+        };
 
-    nixos = { config, ... }:
+        mcpAdapter = pkgs.buildNpmPackage {
+          pname = "pi-mcp-adapter";
+          version = "2.32.1";
+          src = pkgs.fetchFromGitHub {
+            owner = "nicobailon";
+            repo = "pi-mcp-adapter";
+            rev = "8243eba3421e301c88c047444f34ab7d5d57163e";
+            hash = "sha256-Z+Nc7aQJFnZKYAe6yQN0CFwYuekNahAcFRg+dDBpRVU=";
+          };
+          npmDepsHash = "sha256-MtDyee9eaqjc8m6f1Qqt+SEVBBme5doB9lBCb5FXzDk=";
+          npmInstallFlags = [ "--omit=dev" ];
+          postPatch = ''
+            lockfile=$(mktemp)
+            ${pkgs.jq}/bin/jq \
+              'del(.packages[] | select(.dev == true)) | del(.packages[""].devDependencies)' \
+              package-lock.json > "$lockfile"
+            mv "$lockfile" package-lock.json
+            ${pkgs.jq}/bin/jq 'del(.devDependencies)' package.json > "$lockfile"
+            mv "$lockfile" package.json
+          '';
+          dontNpmBuild = true;
+          installPhase = ''
+            mkdir -p $out
+            cp -r . $out
+          '';
+        };
+      in
       {
-        sops.secrets."users/jarvahl/n8n/mcp/token" = { };
+        programs.pi = {
+          enable = true;
 
-        sops.templates."pi-mcp.json" = {
-          owner = "jarvahl";
-          mode = "0400";
-          content = builtins.toJSON {
-            mcpServers = {
-              nixos = {
-                command = "mcp-nixos";
-                lifecycle = "lazy";
-              };
-              "n8n-mcp" = {
-                type = "http";
-                url = "http://localhost:5678/mcp-server/http";
-                headers.Authorization = "Bearer ${config.sops.placeholder."users/jarvahl/n8n/mcp/token"}";
-              };
-            };
+          environment.PI_QUIET_STARTUP = "1";
+          extraPackages = [ pkgs.rtk ];
+
+          extensions = {
+            rtk = "${pkgs.rtk.src}/hooks/pi/rtk.ts";
+            plan-build = "${planBuild}/index.ts";
+            caveman = "${caveman}/extensions/caveman/index.ts";
+            ponytail = "${ponytail}/pi-extension/index.js";
+            mcp-adapter = "${mcpAdapter}/index.ts";
+          };
+
+          skills = {
+            caveman = "${caveman}/skills/caveman";
+            ponytail = "${ponytail}/skills";
+            mcp-adapter = "${mcpAdapter}/skills";
           };
         };
-
-        nixpkgs.overlays = [
-          inputs.pi.overlays.default
-          piCodingAgentOverlay
-          inputs.mcp-nixos.overlays.default
-        ];
       };
+
+    nixos = {
+      nixpkgs.overlays = [
+        inputs.pi.overlays.default
+        piCodingAgentOverlay
+        inputs.mcp-nixos.overlays.default
+      ];
+    };
   };
 
   flake-file.inputs = {

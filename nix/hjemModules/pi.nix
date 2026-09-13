@@ -7,10 +7,7 @@ let
     runtimeInputs = [
       pkgs.bash
       pkgs.coreutils
-      pkgs.mcp-nixos
-      pkgs.herdr
-      pkgs.rtk
-    ];
+    ] ++ cfg.extraPackages;
     text = ''
       config_dir="''${XDG_CONFIG_HOME:-$HOME/.config}/pi"
       state_dir="''${XDG_STATE_HOME:-$HOME/.local/state}/pi"
@@ -54,6 +51,12 @@ in
       type = lib.types.attrsOf lib.types.str;
       default = { };
       description = "Environment variables passed to Pi.";
+    };
+
+    extraPackages = lib.mkOption {
+      type = lib.types.listOf lib.types.package;
+      default = [ ];
+      description = "Packages available to Pi extensions and skills.";
     };
 
     theme = lib.mkOption {
