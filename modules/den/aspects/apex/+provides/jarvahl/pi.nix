@@ -1,9 +1,24 @@
 { inputs, ... }:
+let
+  piCodingAgentOverlay = _final: prev: {
+    pi-coding-agent = prev.pi-coding-agent.overrideAttrs (old: {
+      postPatch = (old.postPatch or "") + ''
+        settings_manager=packages/coding-agent/src/core/settings-manager.ts
+        substituteInPlace "$settings_manager" \
+          --replace-fail \
+            'return this.settings.quietStartup ?? false;' \
+            'return this.settings.quietStartup ?? process.env.PI_QUIET_STARTUP === "1";'
+      '';
+    });
+  };
+in
 {
   den.aspects.apex.provides.jarvahl = {
     hjem = { pkgs, sops, ... }: {
       programs.pi = {
         enable = true;
+
+        environment.PI_QUIET_STARTUP = "1";
 
         extensions = {
           rtk = "${pkgs.rtk.src}/hooks/pi/rtk.ts";
@@ -48,6 +63,7 @@
 
         nixpkgs.overlays = [
           inputs.pi.overlays.default
+          piCodingAgentOverlay
           inputs.mcp-nixos.overlays.default
         ];
       };

@@ -2,16 +2,6 @@
 let
   cfg = config.programs.pi;
 
-  piCodingAgent = pkgs.pi-coding-agent.overrideAttrs (old: {
-    postPatch = (old.postPatch or "") + ''
-      settings_manager=packages/coding-agent/src/core/settings-manager.ts
-      substituteInPlace "$settings_manager" \
-        --replace-fail \
-          'return this.settings.quietStartup ?? false;' \
-          'return this.settings.quietStartup ?? process.env.PI_QUIET_STARTUP === "1";'
-    '';
-  });
-
   pi = pkgs.writeShellApplication {
     name = "pi";
     runtimeInputs = [
@@ -28,7 +18,7 @@ let
       export PI_CODING_AGENT_DIR="$config_dir"
       export PI_SKIP_VERSION_CHECK=1
       export PI_TELEMETRY=0
-      export PI_QUIET_STARTUP=1
+      ${lib.concatMapStringsSep "\n" (name: "export ${name}=${lib.escapeShellArg cfg.environment.${name}}") (lib.attrNames cfg.environment)}
 
       mkdir -p "$state_dir/sessions"
 
@@ -40,7 +30,7 @@ let
         --theme ${lib.escapeShellArg (toString cfg.theme)}
       )
 
-      exec ${piCodingAgent}/bin/pi "''${pi_args[@]}" "$@"
+      exec ${pkgs.pi-coding-agent}/bin/pi "''${pi_args[@]}" "$@"
     '';
   };
 in
@@ -58,6 +48,12 @@ in
       type = lib.types.attrsOf lib.types.path;
       default = { };
       description = "Extensions passed to Pi.";
+    };
+
+    environment = lib.mkOption {
+      type = lib.types.attrsOf lib.types.str;
+      default = { };
+      description = "Environment variables passed to Pi.";
     };
 
     theme = lib.mkOption {
