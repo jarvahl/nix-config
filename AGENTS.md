@@ -1,7 +1,7 @@
 ## Rules
 
-- **IMPORTANT!** Every `.nix` file under `modules/` is auto-imported by `inputs.import-tree ./modules` in `flake.nix`; each file **MUST** therefore be a valid flake-parts module. See [New-file tracking](#new-file-tracking).
-- **IMPORTANT!** `modules/flakelight.nix` evaluates the shared `nix.d/` tree through Flakelight's `mkFlake` with `nixDir = ../nix.d`. Flakelight automatically loads `nix.d/packages` and exposes the resulting packages through its default overlay as `pkgs.<package-name>`, with the overlaid `pkgs` provided via `perSystem`. Package definitions **MUST** be importable by Flakelight's `nixDir` loader: use `nix.d/packages/<name>.nix` for standalone definitions, or `nix.d/packages/<name>/default.nix` when supporting files are needed. Package definitions **MUST NOT** be manually imported with `callPackage` from other modules.
+- **IMPORTANT!** Every `.nix` file under `configurations/` is auto-imported by `inputs.import-tree ./configurations` in `flake.nix`; each file **MUST** therefore be a valid flake-parts module. See [New-file tracking](#new-file-tracking).
+- **IMPORTANT!** `configurations/flakelight.nix` evaluates the repository root through Flakelight's `mkFlake` with `nixDir = ../.`. Flakelight automatically loads `packages` and exposes the resulting packages through its default overlay as `pkgs.<package-name>`, with the overlaid `pkgs` provided via `perSystem`. Package definitions **MUST** be importable by Flakelight's `nixDir` loader: use `packages/<name>.nix` for standalone definitions, or `packages/<name>/default.nix` when supporting files are needed. Package definitions **MUST NOT** be manually imported with `callPackage` from other modules.
 
 ### New-file tracking
 
@@ -15,20 +15,20 @@ Only newly created files **MUST** be added to Git tracking with `git add` or mar
 
 ## Commit conventions
 
-### `modules/den/aspects/<host>/+provides/<user>/`
+### `configurations/den/aspects/<host>/+provides/<user>/`
 
 commit: `<host>(<user>): <hostAspect file name> -> <short description>`
 
-### `modules/den/aspects/<host>/`
+### `configurations/den/aspects/<host>/`
 
 commit: `<host>: <hostAspect file name> -> <short description>`
 
-### `modules/den/aspects/`
+### `configurations/den/aspects/`
 
 commit: `<aspect name>: <short description>`
 when `default.nix`: `<aspect name>: <short description>`
 
-### `modules/`
+### `configurations/`
 
 commit: `<module name>: <short description>`
 
