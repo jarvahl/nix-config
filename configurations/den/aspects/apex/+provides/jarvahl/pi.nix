@@ -92,7 +92,6 @@ in
 
           skills = {
             caveman = "${caveman}/skills/caveman";
-            pi-plan = "${inputs.pi-plan.packages.${pkgs.system}.default}/skills";
             ponytail = "${ponytail}/skills";
             mcp-adapter = "${mcpAdapter}/skills";
           };
