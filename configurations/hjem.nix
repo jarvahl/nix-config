@@ -1,13 +1,16 @@
 { inputs
 , ...
 }:
+let
+  hjemModules = (inputs.import-tree.match ".*\\.nix").addPath ../hjemModules;
+in
 {
   den = {
     default = {
       nixos.hjem.extraModules = [
         inputs.hjem-impure.hjemModules.default
         inputs.hjem-rum.hjemModules.default
-      ];
+      ] ++ hjemModules.files;
 
       nixos.hjem.specialArgs = {
         inherit inputs;
