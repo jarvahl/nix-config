@@ -23,13 +23,6 @@ in
           hash = "sha256-J9Kbvp6Ln3W8QIwCIzC6E6MjeyZqCU2ucYPSUrsmJg0=";
         };
 
-        planBuild = pkgs.fetchFromGitHub {
-          owner = "janvitos";
-          repo = "pi-plan-build";
-          rev = "8d8bb9d9ebc849f52d4771a9ca4d6bda163fa416";
-          hash = "sha256-Uc/7D/HrBq87qhXMOTe5l9hrUSAGt+1I45iNVVvuUVw=";
-        };
-
         ponytail = pkgs.fetchFromGitHub {
           owner = "DietrichGebert";
           repo = "ponytail";
@@ -91,7 +84,7 @@ in
 
           extensions = {
             rtk = "${pkgs.rtk.src}/hooks/pi/rtk.ts";
-            plan-build = "${planBuild}/index.ts";
+            pi-plan = "${inputs.pi-plan.packages.${pkgs.system}.default}/index.ts";
             caveman = "${caveman}/extensions/caveman/index.ts";
             ponytail = "${ponytail}/pi-extension/index.js";
             mcp-adapter = "${mcpAdapter}/index.ts";
@@ -99,6 +92,7 @@ in
 
           skills = {
             caveman = "${caveman}/skills/caveman";
+            pi-plan = "${inputs.pi-plan.packages.${pkgs.system}.default}/skills";
             ponytail = "${ponytail}/skills";
             mcp-adapter = "${mcpAdapter}/skills";
           };
@@ -120,7 +114,11 @@ in
   };
 
   flake-file.inputs = {
+    # Pi plugins
     mcp-nixos.url = "github:utensils/mcp-nixos";
+    pi-plan.url = "github:jarvahl/pi-plan";
+
+    # Pi
     pi.url = "github:lukasl-dev/pi.nix";
   };
 }

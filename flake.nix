@@ -11,7 +11,6 @@
       url = "github:hercules-ci/flake-parts";
       inputs.nixpkgs-lib.follows = "nixpkgs";
     };
-    flakelight.url = "github:nix-community/flakelight";
     git-hooks-nix = {
       url = "github:cachix/git-hooks.nix";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -34,7 +33,7 @@
         nixpkgs.follows = "nixpkgs";
       };
     };
-    import-tree.url = "github:vic/import-tree";
+    import-tree.url = "github:denful/import-tree";
     mcp-nixos.url = "github:utensils/mcp-nixos";
     nix-index-database = {
       url = "github:nix-community/nix-index-database";
@@ -44,6 +43,7 @@
     nixpkgs.url = "https://channels.nixos.org/nixpkgs-unstable/nixexprs.tar.xz";
     nvf.url = "github:notashelf/nvf";
     pi.url = "github:lukasl-dev/pi.nix";
+    pi-plan.url = "github:jarvahl/pi-plan";
     sops-nix = {
       url = "github:Mic92/sops-nix";
       inputs.nixpkgs.follows = "nixpkgs";
