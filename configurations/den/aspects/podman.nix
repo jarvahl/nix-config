@@ -1,6 +1,36 @@
 { ... }:
 {
   den.aspects.podman = {
+    hjem = { ... }: {
+      rum.programs.zsh.flake.imports = [
+        ({ pkgs, ... }:
+          let
+            dockerPlugin = pkgs.runCommand "oh-my-zsh-docker-plugin" { } ''
+              plugin_dir=$out/share/oh-my-zsh/plugins/docker
+              mkdir -p "$plugin_dir"
+              cp -R ${pkgs.oh-my-zsh}/share/oh-my-zsh/plugins/docker/. "$plugin_dir/"
+              chmod -R u+w "$plugin_dir"
+              sed -i '/^# If the completion file/,$d' "$plugin_dir/docker.plugin.zsh"
+            '';
+          in
+          {
+            zsh.optPlugins = {
+              omz-docker = {
+                package = dockerPlugin;
+                source = "share/oh-my-zsh/plugins/docker/docker.plugin.zsh";
+                init = ''
+                  fpath=("${dockerPlugin}/share/oh-my-zsh/plugins/docker/completions" $fpath)
+                '';
+              };
+              omz-docker-compose = {
+                package = pkgs.oh-my-zsh;
+                source = "share/oh-my-zsh/plugins/docker-compose/docker-compose.plugin.zsh";
+              };
+            };
+          })
+      ];
+    };
+
     nixos =
       { pkgs, ... }:
       {

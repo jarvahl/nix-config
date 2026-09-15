@@ -107,6 +107,18 @@ lib.mkMerge [
           log.decorate = "short";
         };
       };
+
+      rum.programs.zsh.flake.imports = [
+        ({ pkgs, ... }: {
+          zsh.optPlugins.omz-git = {
+            package = pkgs.oh-my-zsh;
+            sources = [
+              "share/oh-my-zsh/lib/git.zsh"
+              "share/oh-my-zsh/plugins/git/git.plugin.zsh"
+            ];
+          };
+        })
+      ];
     };
   }
 

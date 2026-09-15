@@ -29,6 +29,14 @@
                   package = ocCompletion;
                   source = "share/zsh/plugins/oc/oc.plugin.zsh";
                 };
+                omz-npm = {
+                  package = pkgs.oh-my-zsh;
+                  source = "share/oh-my-zsh/plugins/npm/npm.plugin.zsh";
+                };
+                omz-nvm = {
+                  package = pkgs.oh-my-zsh;
+                  source = "share/oh-my-zsh/plugins/nvm/nvm.plugin.zsh";
+                };
               };
             })
         ];

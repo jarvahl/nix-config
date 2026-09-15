@@ -24,13 +24,6 @@
               integrations.fzf.enable = true;
             };
 
-            integrations = {
-              git.enable = true;
-              docker.enable = true;
-              npm.enable = true;
-              mvn.enable = true;
-            };
-
             setopt = [
               "APPEND_HISTORY"
               "EXTENDED_HISTORY"
