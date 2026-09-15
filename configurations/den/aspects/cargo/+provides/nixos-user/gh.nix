@@ -11,16 +11,24 @@
         "users/nixos/github/email" = { };
       };
 
-      sops.templates."github-identity".content = ''
-        [user]
-            name = ${config.sops.placeholder."users/nixos/github/username"}
-            email = ${config.sops.placeholder."users/nixos/github/email"}
-      '';
+      sops.templates."github-identity" = {
+        content = ''
+          [user]
+              name = ${config.sops.placeholder."users/nixos/github/username"}
+              email = ${config.sops.placeholder."users/nixos/github/email"}
+        '';
+        owner = "nixos";
+        mode = "0400";
+      };
 
-      sops.templates."github-include".content = ''
-        [includeIf "hasconfig:remote.*.url:https://github.com/"]
-            path = ~/.config/git/github-identity
-      '';
+      sops.templates."github-include" = {
+        content = ''
+          [includeIf "hasconfig:remote.*.url:https://github.com/"]
+              path = ~/.config/git/github-identity
+        '';
+        owner = "nixos";
+        mode = "0400";
+      };
 
       hjem.users.nixos = {
         files = {
