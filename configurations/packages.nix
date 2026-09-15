@@ -15,7 +15,9 @@ in
 
   den.default.nixos.nixpkgs.overlays = [ overlay ];
 
-  perSystem = { system, ... }: {
+  perSystem = { system, pkgs, ... }: {
+    packages.colibri = pkgs.colibri;
+
     _module.args.pkgs = import inputs.nixpkgs {
       inherit system;
       overlays = [ overlay ];
