@@ -33,7 +33,7 @@
         nixpkgs.follows = "nixpkgs";
       };
     };
-    import-tree.url = "github:denful/import-tree";
+    import-tree.url = "github:vic/import-tree";
     mcp-nixos.url = "github:utensils/mcp-nixos";
     nix-index-database = {
       url = "github:nix-community/nix-index-database";
@@ -52,5 +52,6 @@
       url = "github:numtide/treefmt-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    zsh-flake.url = "github:jarvahl/zsh-flake";
   };
 }
