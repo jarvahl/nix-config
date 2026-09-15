@@ -11,16 +11,24 @@
         "users/jarvahl/github/email" = { };
       };
 
-      sops.templates."github-identity".content = ''
-        [user]
-            name = ${config.sops.placeholder."users/jarvahl/github/username"}
-            email = ${config.sops.placeholder."users/jarvahl/github/email"}
-      '';
+      sops.templates."github-identity" = {
+        content = ''
+          [user]
+              name = ${config.sops.placeholder."users/jarvahl/github/username"}
+              email = ${config.sops.placeholder."users/jarvahl/github/email"}
+        '';
+        owner = "jarvahl";
+        mode = "0400";
+      };
 
-      sops.templates."github-include".content = ''
-        [includeIf "hasconfig:remote.*.url:https://github.com/"]
-            path = ~/.config/git/github-identity
-      '';
+      sops.templates."github-include" = {
+        content = ''
+          [includeIf "hasconfig:remote.*.url:https://github.com/"]
+              path = ~/.config/git/github-identity
+        '';
+        owner = "jarvahl";
+        mode = "0400";
+      };
 
       hjem.users.jarvahl = {
         files = {
