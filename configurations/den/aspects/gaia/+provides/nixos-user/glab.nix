@@ -11,19 +11,27 @@
         "users/nixos/gitlab/email" = { };
       };
 
-      sops.templates."gitlab-identity".content = ''
-        [user]
-            name = ${config.sops.placeholder."users/nixos/gitlab/username"}
-            email = ${config.sops.placeholder."users/nixos/gitlab/email"}
-      '';
+      sops.templates."gitlab-identity" = {
+        content = ''
+          [user]
+              name = ${config.sops.placeholder."users/nixos/gitlab/username"}
+              email = ${config.sops.placeholder."users/nixos/gitlab/email"}
+        '';
+        owner = "nixos";
+        mode = "0400";
+      };
 
-      sops.templates."git-identity-includes".content = ''
-        [includeIf "hasconfig:remote.*.url:https://github.com/"]
-            path = ~/.config/git/github-identity
+      sops.templates."git-identity-includes" = {
+        content = ''
+          [includeIf "hasconfig:remote.*.url:https://github.com/"]
+              path = ~/.config/git/github-identity
 
-        [includeIf "hasconfig:remote.*.url:https://${config.sops.placeholder."gitlab/host"}/"]
-            path = ~/.config/git/gitlab-identity
-      '';
+          [includeIf "hasconfig:remote.*.url:https://${config.sops.placeholder."gitlab/host"}/"]
+              path = ~/.config/git/gitlab-identity
+        '';
+        owner = "nixos";
+        mode = "0400";
+      };
 
       hjem.users.nixos = {
         files = {
