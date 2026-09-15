@@ -17,11 +17,11 @@ Only newly created files **MUST** be added to Git tracking with `git add` or mar
 
 ### `configurations/den/aspects/<host>/+provides/<user>/`
 
-commit: `<host>(<user>): <hostAspect file name> -> <short description>`
+commit: `<host>(<user>): <hostAspect name without extension> -> <short description>`
 
 ### `configurations/den/aspects/<host>/`
 
-commit: `<host>: <hostAspect file name> -> <short description>`
+commit: `<host>: <hostAspect name without extension> -> <short description>`
 
 ### `configurations/den/aspects/`
 
