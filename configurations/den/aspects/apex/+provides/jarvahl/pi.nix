@@ -88,6 +88,7 @@ in
             caveman = "${caveman}/extensions/caveman/index.ts";
             ponytail = "${ponytail}/pi-extension/index.js";
             mcp-adapter = "${mcpAdapter}/index.ts";
+            zentui = "${pkgs.pi-zentui}/extensions/zentui";
           };
 
           skills = {
