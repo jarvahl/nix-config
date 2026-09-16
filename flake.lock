@@ -828,11 +828,11 @@
         "treefmt-nix": "treefmt-nix_3"
       },
       "locked": {
-        "lastModified": 1789489459,
-        "narHash": "sha256-EQiXyTwZJMHEup81lUDk6920d/FnCKIJxW1X69Exghk=",
+        "lastModified": 1789556741,
+        "narHash": "sha256-BSXlb1LdiAoKG7A20qUGfyEHwcTDddxtTL+zuVKxVoE=",
         "owner": "jarvahl",
         "repo": "pi-plan",
-        "rev": "fd07e956cb75d9d6dadfacf7d3ae427495b4b669",
+        "rev": "c145c18ee4c8a02461e6703e2501a9453e1c05e2",
         "type": "github"
       },
       "original": {
