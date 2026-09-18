@@ -48,10 +48,11 @@
       url = "github:Mic92/sops-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    tmux.url = "path:./flakes/tmux";
     treefmt-nix = {
       url = "github:numtide/treefmt-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    zsh-flake.url = "github:jarvahl/zsh-flake";
+    zsh.url = "path:./flakes/zsh";
   };
 }

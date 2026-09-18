@@ -1,0 +1,27 @@
+# Nix
+result
+result-*
+.dirlocals
+.devenv/
+.devenv.flake.cachix.org-*
+.pre-commit-config.yaml
+.direnv/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Build artifacts
+*.o
+*.a
+*.so
+dist/
+build/
+
+# Temporary
+*.tmp
+*.bak

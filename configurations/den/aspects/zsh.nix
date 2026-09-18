@@ -33,7 +33,7 @@
               "SHARE_HISTORY"
             ];
 
-            initConfig = builtins.readFile "${inputs."zsh-flake"}/.zshrc";
+            initConfig = builtins.readFile "${inputs.zsh}/.zshrc";
 
             imports = [
               ({ pkgs, ... }: {
@@ -63,10 +63,10 @@
   };
 
   den.default.nixos.hjem.extraModules = lib.mkAfter [
-    inputs."zsh-flake".hjemModules.default
+    inputs.zsh.hjemModules.default
   ];
 
-  flake-file.inputs."zsh-flake" = {
-    url = "github:jarvahl/zsh-flake";
+  flake-file.inputs.zsh = {
+    url = "path:./flakes/zsh";
   };
 }

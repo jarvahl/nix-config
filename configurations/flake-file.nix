@@ -6,6 +6,7 @@
 
   flake-file.inputs = {
     flake-file.url = lib.mkForce "github:denful/flake-file";
+    tmux.url = "path:./flakes/tmux";
   };
 
   flake-file.outputs = ''
