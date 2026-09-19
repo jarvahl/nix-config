@@ -1,14 +1,36 @@
 { inputs, ... }:
 let
   piCodingAgentOverlay = _final: prev: {
-    pi-coding-agent = prev.pi-coding-agent.overrideAttrs (old: {
-      postPatch = (old.postPatch or "") + ''
-        settings_manager=packages/coding-agent/src/core/settings-manager.ts
-        substituteInPlace "$settings_manager" \
-          --replace-fail \
-            'return this.settings.quietStartup ?? false;' \
-            'return this.settings.quietStartup ?? process.env.PI_QUIET_STARTUP === "1";'
-      '';
+    pi-coding-agent-patched = prev.pi-coding-agent.overrideAttrs (old: {
+      patches = (old.patches or [ ]) ++ [
+        (prev.writeText "pi-quiet-startup.patch" ''
+          --- a/packages/coding-agent/src/core/settings-manager.ts
+          +++ b/packages/coding-agent/src/core/settings-manager.ts
+          @@ -956,7 +956,7 @@
+          	}
+
+          	getQuietStartup(): boolean {
+          -		return this.settings.quietStartup ?? false;
+          +		return this.settings.quietStartup ?? process.env.PI_QUIET_STARTUP === "1";
+          	}
+
+          	setQuietStartup(quiet: boolean): void {
+          --- a/packages/coding-agent/src/modes/interactive/interactive-mode.ts
+          +++ b/packages/coding-agent/src/modes/interactive/interactive-mode.ts
+          @@ -1210,6 +1210,11 @@
+          	 * Only shows new entries since last seen version, skips for resumed sessions.
+          	 */
+          	private getChangelogForDisplay(): string | undefined {
+          +		if (this.settingsManager.getQuietStartup()) {
+          +			this.settingsManager.setLastChangelogVersion(VERSION);
+          +			return undefined;
+          +		}
+          +
+          		// Skip changelog for resumed/continued sessions (already have messages)
+          		if (this.session.state.messages.length > 0) {
+          			return undefined;
+        '')
+      ];
     });
   };
 in
@@ -36,6 +58,7 @@ in
 
         programs.pi = {
           enable = true;
+          package = pkgs.pi-coding-agent-patched;
 
           environment.PI_QUIET_STARTUP = "1";
           extraPackages = [ pkgs.rtk ];
