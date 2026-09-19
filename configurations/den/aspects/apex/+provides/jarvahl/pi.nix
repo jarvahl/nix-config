@@ -99,18 +99,19 @@ in
         };
       };
 
-    nixos = {
-      sops.secrets."users/jarvahl/n8n/mcp/token" = {
-        owner = "jarvahl";
-        mode = "0400";
-      };
+    nixos = { ... }:
+      {
+        sops.secrets."users/jarvahl/n8n/mcp/token" = {
+          owner = "jarvahl";
+          mode = "0400";
+        };
 
-      nixpkgs.overlays = [
-        inputs.pi.overlays.default
-        piCodingAgentOverlay
-        inputs.mcp-nixos.overlays.default
-      ];
-    };
+        nixpkgs.overlays = [
+          inputs.pi.overlays.default
+          piCodingAgentOverlay
+          inputs.mcp-nixos.overlays.default
+        ];
+      };
   };
 
   flake-file.inputs = {
