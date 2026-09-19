@@ -45,6 +45,7 @@ in
             caveman = "${pkgs.pi.extensions.pi-caveman}/extensions/caveman/index.ts";
             ponytail = "${pkgs.pi.extensions.pi-ponytail}/pi-extension/index.js";
             mcp-adapter = "${pkgs.pi.extensions.pi-mcp-adapter}/index.ts";
+            skill-orchestrator = "${pkgs.pi.extensions.pi-skill-orchestrator}/src/index.ts";
             subagent = "${pkgs.pi.extensions.pi-subagent}/extensions/index.ts";
             zentui = "${pkgs.pi.extensions.pi-zentui}/extensions/zentui";
           };
