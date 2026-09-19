@@ -1,4 +1,4 @@
-{ inputs, ... }:
+{ den, inputs, ... }:
 let
   piCodingAgentOverlay = _final: prev: {
     pi-coding-agent = prev.pi-coding-agent.overrideAttrs (old: {
@@ -13,9 +13,20 @@ let
   };
 in
 {
+  den.aspects.apex.provides.jarvahl.includes = [ den.aspects.pi ];
+
   den.aspects.apex.provides.jarvahl = {
     hjem = { pkgs, ... }:
       let
+        gnomeScreenshot = pkgs.writeShellApplication {
+          name = "gnome-screenshot";
+          runtimeInputs = [ pkgs.grim ];
+          text = ''
+            test "''${1:-}" = -f
+            exec grim "''${2:?missing output path}"
+          '';
+        };
+
         caveman = pkgs.fetchFromGitHub {
           owner = "v2nic";
           repo = "pi-caveman";
@@ -76,13 +87,29 @@ in
           };
         };
 
+        files."AGENTS.md".text = ''
+          After completing a task, return focus to the chat window that was
+          focused when the task started. Record that window before interacting
+          with other applications and restore it as the final desktop action.
+        '';
+
         programs.pi = {
           enable = true;
 
-          environment.PI_QUIET_STARTUP = "1";
-          extraPackages = [ pkgs.rtk ];
+          environment = {
+            PI_QUIET_STARTUP = "1";
+            COMPUTER_USE_LINUX_SCREENSHOT_BACKEND = "gnome-screenshot";
+          };
+          extraPackages = [
+            pkgs.rtk
+            pkgs.chromium
+            pkgs.computer-use-linux
+            gnomeScreenshot
+          ];
 
           extensions = {
+            computer-use-linux =
+              "${pkgs.computer-use-linux.pi}/pi/extension/index.ts";
             rtk = "${pkgs.rtk.src}/hooks/pi/rtk.ts";
             pi-plan = "${inputs.pi-plan.packages.${pkgs.system}.default}/index.ts";
             caveman = "${caveman}/extensions/caveman/index.ts";
@@ -92,6 +119,8 @@ in
           };
 
           skills = {
+            how-to-use-computer-use-linux =
+              "${pkgs.computer-use-linux.pi}/skills/how-to-use-computer-use-linux";
             caveman = "${caveman}/skills/caveman";
             ponytail = "${ponytail}/skills";
             mcp-adapter = "${mcpAdapter}/skills";
