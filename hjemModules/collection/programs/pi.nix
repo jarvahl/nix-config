@@ -39,6 +39,12 @@ in
       description = "Pi coding agent package to use.";
     };
 
+    mcp.servers = lib.mkOption {
+      type = lib.types.attrs;
+      default = { };
+      description = "MCP servers configured for Pi extensions.";
+    };
+
     skills = lib.mkOption {
       type = lib.types.attrsOf lib.types.path;
       default = { };
@@ -72,5 +78,9 @@ in
 
   config = lib.mkIf cfg.enable {
     packages = [ pi ];
+
+    files.".pi/agent/mcp.json".text = builtins.toJSON {
+      mcpServers = cfg.mcp.servers;
+    };
   };
 }

@@ -38,27 +38,24 @@ in
   den.aspects.apex.provides.jarvahl = {
     hjem = { pkgs, ... }:
       {
-        programs.mcp = {
+        programs.pi = {
           enable = true;
+          package = pkgs.pi-coding-agent-patched;
 
-          servers = {
+          mcp.servers = {
             nixos = {
               command = "${pkgs.mcp-nixos}/bin/mcp-nixos";
               lifecycle = "lazy";
             };
 
             "n8n-mcp" = {
-              type = "http";
+              transport = "streamable-http";
               url = "http://localhost:5678/mcp-server/http";
-              bearerToken =
+              headers.Authorization =
                 "!cat /run/secrets/users/jarvahl/n8n/mcp/token";
+              lifecycle = "lazy";
             };
           };
-        };
-
-        programs.pi = {
-          enable = true;
-          package = pkgs.pi-coding-agent-patched;
 
           environment.PI_QUIET_STARTUP = "1";
           extraPackages = [ pkgs.rtk ];
@@ -67,7 +64,8 @@ in
             rtk = "${pkgs.rtk.src}/hooks/pi/rtk.ts";
             caveman = "${pkgs.pi.extensions.pi-caveman}/extensions/caveman/index.ts";
             ponytail = "${pkgs.pi.extensions.pi-ponytail}/pi-extension/index.js";
-            mcp-adapter = "${pkgs.pi.extensions.pi-mcp-adapter}/index.ts";
+            mcp-extension = "${pkgs.pi.extensions.pi-mcp-extension}/src/index.ts";
+            pi-btw = "${pkgs.pi.extensions.pi-btw}/dist/index.ts";
             skill-orchestrator = "${pkgs.pi.extensions.pi-skill-orchestrator}/src/index.ts";
             subagent = "${pkgs.pi.extensions.pi-subagent}/extensions/index.ts";
             zentui = "${pkgs.pi.extensions.pi-zentui}/extensions/zentui";
