@@ -43,7 +43,6 @@
     nixpkgs.url = "https://channels.nixos.org/nixpkgs-unstable/nixexprs.tar.xz";
     nvf.url = "github:notashelf/nvf";
     pi.url = "github:lukasl-dev/pi.nix";
-    pi-plan.url = "github:jarvahl/pi-plan";
     sops-nix = {
       url = "github:Mic92/sops-nix";
       inputs.nixpkgs.follows = "nixpkgs";

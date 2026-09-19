@@ -84,7 +84,6 @@ in
 
           extensions = {
             rtk = "${pkgs.rtk.src}/hooks/pi/rtk.ts";
-            pi-plan = "${inputs.pi-plan.packages.${pkgs.system}.default}/index.ts";
             caveman = "${caveman}/extensions/caveman/index.ts";
             ponytail = "${ponytail}/pi-extension/index.js";
             mcp-adapter = "${mcpAdapter}/index.ts";
@@ -117,7 +116,6 @@ in
   flake-file.inputs = {
     # Pi plugins
     mcp-nixos.url = "github:utensils/mcp-nixos";
-    pi-plan.url = "github:jarvahl/pi-plan";
 
     # Pi
     pi.url = "github:lukasl-dev/pi.nix";
