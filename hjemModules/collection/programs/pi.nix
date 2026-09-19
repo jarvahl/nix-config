@@ -9,10 +9,8 @@ let
       pkgs.coreutils
     ] ++ cfg.extraPackages;
     text = ''
-      config_dir="''${XDG_CONFIG_HOME:-$HOME/.config}/pi"
       state_dir="''${XDG_STATE_HOME:-$HOME/.local/state}/pi"
 
-      export PI_CODING_AGENT_DIR="$config_dir"
       export PI_SKIP_VERSION_CHECK=1
       export PI_TELEMETRY=0
       ${lib.concatMapStringsSep "\n" (name: "export ${name}=${lib.escapeShellArg cfg.environment.${name}}") (lib.attrNames cfg.environment)}
