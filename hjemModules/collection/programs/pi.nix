@@ -25,13 +25,19 @@ let
         --theme ${lib.escapeShellArg (toString cfg.theme)}
       )
 
-      exec ${pkgs.pi-coding-agent}/bin/pi "''${pi_args[@]}" "$@"
+      exec ${cfg.package}/bin/pi "''${pi_args[@]}" "$@"
     '';
   };
 in
 {
   options.programs.pi = {
     enable = lib.mkEnableOption "Pi coding agent";
+
+    package = lib.mkOption {
+      type = lib.types.package;
+      default = pkgs.pi-coding-agent;
+      description = "Pi coding agent package to use.";
+    };
 
     skills = lib.mkOption {
       type = lib.types.attrsOf lib.types.path;
