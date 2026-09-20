@@ -12,6 +12,11 @@ stdenvNoCC.mkDerivation {
     hash = "sha256-QhIdKRvehGZBU9mS4eVKJIkRxEQqvkwaAf1qg78IvLI=";
   };
 
+  postPatch = ''
+    substituteInPlace lib/paths.js \
+      --replace-fail "  identity.env('STATE') ?? process.env.HERDR_PLUGIN_STATE_DIR ?? path.join(herdrStateDir(), 'plugins', pluginId());" "  path.join(herdrStateDir(), 'plugin-state', pluginId());"
+  '';
+
   installPhase = ''
     mkdir -p $out
     cp -r . $out/

@@ -27,13 +27,9 @@ in
       sidebar_collapsed_mode = "compact"
 
       [theme]
-      name = "catppuccin"
+      name = "vesper"
 
       ${cfg.extraConfig}
-
-      [theme.custom]
-      sidebar_bg = "#181825"
-      panel_bg = "#181825"
     '';
 
     programs.pi.skills.herdr = lib.mkIf cfg.integrations.pi.enable
