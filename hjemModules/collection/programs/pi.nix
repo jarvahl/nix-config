@@ -7,6 +7,7 @@ let
     runtimeInputs = [
       pkgs.bash
       pkgs.coreutils
+      pkgs.tmux
     ] ++ cfg.extraPackages;
     text = ''
       state_dir="''${XDG_STATE_HOME:-$HOME/.local/state}/pi"

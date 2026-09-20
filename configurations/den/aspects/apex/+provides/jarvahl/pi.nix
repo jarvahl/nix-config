@@ -66,6 +66,7 @@ in
             ponytail = "${pkgs.pi.extensions.pi-ponytail}/pi-extension/index.js";
             mcp-extension = "${pkgs.pi.extensions.pi-mcp-extension}/src/index.ts";
             pi-btw = "${pkgs.pi.extensions.pi-btw}/dist/index.ts";
+            pi-tmux-alert = "${pkgs.pi.extensions.pi-tmux-alert}/index.ts";
             skill-orchestrator = "${pkgs.pi.extensions.pi-skill-orchestrator}/src/index.ts";
             subagent = "${pkgs.pi.extensions.pi-subagent}/extensions/index.ts";
             zentui = "${pkgs.pi.extensions.pi-zentui}/extensions/zentui";

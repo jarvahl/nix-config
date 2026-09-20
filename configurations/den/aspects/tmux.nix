@@ -34,8 +34,12 @@
           set -g status-justify absolute-centre
           set -g status-left-length 50
           set -g window-status-separator ""
-          set -g window-status-format "#[fg=gray]  #I:#W  "
-          set -g window-status-current-format "#[fg=cyan,bold]  #I:#W  "
+          set -g window-status-format "#{?#{==:#{@pi_window_status},unread},#[fg=#f2c94c],#[fg=#525252]}#I:#W#[default]  "
+          set -g window-status-current-format "#{?#{==:#{@pi_window_status},unread},#[fg=#f2c94c],#[fg=#3ddbd9]}#I:#W#[default]  "
+
+          # Highlight windows and panes with unread Pi responses.
+          bind w choose-tree -F '#{?#{==:#{@pi_status},unread},#[fg=#f2c94c],#[fg=#525252]}#S:#I.#P #W#[default]'
+          set-hook -g pane-focus-in 'run-shell "${pkgs.pi.extensions.pi-tmux-alert}/bin/pi-tmux-alert refresh #{pane_id}"'
 
           # New session with current directory and switch
           bind C-s run-shell "tmux new-session -Ad -s \"$(basename #{pane_current_path})\" -c \"#{pane_current_path}\" \; switch-client -t \"$(basename #{pane_current_path})\""
