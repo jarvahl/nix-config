@@ -67,6 +67,7 @@ in
             mcp-extension = "${pkgs.pi.extensions.pi-mcp-extension}/src/index.ts";
             pi-diff-review = "${pkgs.pi.extensions.pi-diff-review}/extensions/review.ts";
             pi-btw = "${pkgs.pi.extensions.pi-btw}/dist/index.ts";
+            pi-web-search = "${pkgs.pi.extensions.pi-web-search}/src/index.ts";
             pi-tmux-alert = "${pkgs.pi.extensions.pi-tmux-alert}/index.ts";
             skill-orchestrator = "${pkgs.pi.extensions.pi-skill-orchestrator}/src/index.ts";
             subagent = "${pkgs.pi.extensions.pi-subagent}/extensions/index.ts";
