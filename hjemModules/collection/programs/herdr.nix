@@ -22,6 +22,10 @@ in
     files.".config/herdr/config.toml".text = ''
       onboarding = false
 
+      [ui]
+      sidebar_start_collapsed = true
+      sidebar_collapsed_mode = "compact"
+
       [theme]
       name = "catppuccin"
 
