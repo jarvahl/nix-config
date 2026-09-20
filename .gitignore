@@ -1,4 +1,4 @@
-# Nix
+# nix
 result
 result-*
 .pre-commit-config.yaml
@@ -6,10 +6,15 @@ result-*
 .env
 .direnv
 *.drv
+
+# agent state
+.pi/
+
+# secrets
 /key.txt
 /hermes-key.txt
 
-# Editor
+# editor
 .vscode/
 .idea/
 *.swp
