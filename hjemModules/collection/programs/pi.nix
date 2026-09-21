@@ -136,7 +136,6 @@ in
         mcpServers = cfg.mcp.servers;
       };
 
-      ".pi/agent/settings.json".text = builtins.toJSON cfg.settings;
       ".pi/agent/themes".source = cfg.theme;
     };
   };
