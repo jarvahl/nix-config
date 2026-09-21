@@ -1,4 +1,4 @@
-{ inputs, ... }:
+{ den, inputs, ... }:
 let
   piCodingAgentOverlay = _final: prev: {
     pi-coding-agent-patched = prev.pi-coding-agent.overrideAttrs (old: {
@@ -58,32 +58,61 @@ in
           };
 
           environment.PI_QUIET_STARTUP = "1";
-          extraPackages = [ pkgs.rtk ];
+          extraPackages = [
+            pkgs.rtk
+            pkgs.chromium
+            pkgs.computer-use-linux
+            pkgs.at-spi2-core
+            pkgs.wtype
+            pkgs.xdotool
+            pkgs.ydotool
+          ];
+
+          settings."pi-browser-use" = {
+            executablePath = "${pkgs.chromium}/bin/chromium";
+            headless = false;
+            sessionMode = "persistent";
+            viewport = "1280x720";
+          };
 
           extensions = {
-            rtk = "${pkgs.rtk.src}/hooks/pi/rtk.ts";
-            caveman = "${pkgs.pi.extensions.pi-caveman}/extensions/caveman/index.ts";
-            ponytail = "${pkgs.pi.extensions.pi-ponytail}/pi-extension/index.js";
-            mcp-extension = "${pkgs.pi.extensions.pi-mcp-extension}/src/index.ts";
-            pi-diff-review = "${pkgs.pi.extensions.pi-diff-review}/extensions/review.ts";
-            pi-btw = "${pkgs.pi.extensions.pi-btw}/dist/index.ts";
-            pi-web-search = "${pkgs.pi.extensions.pi-web-search}/src/index.ts";
-            pi-tmux-alert = "${pkgs.pi.extensions.pi-tmux-alert}/index.ts";
-            skill-orchestrator = "${pkgs.pi.extensions.pi-skill-orchestrator}/src/index.ts";
-            subagent = "${pkgs.pi.extensions.pi-subagent}/extensions/index.ts";
-            zentui = "${pkgs.pi.extensions.pi-zentui}/extensions/zentui";
+            caveman = {
+              source = "${pkgs.pi.extensions.pi-caveman}/extensions/caveman/index.ts";
+              skill.source = "${pkgs.pi.extensions.pi-caveman}/skills/caveman";
+            };
+            ponytail = {
+              source = "${pkgs.pi.extensions.pi-ponytail}/pi-extension/index.js";
+              skill.source = "${pkgs.pi.extensions.pi-ponytail}/skills";
+            };
+            computer-use-linux = {
+              source = "${pkgs.computer-use-linux.passthru.pi}/pi/extension/index.ts";
+              skill.source = "${pkgs.computer-use-linux.passthru.pi}/skills/computer-use-linux";
+            };
+            context-mode = {
+              source = "${pkgs.context-mode}/build/adapters/pi/extension.js";
+              skill.source = "${pkgs.context-mode}/skills";
+            };
+            rtk.source = "${pkgs.rtk.src}/hooks/pi/rtk.ts";
+            mcp-extension.source = "${pkgs.pi.extensions.pi-mcp-extension}/src/index.ts";
+            pi-diff-review.source = "${pkgs.pi.extensions.pi-diff-review}/extensions/review.ts";
+            pi-btw.source = "${pkgs.pi.extensions.pi-btw}/dist/index.ts";
+            pi-web-search.source = "${pkgs.pi.extensions.pi-web-search}/src/index.ts";
+            pi-tmux-alert.source = "${pkgs.pi.extensions.pi-tmux-alert}/index.ts";
+            skill-orchestrator.source = "${pkgs.pi.extensions.pi-skill-orchestrator}/src/index.ts";
+            subagent.source = "${pkgs.pi.extensions.pi-subagent}/extensions/index.ts";
+            zentui.source = "${pkgs.pi.extensions.pi-zentui}/extensions/zentui";
+            browser-use.source = "${pkgs.pi.extensions.pi-browser-use}/dist/index.js";
           };
 
-          skills = {
-            caveman = "${pkgs.pi.extensions.pi-caveman}/skills/caveman";
-            ponytail = "${pkgs.pi.extensions.pi-ponytail}/skills";
-            mcp-adapter = "${pkgs.pi.extensions.pi-mcp-adapter}/skills";
-          };
+          skills.mcp-adapter = "${pkgs.pi.extensions.pi-mcp-adapter}/skills";
         };
       };
 
     nixos = { ... }:
       {
+        programs.ydotool.enable = true;
+        users.users.jarvahl.extraGroups = [ "ydotool" ];
+
         sops.secrets."users/jarvahl/n8n/mcp/token" = {
           owner = "jarvahl";
           mode = "0400";
@@ -95,6 +124,10 @@ in
           inputs.mcp-nixos.overlays.default
         ];
       };
+
+    includes = [
+      (den.batteries.unfree [ "context-mode" ])
+    ];
   };
 
   flake-file.inputs = {

@@ -6,7 +6,6 @@
 
   flake-file.inputs = {
     flake-file.url = lib.mkForce "github:denful/flake-file";
-    hermes-agent.url = "github:NousResearch/hermes-agent";
   };
 
   flake-file.outputs = ''

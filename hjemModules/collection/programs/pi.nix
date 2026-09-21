@@ -2,6 +2,28 @@
 let
   cfg = config.programs.pi;
 
+  extensionSkills = lib.mapAttrs'
+    (name: extension:
+      lib.nameValuePair name extension.skill.source
+    )
+    (lib.filterAttrs (_: extension: extension.skill != null) cfg.extensions);
+
+  resourceFiles = directory: resources:
+    lib.mapAttrs'
+      (name: path:
+        let
+          basename = builtins.baseNameOf (toString path);
+          extension =
+            if lib.hasSuffix ".ts" basename then ".ts"
+            else if lib.hasSuffix ".js" basename then ".js"
+            else "";
+        in
+        lib.nameValuePair ".pi/agent/${directory}/${name}${extension}" {
+          source = path;
+        }
+      )
+      resources;
+
   pi = pkgs.writeShellApplication {
     name = "pi";
     runtimeInputs = [
@@ -21,9 +43,6 @@ let
       pi_args=(
         --session-dir "$state_dir/sessions"
         --tui-mode fullscreen
-        ${lib.concatMapStringsSep "\n" (path: "--extension ${lib.escapeShellArg (toString path)}") (lib.attrValues cfg.extensions)}
-        ${lib.concatMapStringsSep "\n" (path: "--skill ${lib.escapeShellArg (toString path)}") (lib.attrValues cfg.skills)}
-        --theme ${lib.escapeShellArg (toString cfg.theme)}
       )
 
       exec ${cfg.package}/bin/pi "''${pi_args[@]}" "$@"
@@ -46,6 +65,12 @@ in
       description = "MCP servers configured for Pi extensions.";
     };
 
+    settings = lib.mkOption {
+      type = lib.types.attrs;
+      default = { };
+      description = "Pi agent settings.json contents.";
+    };
+
     skills = lib.mkOption {
       type = lib.types.attrsOf lib.types.path;
       default = { };
@@ -53,9 +78,27 @@ in
     };
 
     extensions = lib.mkOption {
-      type = lib.types.attrsOf lib.types.path;
+      type = lib.types.attrsOf (lib.types.submodule {
+        options = {
+          source = lib.mkOption {
+            type = lib.types.path;
+            description = "Extension source passed to Pi.";
+          };
+
+          skill = lib.mkOption {
+            type = lib.types.nullOr (lib.types.submodule {
+              options.source = lib.mkOption {
+                type = lib.types.path;
+                description = "Skill source provided by this extension.";
+              };
+            });
+            default = null;
+            description = "Optional skill provided by this extension.";
+          };
+        };
+      });
       default = { };
-      description = "Extensions passed to Pi.";
+      description = "Extensions and their optional skills.";
     };
 
     environment = lib.mkOption {
@@ -80,8 +123,14 @@ in
   config = lib.mkIf cfg.enable {
     packages = [ pi ];
 
-    files.".pi/agent/mcp.json".text = builtins.toJSON {
-      mcpServers = cfg.mcp.servers;
-    };
+    files = {
+      ".pi/agent/mcp.json".text = builtins.toJSON {
+        mcpServers = cfg.mcp.servers;
+      };
+
+      ".pi/agent/settings.json".text = builtins.toJSON cfg.settings;
+      ".pi/agent/themes".source = cfg.theme;
+    } // resourceFiles "extensions" (lib.mapAttrs (_: extension: extension.source) cfg.extensions)
+    // resourceFiles "skills" (extensionSkills // cfg.skills);
   };
 }
