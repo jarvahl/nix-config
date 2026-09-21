@@ -59,7 +59,6 @@ in
 
           environment.PI_QUIET_STARTUP = "1";
           extraPackages = [
-            pkgs.rtk
             pkgs.chromium
             pkgs.computer-use-linux
             pkgs.at-spi2-core
@@ -96,7 +95,6 @@ in
               source = "${pkgs.pi-mnemosyne}/src/index.ts";
               skill.source = "${pkgs.pi-mnemosyne}/skills";
             };
-            rtk.source = "${pkgs.rtk.src}/hooks/pi/rtk.ts";
             token-killer.source = "${pkgs.pi-token-killer}/index.ts";
             mcp-extension.source = "${pkgs.pi.extensions.pi-mcp-extension}/src/index.ts";
             pi-diff-review.source = "${pkgs.pi.extensions.pi-diff-review}/extensions/review.ts";
