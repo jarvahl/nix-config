@@ -1,0 +1,34 @@
+#!/bin/sh
+set -eu
+
+self_dir=$(CDPATH= cd -P -- "${0%/*}" && pwd)
+PATH=$(printf '%s' "$PATH" | awk -v RS=: -v self="$self_dir" \
+  '$0 != self { if (n++) printf ":"; printf "%s", $0 }')
+export PATH
+
+real_nix=$(command -v nix) || {
+  printf '%s\n' 'pi-token-killer: nix not found after removing the current wrapper' >&2
+  exit 127
+}
+
+[ "${1-}" = build ] || exec "$real_nix" "$@"
+
+output=$(mktemp)
+trap 'rm -f "$output"' EXIT
+
+set +e
+"$real_nix" "$@" >"$output" 2>&1
+status=$?
+set -e
+
+if [ "$status" -ne 0 ]; then
+  cat "$output"
+else
+  store_path=$(grep -o '/nix/store/[^[:space:]]*' "$output" | tail -1 || true)
+  if [ -n "$store_path" ]; then
+    printf 'ok %s\n' "$store_path"
+  else
+    printf 'ok build\n'
+  fi
+fi
+exit "$status"

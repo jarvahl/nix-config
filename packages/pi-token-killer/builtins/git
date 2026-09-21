@@ -1,0 +1,49 @@
+#!/bin/sh
+set -eu
+
+self_dir=$(CDPATH= cd -P -- "${0%/*}" && pwd)
+PATH=$(printf '%s' "$PATH" | awk -v RS=: -v self="$self_dir" \
+  '$0 != self { if (n++) printf ":"; printf "%s", $0 }')
+export PATH
+real_git=$(command -v git) || {
+  printf '%s\n' 'pi-token-killer: git not found after removing the current wrapper' >&2
+  exit 127
+}
+
+run_quietly() {
+  output=$(mktemp)
+  trap 'rm -f "$output"' EXIT
+
+  set +e
+  "$real_git" "$@" >"$output"
+  status=$?
+  set -e
+
+  if [ "$status" -ne 0 ]; then
+    cat "$output"
+    return "$status"
+  fi
+}
+
+case ${1-}:${#} in
+  status:1) exec "$real_git" status --short ;;
+  diff:1) exec "$real_git" diff --stat ;;
+  log:1) exec "$real_git" log --oneline --decorate -n 20 ;;
+  commit:*)
+    if run_quietly "$@"; then
+      hash=$(sed -n 's/^\[[^ ]* \([0-9a-f]*\)\].*/\1/p' "$output" | head -n 1)
+      printf 'ok commit %s\n' "${hash:-unknown}"
+    else
+      exit $?
+    fi
+    ;;
+  push:*)
+    if run_quietly "$@"; then
+      branch=$(awk '/ -> / { branch=$NF } END { print branch }' "$output")
+      printf 'ok push%s\n' "${branch:+ $branch}"
+    else
+      exit $?
+    fi
+    ;;
+  *) exec "$real_git" "$@" ;;
+esac
