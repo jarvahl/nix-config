@@ -97,6 +97,7 @@ in
               skill.source = "${pkgs.pi-mnemosyne}/skills";
             };
             rtk.source = "${pkgs.rtk.src}/hooks/pi/rtk.ts";
+            token-killer.source = "${pkgs.pi-token-killer}/index.ts";
             mcp-extension.source = "${pkgs.pi.extensions.pi-mcp-extension}/src/index.ts";
             pi-diff-review.source = "${pkgs.pi.extensions.pi-diff-review}/extensions/review.ts";
             pi-btw.source = "${pkgs.pi.extensions.pi-btw}/dist/index.ts";
