@@ -14,6 +14,7 @@ stdenvNoCC.mkDerivation {
   dontBuild = true;
 
   installPhase = ''
-    cp -r skills $out
+    mkdir -p $out
+    cp -r skills $out/skills
   '';
 }
