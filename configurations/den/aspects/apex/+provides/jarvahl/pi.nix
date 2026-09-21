@@ -108,7 +108,11 @@ in
             browser-use.source = "${pkgs.pi.extensions.pi-browser-use}/dist/index.js";
           };
 
-          skills.mcp-adapter = "${pkgs.pi.extensions.pi-mcp-adapter}/skills";
+          skills = {
+            anthropics = "${pkgs.pi.skills.anthropics}/skills";
+            emilkowalski = "${pkgs.pi.skills.emilkowalski}/skills";
+            mcp-adapter = "${pkgs.pi.extensions.pi-mcp-adapter}/skills";
+          };
         };
       };
 

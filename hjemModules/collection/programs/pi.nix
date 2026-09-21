@@ -3,6 +3,9 @@ let
   cfg = config.programs.pi;
 
   extensionPaths = map (extension: toString extension.source) (lib.attrValues cfg.extensions);
+  autoSkillExtensionPaths = map (extension: toString extension.source) (
+    lib.attrValues (lib.filterAttrs (_: extension: extension.skill == null) cfg.extensions)
+  );
 
   extensionSkills = lib.mapAttrs'
     (name: extension:
@@ -12,10 +15,9 @@ let
 
   skillPaths = map toString (lib.attrValues (extensionSkills // cfg.skills));
 
-  settings = cfg.settings // {
-    extensions = (cfg.settings.extensions or [ ]) ++ extensionPaths;
-    skills = (cfg.settings.skills or [ ]) ++ skillPaths;
-  };
+  extensionArgs = lib.concatMapStringsSep "\n" (path: "        --extension ${lib.escapeShellArg path}") extensionPaths;
+  skillArgs = lib.concatMapStringsSep "\n" (path: "        --skill ${lib.escapeShellArg path}") skillPaths;
+  autoSkillSources = lib.concatMapStringsSep " " lib.escapeShellArg autoSkillExtensionPaths;
 
   pi = pkgs.writeShellApplication {
     name = "pi";
@@ -25,20 +27,33 @@ let
       pkgs.tmux
     ] ++ cfg.extraPackages;
     text = ''
-      state_dir="''${XDG_STATE_HOME:-$HOME/.local/state}/pi"
+            state_dir="''${XDG_STATE_HOME:-$HOME/.local/state}/pi"
 
-      export PI_SKIP_VERSION_CHECK=1
-      export PI_TELEMETRY=0
-      ${lib.concatMapStringsSep "\n" (name: "export ${name}=${lib.escapeShellArg cfg.environment.${name}}") (lib.attrNames cfg.environment)}
+            export PI_SKIP_VERSION_CHECK=1
+            export PI_TELEMETRY=0
+            ${lib.concatMapStringsSep "\n" (name: "export ${name}=${lib.escapeShellArg cfg.environment.${name}}") (lib.attrNames cfg.environment)}
 
-      mkdir -p "$state_dir/sessions"
+            mkdir -p "$state_dir/sessions"
 
-      pi_args=(
-        --session-dir "$state_dir/sessions"
-        --tui-mode fullscreen
-      )
+            pi_args=(
+              --session-dir "$state_dir/sessions"
+              --tui-mode fullscreen
+      ${extensionArgs}
+      ${skillArgs}
+            )
 
-      exec ${cfg.package}/bin/pi "''${pi_args[@]}" "$@"
+            for source in ${autoSkillSources}; do
+              dir=$(dirname "$source")
+              for _ in 1 2 3 4 5; do
+                if [ -d "$dir/skills" ]; then
+                  pi_args+=(--skill "$dir/skills")
+                  break
+                fi
+                dir=$(dirname "$dir")
+              done
+            done
+
+            exec ${cfg.package}/bin/pi "''${pi_args[@]}" "$@"
     '';
   };
 in
@@ -121,7 +136,7 @@ in
         mcpServers = cfg.mcp.servers;
       };
 
-      ".pi/agent/settings.json".text = builtins.toJSON settings;
+      ".pi/agent/settings.json".text = builtins.toJSON cfg.settings;
       ".pi/agent/themes".source = cfg.theme;
     };
   };
