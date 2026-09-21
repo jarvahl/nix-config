@@ -18,6 +18,25 @@ let
   extensionArgs = lib.concatMapStringsSep "\n" (path: "        --extension ${lib.escapeShellArg path}") extensionPaths;
   skillArgs = lib.concatMapStringsSep "\n" (path: "        --skill ${lib.escapeShellArg path}") skillPaths;
   autoSkillSources = lib.concatMapStringsSep " " lib.escapeShellArg autoSkillExtensionPaths;
+  autoSkillPathsFile = pkgs.runCommand "pi-auto-skill-paths" { } ''
+    : > "$out"
+
+    for source in ${autoSkillSources}; do
+      case "$source" in
+        ${builtins.storeDir}/*/*)
+          root="''${source#${builtins.storeDir}/}"
+          root="${builtins.storeDir}/''${root%%/*}"
+          ;;
+        *)
+          continue
+          ;;
+      esac
+
+      if [ -d "$root/skills" ]; then
+        printf '%s\n' "$root/skills" >> "$out"
+      fi
+    done
+  '';
 
   pi = pkgs.writeShellApplication {
     name = "pi";
@@ -42,16 +61,9 @@ let
       ${skillArgs}
             )
 
-            for source in ${autoSkillSources}; do
-              dir=$(dirname "$source")
-              for _ in 1 2 3 4 5; do
-                if [ -d "$dir/skills" ]; then
-                  pi_args+=(--skill "$dir/skills")
-                  break
-                fi
-                dir=$(dirname "$dir")
-              done
-            done
+            while IFS= read -r skill; do
+              pi_args+=(--skill "$skill")
+            done < ${autoSkillPathsFile}
 
             exec ${cfg.package}/bin/pi "''${pi_args[@]}" "$@"
     '';
