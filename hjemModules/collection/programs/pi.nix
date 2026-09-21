@@ -2,27 +2,20 @@
 let
   cfg = config.programs.pi;
 
+  extensionPaths = map (extension: toString extension.source) (lib.attrValues cfg.extensions);
+
   extensionSkills = lib.mapAttrs'
     (name: extension:
       lib.nameValuePair name extension.skill.source
     )
     (lib.filterAttrs (_: extension: extension.skill != null) cfg.extensions);
 
-  resourceFiles = directory: resources:
-    lib.mapAttrs'
-      (name: path:
-        let
-          basename = builtins.baseNameOf (toString path);
-          extension =
-            if lib.hasSuffix ".ts" basename then ".ts"
-            else if lib.hasSuffix ".js" basename then ".js"
-            else "";
-        in
-        lib.nameValuePair ".pi/agent/${directory}/${name}${extension}" {
-          source = path;
-        }
-      )
-      resources;
+  skillPaths = map toString (lib.attrValues (extensionSkills // cfg.skills));
+
+  settings = cfg.settings // {
+    extensions = (cfg.settings.extensions or [ ]) ++ extensionPaths;
+    skills = (cfg.settings.skills or [ ]) ++ skillPaths;
+  };
 
   pi = pkgs.writeShellApplication {
     name = "pi";
@@ -128,9 +121,8 @@ in
         mcpServers = cfg.mcp.servers;
       };
 
-      ".pi/agent/settings.json".text = builtins.toJSON cfg.settings;
+      ".pi/agent/settings.json".text = builtins.toJSON settings;
       ".pi/agent/themes".source = cfg.theme;
-    } // resourceFiles "extensions" (lib.mapAttrs (_: extension: extension.source) cfg.extensions)
-    // resourceFiles "skills" (extensionSkills // cfg.skills);
+    };
   };
 }

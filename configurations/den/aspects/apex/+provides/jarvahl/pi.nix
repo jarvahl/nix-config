@@ -92,6 +92,10 @@ in
               source = "${pkgs.context-mode}/build/adapters/pi/extension.js";
               skill.source = "${pkgs.context-mode}/skills";
             };
+            mnemosyne = {
+              source = "${pkgs.pi-mnemosyne}/src/index.ts";
+              skill.source = "${pkgs.pi-mnemosyne}/skills";
+            };
             rtk.source = "${pkgs.rtk.src}/hooks/pi/rtk.ts";
             mcp-extension.source = "${pkgs.pi.extensions.pi-mcp-extension}/src/index.ts";
             pi-diff-review.source = "${pkgs.pi.extensions.pi-diff-review}/extensions/review.ts";
