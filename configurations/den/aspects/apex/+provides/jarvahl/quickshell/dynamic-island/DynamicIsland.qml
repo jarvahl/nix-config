@@ -1,5 +1,6 @@
 import QtQuick
 import Quickshell
+import "battery" as Battery
 import "brightness" as Brightness
 import "clock" as Clock
 import "volume" as Volume
@@ -7,11 +8,14 @@ import "volume" as Volume
 PanelWindow {
     id: root
 
+    Battery.BatterySource {}
+
     property string activeIsland: ""
     property var activeData: ({})
     property bool contentVisible: true
-    property Item activeWidget: activeIsland === "brightness"
-        ? brightnessWidget
+    property Item activeWidget: activeIsland === "battery"
+        ? batteryWidget
+        : activeIsland === "brightness" ? brightnessWidget
         : activeIsland === "volume" ? volumeWidget : null
 
     screen: Quickshell.screens[0]
@@ -65,6 +69,28 @@ PanelWindow {
                 NumberAnimation {
                     duration: 180
                     easing.type: Easing.InOutCubic
+                }
+            }
+        }
+
+        Battery.BatteryIsland {
+            id: batteryWidget
+            anchors.centerIn: parent
+            eventLabel: root.activeData.label || "Battery"
+            opacity: root.contentVisible && root.activeIsland === "battery" ? 1 : 0
+            scale: root.contentVisible ? 1 : 0.94
+
+            Behavior on opacity {
+                NumberAnimation {
+                    duration: 180
+                    easing.type: Easing.InOutCubic
+                }
+            }
+
+            Behavior on scale {
+                NumberAnimation {
+                    duration: 260
+                    easing.type: Easing.OutCubic
                 }
             }
         }
