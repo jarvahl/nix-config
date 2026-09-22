@@ -41,6 +41,12 @@
   hl.bind("SUPER + P", hl.dsp.exec_cmd("${pkgs.runtimeShell} -lc '${pkgs.quickshell}/bin/qs -p \"$(${pkgs.coreutils}/bin/readlink -f \"$HOME/.config/quickshell/index.qml\")\" ipc --any-display call launcher toggle'"))
   hl.bind("SUPER + C", hl.dsp.window.close())
   hl.bind("SUPER + M", hl.dsp.exit())
+
+  for workspace = 1, 9 do
+    hl.bind("SUPER + " .. workspace, hl.dsp.focus({ workspace = workspace }))
+    hl.bind("SUPER + SHIFT + " .. workspace, hl.dsp.window.move({ workspace = workspace }))
+  end
+
   local focus_mode_window = nil
 
   local function leave_focus_mode()
