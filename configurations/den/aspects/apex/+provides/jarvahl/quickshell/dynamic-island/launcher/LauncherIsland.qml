@@ -7,7 +7,7 @@ Item {
 
     signal closeRequested()
 
-    readonly property var apps: DesktopEntries.applications.values || DesktopEntries.applications
+    readonly property var apps: listApps()
     readonly property string query: search.text.trim().toLowerCase()
     readonly property var matches: filterApps(search.text)
     readonly property var bestMatch: matches.length > 0 ? matches[0] : null
@@ -15,6 +15,18 @@ Item {
 
     width: 440
     height: 42
+
+    function listApps() {
+        const applications = DesktopEntries.applications;
+
+        if (!applications)
+            return [];
+
+        if (typeof applications.values === "function")
+            return Array.from(applications.values());
+
+        return Array.from(applications.values || applications);
+    }
 
     function filterApps(query) {
         const needle = query.trim().toLowerCase();
@@ -52,10 +64,12 @@ Item {
     }
 
     function launchSelected() {
-        if (!bestMatch)
+        const app = bestMatch;
+
+        if (!app)
             return;
 
-        bestMatch.execute();
+        Quickshell.execDetached(["gtk-launch", app.id]);
         closeRequested();
     }
 
