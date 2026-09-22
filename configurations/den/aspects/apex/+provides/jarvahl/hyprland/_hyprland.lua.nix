@@ -38,6 +38,7 @@
 
   hl.bind("SUPER + Q", hl.dsp.exec_cmd("${pkgs.foot}/bin/foot"))
   hl.bind("SUPER + B", hl.dsp.exec_cmd("${pkgs.firefox}/bin/firefox"))
+  hl.bind("SUPER + P", hl.dsp.exec_cmd("${pkgs.runtimeShell} -lc '${pkgs.quickshell}/bin/qs -p \"$(${pkgs.coreutils}/bin/readlink -f \"$HOME/.config/quickshell/index.qml\")\" ipc --any-display call launcher toggle'"))
   hl.bind("SUPER + C", hl.dsp.window.close())
   hl.bind("SUPER + M", hl.dsp.exit())
   local focus_mode_window = nil

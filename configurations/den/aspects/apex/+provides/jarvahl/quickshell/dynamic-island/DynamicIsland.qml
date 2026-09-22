@@ -1,8 +1,12 @@
 import QtQuick
 import Quickshell
+import Quickshell.Hyprland
+import Quickshell.Io
+import Quickshell.Wayland
 import "battery" as Battery
 import "brightness" as Brightness
 import "clock" as Clock
+import "launcher" as Launcher
 import "volume" as Volume
 
 PanelWindow {
@@ -10,30 +14,75 @@ PanelWindow {
 
     Battery.BatterySource {}
 
+    IpcHandler {
+        target: "launcher"
+
+        function toggle(): void {
+            root.toggleLauncher();
+        }
+    }
+
+    function toggleLauncher() {
+        if (activeIsland === "launcher") {
+            closeActive();
+            return;
+        }
+
+        hideTimer.stop();
+        collapseTimer.stop();
+        activeData = ({});
+        activeIsland = "launcher";
+        contentVisible = false;
+        launcherFocusAttempts = 0;
+        launcherWidget.reset();
+        showTimer.restart();
+        launcherFocusTimer.restart();
+    }
+
+    function closeActive() {
+        hideTimer.stop();
+        contentVisible = false;
+        collapseTimer.restart();
+    }
+
     property string activeIsland: ""
     property var activeData: ({})
     property bool contentVisible: true
-    property Item activeWidget: activeIsland === "battery"
-        ? batteryWidget
+    property int launcherFocusAttempts: 0
+    property Item activeWidget: activeIsland === "launcher"
+        ? launcherWidget
+        : activeIsland === "battery" ? batteryWidget
         : activeIsland === "brightness" ? brightnessWidget
         : activeIsland === "volume" ? volumeWidget : null
 
     screen: Quickshell.screens[0]
     anchors.top: true
     visible: true
-    implicitWidth: 480
-    implicitHeight: 72
+    focusable: activeIsland === "launcher"
+    WlrLayershell.keyboardFocus: activeIsland === "launcher" ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
+    implicitWidth: activeIsland === "launcher" ? 520 : 480
+    implicitHeight: activeIsland === "launcher" ? 360 : 72
     margins.top: 12
     color: "transparent"
     exclusiveZone: 64
 
+    HyprlandFocusGrab {
+        windows: [root]
+        active: root.activeIsland === "launcher"
+
+        onCleared: {
+            if (root.activeIsland === "launcher")
+                root.closeActive();
+        }
+    }
+
     Rectangle {
         anchors.top: parent.top
         anchors.horizontalCenter: parent.horizontalCenter
-        width: root.activeWidget ? root.activeWidget.width + 40 : 128
-        height: root.activeWidget ? root.activeWidget.height + 18 : 32
+        width: root.activeWidget ? root.activeWidget.width + (root.activeIsland === "launcher" ? 0 : 40) : 128
+        height: root.activeWidget ? root.activeWidget.height + (root.activeIsland === "launcher" ? 0 : 18) : 32
         color: "#08090b"
-        border.color: "#28ffffff"
+        border.color: root.activeIsland === "launcher" ? (launcherWidget.activeFocus ? "#35ffffff" : "#28ffffff") : "#28ffffff"
         border.width: 1
         radius: height / 2
 
@@ -50,7 +99,7 @@ PanelWindow {
                 easing.type: Easing.OutCubic
             }
         }
-        clip: true
+        clip: root.activeIsland !== "launcher"
 
         Rectangle {
             anchors.top: parent.top
@@ -69,6 +118,29 @@ PanelWindow {
                 NumberAnimation {
                     duration: 180
                     easing.type: Easing.InOutCubic
+                }
+            }
+        }
+
+        Launcher.LauncherIsland {
+            id: launcherWidget
+            anchors.centerIn: parent
+            opacity: root.contentVisible && root.activeIsland === "launcher" ? 1 : 0
+            scale: root.contentVisible ? 1 : 0.94
+
+            onCloseRequested: root.closeActive()
+
+            Behavior on opacity {
+                NumberAnimation {
+                    duration: 180
+                    easing.type: Easing.InOutCubic
+                }
+            }
+
+            Behavior on scale {
+                NumberAnimation {
+                    duration: 260
+                    easing.type: Easing.OutCubic
                 }
             }
         }
@@ -146,14 +218,17 @@ PanelWindow {
             root.activeData = data;
 
             if (root.activeIsland === island) {
-                hideTimer.restart();
+                if (island !== "launcher")
+                    hideTimer.restart();
                 return;
             }
 
             root.activeIsland = island;
             root.contentVisible = false;
             showTimer.restart();
-            hideTimer.restart();
+
+            if (island !== "launcher")
+                hideTimer.restart();
         }
     }
 
@@ -161,7 +236,31 @@ PanelWindow {
         id: showTimer
         interval: 420
 
-        onTriggered: root.contentVisible = true
+        onTriggered: {
+            root.contentVisible = true;
+
+            if (root.activeIsland === "launcher")
+                launcherFocusTimer.restart();
+        }
+    }
+
+    Timer {
+        id: launcherFocusTimer
+        interval: 50
+        repeat: true
+
+        onTriggered: {
+            if (root.activeIsland !== "launcher") {
+                stop();
+                return;
+            }
+
+            launcherWidget.focusSearch();
+            root.launcherFocusAttempts += 1;
+
+            if (root.launcherFocusAttempts >= 5)
+                stop();
+        }
     }
 
     Timer {
