@@ -58,21 +58,15 @@ in
           };
 
           environment.PI_QUIET_STARTUP = "1";
+          environment.PI_BROWSER_USE_EXECUTABLE_PATH =
+            "${pkgs.google-chrome}/bin/google-chrome-stable";
           extraPackages = [
-            pkgs.chromium
             pkgs.computer-use-linux
             pkgs.at-spi2-core
             pkgs.wtype
             pkgs.xdotool
             pkgs.ydotool
           ];
-
-          settings."pi-browser-use" = {
-            executablePath = "${pkgs.chromium}/bin/chromium";
-            headless = false;
-            sessionMode = "persistent";
-            viewport = "1280x720";
-          };
 
           extensions = {
             caveman = {

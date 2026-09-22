@@ -14,6 +14,10 @@ buildNpmPackage {
   postPatch = ''
     cp ${./package.json} package.json
     cp ${./package-lock.json} package-lock.json
+    substituteInPlace dist/config.js \
+      --replace-fail \
+        "const DEFAULTS = {" \
+        "const DEFAULTS = { executablePath: process.env.PI_BROWSER_USE_EXECUTABLE_PATH,"
   '';
 
   npmDepsHash = "sha256-r5kI5+P6c5shQfH75bR7GG1vziF87Yk1fieKDT5caqs=";
