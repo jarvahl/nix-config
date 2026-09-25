@@ -12,7 +12,6 @@ result-*
 
 # secrets
 /key.txt
-/hermes-key.txt
 
 # editor
 .vscode/

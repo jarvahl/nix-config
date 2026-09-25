@@ -93,5 +93,5 @@ nix build --impure --no-link --expr '
 Format touched files:
 
 ```sh
-nix fmt -- packages/pi/skills/<package-name>/package.nix configurations/den/aspects/apex/+provides/jarvahl/pi.nix
+nix fmt -- packages/pi/skills/<package-name>/package.nix modules/den/aspects/apex/+provides/jarvahl/pi.nix
 ```
