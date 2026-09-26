@@ -30,6 +30,18 @@ lib.mkMerge [
 
   {
     den.aspects.apex.nixos = { pkgs, ... }: {
+      virtualisation.libvirtd.enable = true;
+      virtualisation.libvirtd.qemu.runAsRoot = true;
+      users.users.jarvahl.extraGroups = [ "libvirtd" ];
+      environment.systemPackages = with pkgs; [
+        virt-manager
+        qemu_kvm
+      ];
+    };
+  }
+
+  {
+    den.aspects.apex.nixos = { pkgs, ... }: {
       services.atd.enable = true;
       environment.systemPackages = [ pkgs.at ];
     };
