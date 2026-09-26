@@ -12,7 +12,7 @@ let
       nixDirPathAttrs = [ "hjemModules" ];
 
       apps = pkgs:
-        lib.mapAttrs (name: _: lib.getExe pkgs.${name}) config.packages;
+        lib.mapAttrs (name: _: lib.getExe pkgs.${name}) (config.packages pkgs);
 
       outputs.hjemModules = config.hjemModules;
     };
@@ -27,6 +27,9 @@ in
       inherit system;
       overlays = [ overlay ];
     };
+
+    apps = generated.apps.${system};
+    packages = generated.packages.${system};
   };
 
   den.default.nixos = {
@@ -35,7 +38,7 @@ in
   };
 
   flake = {
-    inherit (generated) apps overlays packages;
+    inherit (generated) overlays;
   };
 
   flake-file.inputs.flakelight.url = "github:nix-community/flakelight";

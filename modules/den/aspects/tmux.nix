@@ -39,7 +39,7 @@
 
           # Highlight windows and panes with unread Pi responses.
           bind w choose-tree -F '#{?#{==:#{@pi_status},unread},#[fg=#f2c94c],#[fg=#525252]}#S:#I.#P #W#[default]'
-          set-hook -g pane-focus-in 'run-shell "${pkgs.pi.extensions.pi-tmux-alert}/bin/pi-tmux-alert refresh #{pane_id}"'
+          set-hook -g pane-focus-in 'run-shell "${pkgs.pi-tmux-alert}/bin/pi-tmux-alert refresh #{pane_id}"'
 
           # New session with current directory and switch
           bind C-s run-shell "tmux new-session -Ad -s \"$(basename #{pane_current_path})\" -c \"#{pane_current_path}\" \; switch-client -t \"$(basename #{pane_current_path})\""

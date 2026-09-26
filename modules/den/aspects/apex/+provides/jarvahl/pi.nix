@@ -70,12 +70,12 @@ in
 
           extensions = {
             caveman = {
-              source = "${pkgs.pi.extensions.pi-caveman}/extensions/caveman/index.ts";
-              skill.source = "${pkgs.pi.extensions.pi-caveman}/skills/caveman";
+              source = "${pkgs.pi-caveman}/extensions/caveman/index.ts";
+              skill.source = "${pkgs.pi-caveman}/skills/caveman";
             };
             ponytail = {
-              source = "${pkgs.pi.extensions.pi-ponytail}/pi-extension/index.js";
-              skill.source = "${pkgs.pi.extensions.pi-ponytail}/skills";
+              source = "${pkgs.pi-ponytail}/pi-extension/index.js";
+              skill.source = "${pkgs.pi-ponytail}/skills";
             };
             computer-use-linux = {
               source = "${pkgs.computer-use-linux.passthru.pi}/pi/extension/index.ts";
@@ -90,21 +90,21 @@ in
               skill.source = "${pkgs.pi-mnemosyne}/skills";
             };
             token-killer.source = "${pkgs.pi-token-killer}/index.ts";
-            mcp-extension.source = "${pkgs.pi.extensions.pi-mcp-extension}/src/index.ts";
-            pi-diff-review.source = "${pkgs.pi.extensions.pi-diff-review}/extensions/review.ts";
-            pi-btw.source = "${pkgs.pi.extensions.pi-btw}/dist/index.ts";
-            pi-web-search.source = "${pkgs.pi.extensions.pi-web-search}/src/index.ts";
-            pi-tmux-alert.source = "${pkgs.pi.extensions.pi-tmux-alert}/index.ts";
-            skill-orchestrator.source = "${pkgs.pi.extensions.pi-skill-orchestrator}/src/index.ts";
-            subagent.source = "${pkgs.pi.extensions.pi-subagent}/extensions/index.ts";
-            zentui.source = "${pkgs.pi.extensions.pi-zentui}/extensions/zentui";
-            browser-use.source = "${pkgs.pi.extensions.pi-browser-use}/dist/index.js";
+            mcp-extension.source = "${pkgs.pi-mcp-extension}/src/index.ts";
+            pi-diff-review.source = "${pkgs.pi-diff-review}/extensions/review.ts";
+            pi-btw.source = "${pkgs.pi-btw}/dist/index.ts";
+            pi-web-search.source = "${pkgs.pi-web-search}/src/index.ts";
+            pi-tmux-alert.source = "${pkgs.pi-tmux-alert}/index.ts";
+            skill-orchestrator.source = "${pkgs.pi-skill-orchestrator}/src/index.ts";
+            subagent.source = "${pkgs.pi-subagent}/extensions/index.ts";
+            zentui.source = "${pkgs.pi-zentui}/extensions/zentui";
+            browser-use.source = "${pkgs.pi-browser-use}/dist/index.js";
           };
 
           skills = {
-            anthropics = "${pkgs.pi.skills.anthropics}/skills";
-            emilkowalski = "${pkgs.pi.skills.emilkowalski}/skills";
-            mcp-adapter = "${pkgs.pi.extensions.pi-mcp-adapter}/skills";
+            anthropics = "${pkgs.anthropics}/skills";
+            emilkowalski = "${pkgs.emilkowalski}/skills";
+            mcp-adapter = "${pkgs.pi-mcp-adapter}/skills";
           };
         };
       };

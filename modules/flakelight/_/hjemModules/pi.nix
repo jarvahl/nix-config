@@ -135,7 +135,7 @@ in
 
     theme = lib.mkOption {
       type = lib.types.path;
-      default = "${pkgs.pi.themes}/pi-themes/themes";
+      default = "${pkgs.themes}/pi-themes/themes";
       description = "Theme directory passed to Pi.";
     };
   };
