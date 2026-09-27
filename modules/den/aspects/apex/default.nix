@@ -1,5 +1,4 @@
 { den
-, inputs
 , lib
 , ...
 }:
@@ -85,65 +84,6 @@ lib.mkMerge [
 
           default_session = initial_session;
         };
-      };
-    };
-  }
-
-  {
-    den.aspects.apex.nixos = { pkgs, ... }: {
-      imports = [
-        inputs.hermes-agent.nixosModules.default
-        inputs.hermes-webui.nixosModules.default
-      ];
-
-      users.groups.hermes.gid = 973;
-      users.users.hermes = {
-        uid = 982;
-        group = "hermes";
-        isSystemUser = true;
-        home = "/var/lib/hermes";
-        createHome = true;
-      };
-
-      services.hermes-agent.enable = true;
-
-      services.hermes-webui = {
-        enable = true;
-        host = "127.0.0.1";
-        port = 8787;
-        user = "hermes";
-        group = "hermes";
-        hermesHome = "/var/lib/hermes/.hermes";
-        agent.package = inputs.hermes-agent.packages.${pkgs.stdenv.hostPlatform.system}.default;
-      };
-
-      systemd.services.hermes-webui-tailscale-serve = {
-        description = "Expose Hermes WebUI through Tailscale HTTPS";
-        after = [
-          "tailscaled.service"
-          "hermes-webui.service"
-        ];
-        wants = [
-          "tailscaled.service"
-          "hermes-webui.service"
-        ];
-        wantedBy = [ "multi-user.target" ];
-        path = [ pkgs.tailscale ];
-        serviceConfig = {
-          Type = "oneshot";
-          RemainAfterExit = true;
-        };
-        script = ''
-          tailscale serve --yes --bg --https=443 127.0.0.1:8787
-        '';
-      };
-    };
-
-    flake-file.inputs = {
-      hermes-agent.url = "github:NousResearch/hermes-agent";
-      hermes-webui = {
-        url = "github:nesquena/hermes-webui";
-        inputs.nixpkgs.follows = "nixpkgs";
       };
     };
   }
