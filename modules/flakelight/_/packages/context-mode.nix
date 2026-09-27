@@ -18,7 +18,7 @@ buildNpmPackage rec {
     cp ${./context-mode-package-lock.json} package-lock.json
   '';
 
-  npmDepsHash = "sha256-BVKvJlwHdWUqTqdJF16SGe8hMrnUgs+dPCAmtAKvHKU=";
+  npmDepsHash = "sha256-9ya6MuVHGt0NbwOKlxgjkz6tKgJOWozYe0VpqzfFXi8=";
   installPhase = ''
     runHook preInstall
     cp -r . $out
