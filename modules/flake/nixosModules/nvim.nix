@@ -8,10 +8,15 @@
     };
   });
 
-  perSystem = { pkgs, ... }: {
+  perSystem = { lib, pkgs, ... }: {
     packages.nvim = (inputs.nvf.lib.neovimConfiguration {
       modules = [ ];
       inherit pkgs;
-    }).neovim;
+    }).neovim.overrideAttrs (old: {
+      meta = old.meta // {
+        license = lib.licenses.asl20;
+        platforms = lib.platforms.all;
+      };
+    });
   };
 }

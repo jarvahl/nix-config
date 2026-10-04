@@ -1,14 +1,13 @@
 { self, ... }:
 
 let
-  host = "theia";
+  host = "gaia";
 in
 {
   flake.nixosModules.${host} = {
     imports = with self.nixosModules;
       [
         # development
-        nvim
         zsh
       ]
       ++ [
@@ -20,7 +19,7 @@ in
     security.sudo.wheelNeedsPassword = false;
     system.stateVersion = "26.05";
 
-    users.users.jarvahl = {
+    users.users.nixos = {
       extraGroups = [ "wheel" ];
       initialPassword = "changeme";
       isNormalUser = true;

@@ -3,7 +3,7 @@
 let
   inherit (self.lib) vm;
 
-  host = "theia";
+  host = "cargo";
 in
 {
   flake.nixosConfigurations.${host} = nixosSystem {
@@ -19,6 +19,4 @@ in
       inherit host lib pkgs;
     };
   };
-
-  systems = [ "x86_64-linux" ];
 }
