@@ -5,4 +5,5 @@
 - Use `inherit` to name deep attribute paths before reusing them.
 - Use `writeShellApplication.runtimeInputs` for commands used inside shell scripts.
 - Use `lib.getExe`/`lib.getExe'` instead of hard-coded `/bin` paths outside those scripts.
+- Put development modules before system modules when grouping NixOS module imports inline.
 - Run `nix run .#write-flake` after changing `flake-file.inputs`.

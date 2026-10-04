@@ -5,13 +5,18 @@ let
 in
 {
   flake.nixosModules.${host} = {
-    imports = with self.nixosModules; [
-      nix
-    ];
+    imports = with self.nixosModules;
+      [
+        # development
+        nvim
+      ]
+      ++ [
+        # system
+        nix
+      ];
 
     networking.hostName = host;
-    system.stateVersion = "26.05";
-
     security.sudo.wheelNeedsPassword = false;
+    system.stateVersion = "26.05";
   };
 }
