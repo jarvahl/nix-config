@@ -4,8 +4,10 @@
     aspects."jarvahl@zero".includes = with den.aspects; [
       dynamic-island
       hyperland
+      hypridle
+      swaybg
     ];
 
-    hosts.x86_64-linux.zero.users.jarvahl = { };
+    hosts.x86_64-linux.zero.users.jarvahl.classes = [ "hjem" ];
   };
 }
