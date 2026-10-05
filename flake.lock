@@ -48,6 +48,49 @@
         "type": "github"
       }
     },
+    "hjem": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1790081753,
+        "narHash": "sha256-tycoVCB2KSVdy9ERT1lJGHdP9Hf4FHanaEY25hUxylw=",
+        "owner": "feel-co",
+        "repo": "hjem",
+        "rev": "cef02450f2c18a7e2b9297ea8d366f9a597254f7",
+        "type": "github"
+      },
+      "original": {
+        "owner": "feel-co",
+        "repo": "hjem",
+        "type": "github"
+      }
+    },
+    "hjem-rum": {
+      "inputs": {
+        "hjem": [
+          "hjem"
+        ],
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1789576270,
+        "narHash": "sha256-ntcojKoFfndHu9/cw6zRyan2AECyxMwJ0e1Qr7a+m40=",
+        "owner": "snugnug",
+        "repo": "hjem-rum",
+        "rev": "4194064c687bf6ca7a79cbe127cbe5a3f51ed5d5",
+        "type": "github"
+      },
+      "original": {
+        "owner": "snugnug",
+        "repo": "hjem-rum",
+        "type": "github"
+      }
+    },
     "import-tree": {
       "locked": {
         "lastModified": 1788467110,
@@ -96,6 +139,8 @@
         "den": "den",
         "flake-file": "flake-file",
         "flake-parts": "flake-parts",
+        "hjem": "hjem",
+        "hjem-rum": "hjem-rum",
         "import-tree": "import-tree",
         "nixpkgs": "nixpkgs"
       }

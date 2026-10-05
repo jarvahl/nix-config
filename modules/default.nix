@@ -4,6 +4,7 @@
   imports = [
     inputs.flake-file.flakeModules.default
     inputs.flake-file.flakeModules.import-tree
+    inputs.flake-file.flakeModules.auto-follow
   ];
 
   systems = inputs.nixpkgs.lib.systems.flakeExposed;
