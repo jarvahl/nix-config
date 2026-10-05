@@ -10,33 +10,16 @@
         rum.desktops.hyprland = {
           enable = true;
 
+          extraConfig = ''
+            bind = SUPER SHIFT, F11, fullscreen, 1
+            bind = SUPER SHIFT, F11, submap, focus-mode
+            submap = focus-mode
+            bind = SUPER, Escape, fullscreen, 0
+            bind = SUPER, Escape, submap, reset
+            submap = reset
+          '';
+
           settings = {
-            monitor = ", preferred, auto, 1.0";
-
-            general = {
-              border_size = 0;
-              gaps_in = 16;
-              gaps_out = "0, 90, 48, 90";
-            };
-
-            decoration = {
-              rounding = 14;
-              rounding_power = 2;
-              shadow = {
-                enabled = true;
-                range = 18;
-                render_power = 3;
-                color = "0xaa000000";
-              };
-            };
-
-            misc = {
-              background_color = "0xc8c0b4";
-              disable_hyprland_logo = true;
-              disable_splash_rendering = true;
-              force_default_wallpaper = 0;
-            };
-
             bind = [
               "SUPER, B, exec, ${pkgs.firefox}/bin/firefox"
               "SUPER, C, killactive"
@@ -56,17 +39,34 @@
               ", XF86AudioMicMute, exec, ${pkgs.wireplumber}/bin/wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"
             ];
 
-            exec-once = "${pkgs.uwsm}/bin/uwsm finalize";
-          };
+            decoration = {
+              rounding = 14;
+              rounding_power = 2;
+              shadow = {
+                color = "0xaa000000";
+                enabled = true;
+                range = 18;
+                render_power = 3;
+              };
+            };
 
-          extraConfig = ''
-            bind = SUPER SHIFT, F11, fullscreen, 1
-            bind = SUPER SHIFT, F11, submap, focus-mode
-            submap = focus-mode
-            bind = SUPER, Escape, fullscreen, 0
-            bind = SUPER, Escape, submap, reset
-            submap = reset
-          '';
+            exec-once = "${pkgs.uwsm}/bin/uwsm finalize";
+
+            general = {
+              border_size = 0;
+              gaps_in = 16;
+              gaps_out = "0, 90, 48, 90";
+            };
+
+            misc = {
+              background_color = "0xc8c0b4";
+              disable_hyprland_logo = true;
+              disable_splash_rendering = true;
+              force_default_wallpaper = 0;
+            };
+
+            monitor = ", preferred, auto, 1.0";
+          };
         };
       };
 

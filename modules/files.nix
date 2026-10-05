@@ -1,8 +1,8 @@
 { ... }:
 {
   flake-file.inputs.files = {
-    url = "github:mightyiam/files";
     flake = false;
+    url = "github:mightyiam/files";
   };
 
   perSystem = { ... }: {

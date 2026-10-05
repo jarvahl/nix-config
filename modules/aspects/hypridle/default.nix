@@ -5,24 +5,25 @@
       enable = true;
       settings.listener = [
         {
-          timeout = 600;
-          "on-timeout" = "${pkgs.hyprland}/bin/hyprctl dispatch dpms off";
           "on-resume" = "${pkgs.hyprland}/bin/hyprctl dispatch dpms on";
+          "on-timeout" = "${pkgs.hyprland}/bin/hyprctl dispatch dpms off";
+          timeout = 600;
         }
       ];
     };
 
     systemd.services.hypridle = {
-      description = "Hyprland idle manager";
-      wantedBy = [ "graphical-session.target" ];
-      partOf = [ "graphical-session.target" ];
-      wants = [ "wayland-session-waitenv.service" ];
       after = [ "wayland-session-waitenv.service" ];
+      description = "Hyprland idle manager";
+      partOf = [ "graphical-session.target" ];
 
       serviceConfig = {
         ExecStart = "${pkgs.hypridle}/bin/hypridle";
         Restart = "on-failure";
       };
+
+      wantedBy = [ "graphical-session.target" ];
+      wants = [ "wayland-session-waitenv.service" ];
     };
   };
 }

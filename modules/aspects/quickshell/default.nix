@@ -10,9 +10,9 @@
       }:
       let
         quickshellConfig = builtins.path {
+          filter = path: type: type == "directory" || lib.hasSuffix ".qml" path;
           name = "quickshell";
           path = ./.;
-          filter = path: type: type == "directory" || lib.hasSuffix ".qml" path;
         };
 
         launcherToggle = pkgs.writeShellScriptBin "launcher-toggle" ''
@@ -35,11 +35,9 @@
         ];
 
         systemd.services.quickshell-dynamic-island = {
-          description = "Quickshell Dynamic Island";
-          wantedBy = [ "graphical-session.target" ];
-          partOf = [ "graphical-session.target" ];
-          wants = [ "wayland-session-waitenv.service" ];
           after = [ "wayland-session-waitenv.service" ];
+          description = "Quickshell Dynamic Island";
+          partOf = [ "graphical-session.target" ];
           restartTriggers = [ config.files.".config/quickshell/dynamic-island".source ];
 
           serviceConfig = {
@@ -54,6 +52,9 @@
             }/Host.qml";
             Restart = "on-failure";
           };
+
+          wantedBy = [ "graphical-session.target" ];
+          wants = [ "wayland-session-waitenv.service" ];
         };
       };
   };
