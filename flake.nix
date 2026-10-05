@@ -7,6 +7,15 @@
     den = {
       url = "github:denful/den";
     };
+    files = {
+      url = "github:mightyiam/files";
+      flake = false;
+      inputs = {
+        flake-parts.follows = "flake-parts";
+        import-tree.follows = "import-tree";
+        nixpkgs.follows = "nixpkgs";
+      };
+    };
     flake-file = {
       url = "github:denful/flake-file";
     };
@@ -29,6 +38,10 @@
     };
     nixpkgs = {
       url = "https://channels.nixos.org/nixpkgs-unstable/nixexprs.tar.zst";
+    };
+    sops-nix = {
+      url = "github:Mic92/sops-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 }
