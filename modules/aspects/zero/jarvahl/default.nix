@@ -2,6 +2,7 @@
 {
   den = {
     aspects."jarvahl@zero".includes = with den.aspects; [
+      (den.batteries.user-shell "zsh")
       quickshell
       foot
       hyperland
