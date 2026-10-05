@@ -38,9 +38,7 @@
             };
 
             bind = [
-              "SUPER, Q, exec, ${pkgs.foot}/bin/foot"
               "SUPER, B, exec, ${pkgs.firefox}/bin/firefox"
-              "SUPER, P, exec, launcher-toggle"
               "SUPER, C, killactive"
               "SUPER, M, exit"
             ]

@@ -30,6 +30,10 @@
           launcherToggle
         ];
 
+        rum.desktops.hyprland.settings.bind = lib.mkIf config.rum.desktops.hyprland.enable [
+          "SUPER, P, exec, launcher-toggle"
+        ];
+
         systemd.services.quickshell-dynamic-island = {
           description = "Quickshell Dynamic Island";
           wantedBy = [ "graphical-session.target" ];
@@ -45,7 +49,9 @@
                 pkgs.gtk3
               ]
             }:/etc/profiles/per-user/jarvahl/bin:/run/current-system/sw/bin";
-            ExecStart = "${pkgs.quickshell}/bin/qs -p ${config.files.".config/quickshell/dynamic-island".source}/Host.qml";
+            ExecStart = "${pkgs.quickshell}/bin/qs -p ${
+              config.files.".config/quickshell/dynamic-island".source
+            }/Host.qml";
             Restart = "on-failure";
           };
         };
