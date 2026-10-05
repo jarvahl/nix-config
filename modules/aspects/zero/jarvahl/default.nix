@@ -2,7 +2,7 @@
 {
   den = {
     aspects."jarvahl@zero".includes = with den.aspects; [
-      dynamic-island
+      quickshell
       foot
       hyperland
       hypridle

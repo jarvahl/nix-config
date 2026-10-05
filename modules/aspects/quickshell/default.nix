@@ -1,6 +1,6 @@
 { ... }:
 {
-  den.aspects."dynamic-island" = {
+  den.aspects.quickshell = {
     hjem =
       {
         config,
@@ -9,8 +9,8 @@
         ...
       }:
       let
-        dynamicIslandConfig = builtins.path {
-          name = "dynamic-island";
+        quickshellConfig = builtins.path {
+          name = "quickshell";
           path = ./.;
           filter = path: type: type == "directory" || lib.hasSuffix ".qml" path;
         };
@@ -21,7 +21,7 @@
         '';
       in
       {
-        files.".config/quickshell/dynamic-island".source = dynamicIslandConfig;
+        files.".config/quickshell/dynamic-island".source = quickshellConfig;
 
         packages = [
           pkgs.brightnessctl
