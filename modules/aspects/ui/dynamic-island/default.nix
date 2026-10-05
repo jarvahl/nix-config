@@ -14,6 +14,11 @@
           path = ./.;
           filter = path: type: type == "directory" || lib.hasSuffix ".qml" path;
         };
+
+        launcherToggle = pkgs.writeShellScriptBin "launcher-toggle" ''
+          config="$HOME/.config/quickshell/dynamic-island/Host.qml"
+          exec ${pkgs.quickshell}/bin/qs -p "$(${pkgs.coreutils}/bin/readlink -f "$config")" ipc --any-display call launcher toggle
+        '';
       in
       {
         files.".config/quickshell/dynamic-island".source = dynamicIslandConfig;
@@ -22,6 +27,7 @@
           pkgs.brightnessctl
           pkgs.gtk3
           pkgs.quickshell
+          launcherToggle
         ];
 
         systemd.services.quickshell-dynamic-island = {

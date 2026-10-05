@@ -1,10 +1,4 @@
 { pkgs, ... }:
-let
-  toggleDynamicIslandLauncher = pkgs.writeShellScript "toggle-dynamic-island-launcher" ''
-    config="$HOME/.config/quickshell/dynamic-island/Host.qml"
-    exec ${pkgs.quickshell}/bin/qs -p "$(${pkgs.coreutils}/bin/readlink -f "$config")" ipc --any-display call launcher toggle
-  '';
-in
 ''
   hl.monitor({
     output = "",
@@ -44,7 +38,7 @@ in
 
   hl.bind("SUPER + Q", hl.dsp.exec_cmd("${pkgs.foot}/bin/foot"))
   hl.bind("SUPER + B", hl.dsp.exec_cmd("${pkgs.firefox}/bin/firefox"))
-  hl.bind("SUPER + P", hl.dsp.exec_cmd("${toggleDynamicIslandLauncher}"))
+  hl.bind("SUPER + P", hl.dsp.exec_cmd("launcher-toggle"))
   hl.bind("SUPER + C", hl.dsp.window.close())
   hl.bind("SUPER + M", hl.dsp.exit())
 
