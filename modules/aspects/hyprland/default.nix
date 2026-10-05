@@ -4,25 +4,72 @@
     hjem =
       { lib, pkgs, ... }:
       let
-        hyprlandFiles = lib.filterAttrs (
-          name: type: type == "regular" && (lib.hasSuffix ".lua" name || lib.hasSuffix ".lua.nix" name)
-        ) (builtins.readDir ./.);
-
-        hyprlandFileName =
-          name:
-          lib.removePrefix "_" (if lib.hasSuffix ".lua.nix" name then lib.removeSuffix ".nix" name else name);
-
-        hyprlandFile = name: _: {
-          name = ".config/hypr/${hyprlandFileName name}";
-          value.source =
-            if lib.hasSuffix ".lua.nix" name then
-              pkgs.writeText (hyprlandFileName name) (import ./${name} { inherit pkgs; })
-            else
-              ./${name};
-        };
+        workspaces = map toString (lib.range 1 9);
       in
       {
-        files = lib.mapAttrs' hyprlandFile hyprlandFiles;
+        rum.desktops.hyprland = {
+          enable = true;
+
+          settings = {
+            monitor = ", preferred, auto, 1.0";
+
+            general = {
+              border_size = 0;
+              gaps_in = 16;
+              gaps_out = "0, 90, 48, 90";
+            };
+
+            decoration = {
+              rounding = 14;
+              rounding_power = 2;
+              shadow = {
+                enabled = true;
+                range = 18;
+                render_power = 3;
+                color = "0xaa000000";
+              };
+            };
+
+            misc = {
+              background_color = "0xc8c0b4";
+              disable_hyprland_logo = true;
+              disable_splash_rendering = true;
+              force_default_wallpaper = 0;
+            };
+
+            bind = [
+              "SUPER, Q, exec, ${pkgs.foot}/bin/foot"
+              "SUPER, B, exec, ${pkgs.firefox}/bin/firefox"
+              "SUPER, P, exec, launcher-toggle"
+              "SUPER, C, killactive"
+              "SUPER, M, exit"
+            ]
+            ++ lib.concatMap (workspace: [
+              "SUPER, ${workspace}, workspace, ${workspace}"
+              "SUPER SHIFT, ${workspace}, movetoworkspace, ${workspace}"
+            ]) workspaces;
+
+            bindel = [
+              ", XF86MonBrightnessDown, exec, ${pkgs.brightnessctl}/bin/brightnessctl -e4 -n2 set 5%-"
+              ", XF86MonBrightnessUp, exec, ${pkgs.brightnessctl}/bin/brightnessctl -e4 -n2 set 5%+"
+              ", XF86AudioLowerVolume, exec, ${pkgs.wireplumber}/bin/wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"
+              ", XF86AudioRaiseVolume, exec, ${pkgs.wireplumber}/bin/wpctl set-volume -l 1 @DEFAULT_AUDIO_SINK@ 5%+"
+              ", XF86AudioMute, exec, ${pkgs.wireplumber}/bin/wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
+              ", XF86AudioMicMute, exec, ${pkgs.wireplumber}/bin/wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"
+            ];
+
+            exec-once = "${pkgs.uwsm}/bin/uwsm finalize";
+          };
+
+          extraConfig = ''
+            bind = SUPER SHIFT, F11, fullscreen, 1
+            bind = SUPER SHIFT, F11, submap, focus-mode
+            submap = focus-mode
+            bind = SUPER, Escape, fullscreen, 0
+            bind = SUPER, Escape, submap, reset
+            submap = reset
+          '';
+        };
       };
 
     nixos = { pkgs, ... }: {
