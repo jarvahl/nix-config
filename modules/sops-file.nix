@@ -1,4 +1,4 @@
-{ config, inputs, lib, self, ... }:
+{ config, lib, self, ... }:
 let
   cfg = config."sops-file";
 
@@ -32,13 +32,9 @@ let
   };
 in
 {
-  config = lib.optionalAttrs (inputs ? files) {
-    perSystem = { ... }: lib.optionalAttrs (cfg.creation_rules != [ ]) {
-      files.file.${cfg.path}.text = lib.generators.toYAML { } rendered;
-    };
+  config.perSystem = { ... }: lib.optionalAttrs (cfg.creation_rules != [ ]) {
+    files.file.${cfg.path}.text = lib.generators.toYAML { } rendered;
   };
-
-  imports = lib.optionals (inputs ? files) [ "${inputs.files}/flake-module.nix" ];
 
   options."sops-file" = {
     creation_rules = lib.mkOption {
