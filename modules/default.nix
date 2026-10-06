@@ -6,10 +6,10 @@
     nixpkgs.url = "https://channels.nixos.org/nixpkgs-unstable/nixexprs.tar.zst";
   };
 
-  imports = [
-    inputs.flake-file.flakeModules.default
-    inputs.flake-file.flakeModules.import-tree
-    inputs.flake-file.flakeModules.auto-follow
+  imports = with inputs.flake-file.flakeModules; [
+    auto-follow
+    default
+    import-tree
   ];
 
   systems = inputs.nixpkgs.lib.systems.flakeExposed;
