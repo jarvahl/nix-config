@@ -2,6 +2,12 @@
 let
   cfg = config."sops-file";
 
+  ageKeys = value:
+    lib.unique (
+      (map (key: cfg.keys.${key}) value)
+      ++ lib.optional (cfg.recovery_key != null) cfg.recovery_key
+    );
+
   pathRegex = value:
     if lib.isPath value then
       "${lib.escapeRegex (lib.removePrefix "${self}/" (toString value))}$"
@@ -9,7 +15,7 @@ let
       value;
 
   keyGroup = lib.mapAttrs (name: value:
-    if name == "age" then map (key: cfg.keys.${key}) value else value
+    if name == "age" then ageKeys value else value
   );
 in
 {
@@ -46,6 +52,11 @@ in
     path = lib.mkOption {
       default = ".sops.yml";
       type = lib.types.str;
+    };
+
+    recovery_key = lib.mkOption {
+      default = null;
+      type = lib.types.nullOr lib.types.str;
     };
   };
 }
