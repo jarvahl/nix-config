@@ -3,17 +3,10 @@ let
   cfg = config."sops-file";
 
   pathRegex = value:
-    if builtins.typeOf value != "path" then
-      value
+    if lib.isPath value then
+      "${lib.escapeRegex (lib.removePrefix "${self}/" (toString value))}$"
     else
-      let
-        full = toString value;
-        prefix = "${self}/";
-      in
-      if lib.hasPrefix prefix full then
-        "${lib.escapeRegex (lib.removePrefix prefix full)}$"
-      else
-        throw "sops-file path_regex must point inside this flake: ${full}";
+      value;
 
   keyGroup = lib.mapAttrs (name: value:
     if name == "age" then map (key: cfg.keys.${key}) value else value
