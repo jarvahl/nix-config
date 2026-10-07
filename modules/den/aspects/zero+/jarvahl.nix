@@ -3,12 +3,16 @@
   den = {
     aspects."jarvahl@zero".includes =
       (with den.aspects; [
-        quickshell
+        # UI
         foot
         hyperland
         hyperland.autologin
         hypridle
+        quickshell
         swaybg
+
+        # Console
+        zsh
       ])
       ++ (with den.batteries; [
         (user-shell "zsh")
