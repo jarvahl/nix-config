@@ -24,9 +24,9 @@ let
 in
 {
   config.perSystem =
-    { ... }:
+    { pkgs, ... }:
     lib.optionalAttrs (cfg.creation_rules != [ ]) {
-      files.file.${cfg.path}.text = lib.generators.toYAML { } {
+      files.file.${cfg.path}.source = (pkgs.formats.yaml { }).generate cfg.path {
         creation_rules = map (
           rule:
           rule
