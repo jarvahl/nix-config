@@ -54,8 +54,8 @@
 
             general = {
               border_size = 0;
-              gaps_in = 16;
-              gaps_out = "0, 90, 48, 90";
+              gaps_in = 8;
+              gaps_out = "0, 45, 48, 45";
             };
 
             misc = {
