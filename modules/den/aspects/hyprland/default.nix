@@ -39,6 +39,11 @@
               ", XF86AudioMicMute, exec, ${pkgs.wireplumber}/bin/wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"
             ];
 
+            # FIXME: migrate to a Lua-based config when the generator supports it.
+            debug = {
+              enable_stdout_logs = false;
+            };
+
             decoration = {
               rounding = 14;
               rounding_power = 2;
