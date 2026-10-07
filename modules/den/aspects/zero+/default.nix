@@ -2,7 +2,10 @@
 {
   den = {
     aspects.zero = {
-      includes = with den.aspects; [ ssh ];
+      includes = with den.aspects; [
+        ssh
+        tailscale
+      ];
 
       nixos =
         {
