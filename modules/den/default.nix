@@ -10,7 +10,15 @@
     ])
     ++ (with den.aspects; [
       nix
-    ]);
+      passwordless-sudo
+    ])
+    ++ [
+      {
+        nixos = { user, ... }: {
+          users.users.${user.userName}.initialPassword = "password";
+        };
+      }
+    ];
 
     nixos = { pkgs, ... }: {
       environment.systemPackages = with pkgs; [
