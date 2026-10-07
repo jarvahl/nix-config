@@ -1,13 +1,16 @@
 { den, inputs, ... }:
 {
   den.default = {
-    includes = with den.batteries; [
+    includes = (with den.batteries; [
       define-user
       hostname
       inputs'
       primary-user
       self'
-    ];
+    ])
+    ++ (with den.aspects; [
+      nix
+    ]);
 
     nixos = { pkgs, ... }: {
       environment.systemPackages = with pkgs; [
