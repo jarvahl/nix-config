@@ -1,24 +1,25 @@
 { den, inputs, ... }:
 {
   den.default = {
-    includes = (with den.batteries; [
-      define-user
-      hostname
-      inputs'
-      primary-user
-      self'
-    ])
-    ++ (with den.aspects; [
-      nix
-      passwordless-sudo
-    ])
-    ++ [
-      {
-        nixos = { user, ... }: {
-          users.users.${user.userName}.initialPassword = "password";
-        };
-      }
-    ];
+    includes =
+      (with den.batteries; [
+        define-user
+        hostname
+        inputs'
+        primary-user
+        self'
+      ])
+      ++ (with den.aspects; [
+        nix
+        passwordless-sudo
+      ])
+      ++ [
+        {
+          nixos = { user, ... }: {
+            users.users.${user.userName}.initialPassword = "password";
+          };
+        }
+      ];
 
     nixos = { pkgs, ... }: {
       environment.systemPackages = with pkgs; [

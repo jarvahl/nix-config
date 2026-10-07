@@ -94,30 +94,32 @@ lib.mkMerge [
     };
   }
 
-  (let
-    user = "jarvahl";
-  in
-  {
-    den = {
-      aspects."${user}@${host}".includes =
-        (with den.aspects; [
-          # UI
-          foot
-          hyperland
-          hyperland.autologin
-          hypridle
-          quickshell
-          swaybg
+  (
+    let
+      user = "jarvahl";
+    in
+    {
+      den = {
+        aspects."${user}@${host}".includes =
+          (with den.aspects; [
+            # UI
+            foot
+            hyperland
+            hyperland.autologin
+            hypridle
+            quickshell
+            swaybg
 
-          # Console
-          pi
-          zsh
-        ])
-        ++ (with den.batteries; [
-          (user-shell "zsh")
-        ]);
+            # Console
+            pi
+            zsh
+          ])
+          ++ (with den.batteries; [
+            (user-shell "zsh")
+          ]);
 
-      hosts.x86_64-linux.${host}.users.${user}.classes = [ "hjem" ];
-    };
-  })
+        hosts.x86_64-linux.${host}.users.${user}.classes = [ "hjem" ];
+      };
+    }
+  )
 ]
