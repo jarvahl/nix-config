@@ -14,6 +14,7 @@
         flake-parts.follows = "flake-parts";
         import-tree.follows = "import-tree";
         nixpkgs.follows = "nixpkgs";
+        treefmt-nix.follows = "treefmt-nix";
       };
     };
     flake-file = {
@@ -45,12 +46,22 @@
     };
     pi = {
       url = "github:lukasl-dev/pi.nix";
-      inputs.flake-parts.follows = "flake-parts";
-      inputs.nixpkgs.follows = "nixpkgs";
-      inputs.bun2nix-x86_64-darwin.inputs.nixpkgs.follows = "nixpkgs";
+      inputs = {
+        bun2nix.inputs.treefmt-nix.follows = "treefmt-nix";
+        bun2nix-x86_64-darwin.inputs = {
+          nixpkgs.follows = "nixpkgs";
+          treefmt-nix.follows = "treefmt-nix";
+        };
+        flake-parts.follows = "flake-parts";
+        nixpkgs.follows = "nixpkgs";
+      };
     };
     sops-nix = {
       url = "github:Mic92/sops-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    treefmt-nix = {
+      url = "github:numtide/treefmt-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     wrappers = {
