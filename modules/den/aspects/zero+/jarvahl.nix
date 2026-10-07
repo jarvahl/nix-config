@@ -6,6 +6,7 @@
         quickshell
         foot
         hyperland
+        hyperland.autologin
         hypridle
         swaybg
       ])
