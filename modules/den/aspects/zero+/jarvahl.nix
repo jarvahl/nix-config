@@ -12,6 +12,7 @@
         swaybg
 
         # Console
+        pi
         zsh
       ])
       ++ (with den.batteries; [
