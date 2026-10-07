@@ -45,5 +45,23 @@ boot host=host:
         -L \
         --accept-flake-config
 
+# [vm] Build and run host in an ephemeral VM
+[no-exit-message]
+vm host=host:
+    #!/usr/bin/env bash
+    set -euo pipefail
+
+    tmp="$(mktemp -d)"
+    trap 'rm -rf "$tmp"' EXIT
+    export NIX_DISK_IMAGE="$tmp/disk.qcow2"
+
+    nixos-rebuild build-vm \
+        --flake ".#{{host}}" \
+        -L \
+        --show-trace \
+        --accept-flake-config
+
+    "./result/bin/run-{{host}}-vm"
+
 default:
     just --list
