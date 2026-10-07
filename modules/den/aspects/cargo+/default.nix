@@ -1,0 +1,12 @@
+{ den, ... }:
+{
+  den = {
+    hosts.x86_64-linux.cargo = {
+      users.nixos-user = {
+        classes = [ "hjem" ];
+        userName = "nixos";
+      };
+      wsl.enable = true;
+    };
+  };
+}
