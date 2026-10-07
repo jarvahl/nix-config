@@ -65,7 +65,7 @@ in
     };
 
     path = lib.mkOption {
-      default = ".sops.yml";
+      default = ".sops.yaml";
       type = lib.types.str;
     };
 
