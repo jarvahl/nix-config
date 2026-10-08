@@ -11,53 +11,78 @@ let
 
   hmLib = lib.extend (_: _: { hm.dag = hmDag; });
 
-  adapter =
-    {
-      config,
-      lib,
-      pkgs,
-      ...
-    }:
-
+  compatOptionsModule =
+    { config, lib, ... }:
     let
-      fileType = lib.types.attrsOf (
-        lib.types.submodule (
-          { name, ... }: {
+      types = lib.types;
+      mkOpt = type: default: lib.mkOption { inherit type default; };
+      anythingAttrs = types.attrsOf types.anything;
+      emptyAnythingAttrs = mkOpt anythingAttrs { };
+
+      fileType = types.attrsOf (
+        types.submodule (
+          { name, ... }:
+          {
             options = {
-              enable = lib.mkOption {
-                type = lib.types.bool;
-                default = true;
-              };
-
-              executable = lib.mkOption {
-                type = lib.types.nullOr lib.types.bool;
-                default = null;
-              };
-
-              force = lib.mkOption {
-                type = lib.types.bool;
-                default = false;
-              };
-
-              source = lib.mkOption {
-                type = lib.types.nullOr lib.types.path;
-                default = null;
-              };
-
-              target = lib.mkOption {
-                type = lib.types.str;
-                default = name;
-              };
-
-              text = lib.mkOption {
-                type = lib.types.nullOr lib.types.lines;
-                default = null;
-              };
+              enable = mkOpt types.bool true;
+              executable = mkOpt (types.nullOr types.bool) null;
+              force = mkOpt types.bool false;
+              source = mkOpt (types.nullOr types.path) null;
+              target = mkOpt types.str name;
+              text = mkOpt (types.nullOr types.lines) null;
             };
           }
         )
       );
+    in
+    {
+      options = {
+        assertions = mkOpt (types.listOf types.unspecified) [ ];
+        warnings = mkOpt (types.listOf types.str) [ ];
 
+        home = {
+          activation = emptyAnythingAttrs;
+          file = mkOpt fileType { };
+          homeDirectory = mkOpt types.str null;
+          packages = mkOpt (types.listOf types.package) [ ];
+          sessionVariables = emptyAnythingAttrs;
+          stateVersion = mkOpt types.str "26.11";
+          username = mkOpt types.str null;
+        };
+
+        launchd.agents = emptyAnythingAttrs;
+
+        systemd.user =
+          lib.genAttrs [
+            "paths"
+            "services"
+            "sockets"
+            "targets"
+            "timers"
+          ] (_: emptyAnythingAttrs)
+          // {
+            systemctlPath = mkOpt types.str null;
+          };
+
+        xdg = {
+          cacheFile = mkOpt fileType { };
+          cacheHome = mkOpt types.str "${config.home.homeDirectory}/.cache";
+          configFile = mkOpt fileType { };
+          configHome = mkOpt types.str "${config.home.homeDirectory}/.config";
+          dataFile = mkOpt fileType { };
+          dataHome = mkOpt types.str "${config.home.homeDirectory}/.local/share";
+          stateFile = mkOpt fileType { };
+          stateHome = mkOpt types.str "${config.home.homeDirectory}/.local/state";
+        };
+      };
+    };
+
+  mapHomeManagerToHjem =
+    {
+      hmConfig,
+      pkgs,
+    }:
+    let
       prefixFiles =
         prefix:
         lib.mapAttrs' (
@@ -70,11 +95,11 @@ let
         );
 
       hmFiles =
-        config.home.file
-        // prefixFiles ".cache" config.xdg.cacheFile
-        // prefixFiles ".config" config.xdg.configFile
-        // prefixFiles ".local/share" config.xdg.dataFile
-        // prefixFiles ".local/state" config.xdg.stateFile;
+        hmConfig.home.file
+        // prefixFiles ".cache" hmConfig.xdg.cacheFile
+        // prefixFiles ".config" hmConfig.xdg.configFile
+        // prefixFiles ".local/share" hmConfig.xdg.dataFile
+        // prefixFiles ".local/state" hmConfig.xdg.stateFile;
 
       fileSource =
         name: file:
@@ -119,8 +144,8 @@ let
           ExecStart = pkgs.writeShellScript "home-manager-adapter-${name}" ''
             set -euo pipefail
 
-            export HOME=${lib.escapeShellArg config.home.homeDirectory}
-            export USER=${lib.escapeShellArg config.home.username}
+            export HOME=${lib.escapeShellArg hmConfig.home.homeDirectory}
+            export USER=${lib.escapeShellArg hmConfig.home.username}
             cd "$HOME"
 
             hmDriverVersion=1
@@ -138,171 +163,100 @@ let
         };
       };
 
-      activationServices =
-        lib.mapAttrs'
-          (name: node: {
-            name = "home-manager-adapter-${name}";
-            value = activationService name node;
-          })
-          (
-            removeAttrs config.home.activation [
-              "checkLinkTargets"
-              "installPackages"
-              "linkGeneration"
-              "reloadSystemd"
-              "writeBoundary"
-            ]
-          );
+      skippedActivationNodes = [
+        "checkLinkTargets"
+        "installPackages"
+        "linkGeneration"
+        "reloadSystemd"
+        "writeBoundary"
+      ];
+
+      activationServices = lib.mapAttrs' (name: node: {
+        name = "home-manager-adapter-${name}";
+        value = activationService name node;
+      }) (removeAttrs hmConfig.home.activation skippedActivationNodes);
 
       hasActivation = activationServices != { };
+      mappedSystemdUnits = lib.genAttrs [
+        "paths"
+        "services"
+        "sockets"
+        "timers"
+      ] (kind: lib.mapAttrs (_: mapUnit) hmConfig.systemd.user.${kind});
     in
     {
-      options = {
-        home = {
-          activation = lib.mkOption {
-            type = lib.types.attrsOf lib.types.anything;
-            default = { };
+      files = lib.mapAttrs mapFile (lib.filterAttrs (_: file: file.enable) hmFiles);
+      packages = hmConfig.home.packages;
+
+      systemd = mappedSystemdUnits // {
+        services = mappedSystemdUnits.services // activationServices;
+        targets =
+          lib.mapAttrs (_: mapUnit) hmConfig.systemd.user.targets
+          // lib.optionalAttrs hasActivation {
+            home-manager-adapter.description = "Home Manager adapter";
           };
+      };
+    };
 
-          file = lib.mkOption {
-            type = fileType;
-            default = { };
-          };
+  wrap-home-manager-module =
+    hmModule:
+    { config, pkgs, ... }@args:
+    let
+      compatOptionNames = [
+        "_module"
+        "assertions"
+        "home"
+        "launchd"
+        "systemd"
+        "warnings"
+        "xdg"
+      ];
 
-          homeDirectory = lib.mkOption {
-            type = lib.types.str;
-            default = config.directory;
-          };
+      specialArgs = removeAttrs args [
+        "config"
+        "lib"
+        "options"
+      ];
 
-          packages = lib.mkOption {
-            type = lib.types.listOf lib.types.package;
-            default = [ ];
-          };
-
-          sessionVariables = lib.mkOption {
-            type = lib.types.attrsOf lib.types.anything;
-            default = { };
-          };
-
-          stateVersion = lib.mkOption {
-            type = lib.types.str;
-            default = "26.11";
-          };
-
-          username = lib.mkOption {
-            type = lib.types.str;
-            default = config.user;
-          };
-        };
-
-        launchd.agents = lib.mkOption {
-          type = lib.types.attrsOf lib.types.anything;
-          default = { };
-        };
-
-        systemd.activationTargets = lib.mkOption {
-          type = lib.types.listOf lib.types.str;
-          default = [ ];
-        };
-
-        systemd.user = {
-          paths = lib.mkOption {
-            type = lib.types.attrsOf lib.types.anything;
-            default = { };
-          };
-
-          services = lib.mkOption {
-            type = lib.types.attrsOf lib.types.anything;
-            default = { };
-          };
-
-          sockets = lib.mkOption {
-            type = lib.types.attrsOf lib.types.anything;
-            default = { };
-          };
-
-          systemctlPath = lib.mkOption {
-            type = lib.types.str;
-            default = "${pkgs.systemd}/bin/systemctl";
-          };
-
-          targets = lib.mkOption {
-            type = lib.types.attrsOf lib.types.anything;
-            default = { };
-          };
-
-          timers = lib.mkOption {
-            type = lib.types.attrsOf lib.types.anything;
-            default = { };
-          };
-        };
-
-        xdg = {
-          cacheFile = lib.mkOption {
-            type = fileType;
-            default = { };
-          };
-
-          cacheHome = lib.mkOption {
-            type = lib.types.str;
-            default = "${config.home.homeDirectory}/.cache";
-          };
-
-          configFile = lib.mkOption {
-            type = fileType;
-            default = { };
-          };
-
-          configHome = lib.mkOption {
-            type = lib.types.str;
-            default = "${config.home.homeDirectory}/.config";
-          };
-
-          dataFile = lib.mkOption {
-            type = fileType;
-            default = { };
-          };
-
-          dataHome = lib.mkOption {
-            type = lib.types.str;
-            default = "${config.home.homeDirectory}/.local/share";
-          };
-
-          stateFile = lib.mkOption {
-            type = fileType;
-            default = { };
-          };
-
-          stateHome = lib.mkOption {
-            type = lib.types.str;
-            default = "${config.home.homeDirectory}/.local/state";
-          };
-        };
+      defaults = {
+        home.homeDirectory = lib.mkDefault config.directory;
+        home.username = lib.mkDefault config.user;
+        systemd.user.systemctlPath = lib.mkDefault "${pkgs.systemd}/bin/systemctl";
       };
 
-      config = {
-        files = lib.mapAttrs mapFile (lib.filterAttrs (_: file: file.enable) hmFiles);
-        packages = config.home.packages;
+      hmOptions = hmLib.evalModules {
+        modules = [
+          compatOptionsModule
+          hmModule
+          defaults
+        ];
 
-        systemd = {
-          activationTargets = lib.mkIf hasActivation [ "home-manager-adapter.target" ];
-          paths = lib.mapAttrs (_: mapUnit) config.systemd.user.paths;
-          services = lib.mapAttrs (_: mapUnit) config.systemd.user.services // activationServices;
-          sockets = lib.mapAttrs (_: mapUnit) config.systemd.user.sockets;
-          targets =
-            lib.mapAttrs (_: mapUnit) config.systemd.user.targets
-            // lib.optionalAttrs hasActivation {
-              home-manager-adapter.description = "Home Manager adapter";
-            };
-          timers = lib.mapAttrs (_: mapUnit) config.systemd.user.timers;
-        };
+        inherit specialArgs;
+      };
+
+      passthroughOptions = removeAttrs hmOptions.options compatOptionNames;
+
+      hm = hmLib.evalModules {
+        modules = [
+          compatOptionsModule
+          hmModule
+          defaults
+          { config = lib.getAttrs (builtins.attrNames passthroughOptions) config; }
+        ];
+
+        inherit specialArgs;
+      };
+    in
+    {
+      options = passthroughOptions;
+      config = mapHomeManagerToHjem {
+        inherit pkgs;
+        hmConfig = hm.config;
       };
     };
 in
 {
-  den.default.nixos.hjem = {
-    extraModules = [ adapter ];
-    specialArgs.lib = hmLib;
+  den.default.nixos.hjem.specialArgs = {
+    inherit wrap-home-manager-module;
   };
-
 }
