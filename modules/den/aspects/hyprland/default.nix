@@ -1,6 +1,18 @@
-{ ... }:
+{ den, ... }:
 {
   den.aspects.hyperland = {
+    includes = [
+      (
+        {
+          includes ? (_: [ ]),
+          ...
+        }:
+        {
+          includes = includes (builtins.removeAttrs den.aspects.hyperland [ "__functor" ]);
+        }
+      )
+    ];
+
     hjem =
       { lib, pkgs, ... }:
       let

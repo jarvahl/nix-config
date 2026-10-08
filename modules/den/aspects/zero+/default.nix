@@ -93,8 +93,11 @@ lib.mkMerge [
           (with den.aspects; [
             # UI
             foot
-            hyperland
-            hyperland.autologin
+            (hyperland {
+              includes = { autologin, ... }: [
+                autologin
+              ];
+            })
             hypridle
             quickshell
             swaybg
