@@ -2,6 +2,7 @@
 {
   den.default.nixos.hjem.extraModules = [
     inputs.hjem-rum.hjemModules.default
+    inputs.sops-nix.homeManagerModules.sops
   ];
 
   flake-file.inputs = {

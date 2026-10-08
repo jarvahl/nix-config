@@ -1,14 +1,14 @@
 { lib, ... }:
 {
   den.aspects.sops = {
-    for-home-manager = {
+    for-hjem = {
       loadSecretsFrom =
         {
           file,
           sshKeyPath ? null,
         }:
         {
-          homeManager.sops = {
+          hjem.sops = {
             defaultSopsFile = file;
           }
           // lib.optionalAttrs (sshKeyPath != null) {
@@ -23,7 +23,7 @@
           mode ? "0600",
         }:
         {
-          homeManager =
+          hjem =
             { config, ... }:
             {
               sops.secrets.${name} = {

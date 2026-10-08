@@ -123,7 +123,7 @@ lib.mkMerge [
               pi
               zsh
             ])
-            ++ (with den.aspects.sops.for-home-manager; [
+            ++ (with den.aspects.sops.for-hjem; [
               (loadSecretsFrom {
                 file = ./secrets.${user}.yaml;
                 sshKeyPath = "/home/${user}/.ssh/id_ed25519";
@@ -133,12 +133,10 @@ lib.mkMerge [
               (user-shell "zsh")
             ]);
 
-          homeManager = { };
         };
 
         hosts.x86_64-linux.${host}.users.${user}.classes = [
           "hjem"
-          "homeManager"
         ];
       };
 
