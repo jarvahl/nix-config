@@ -7,7 +7,12 @@ lib.mkMerge [
     den = {
       aspects.${host} = {
         includes = with den.aspects; [
+          (sops.file ./secrets.yaml)
           ssh
+          (ssh.host-key {
+            path = "/etc/ssh/ssh_host_ed25519_key";
+            type = "ed25519";
+          })
           tailscale
         ];
 
@@ -52,24 +57,6 @@ lib.mkMerge [
             imports = [ (modulesPath + "/installer/scan/not-detected.nix") ];
 
             networking.useDHCP = lib.mkDefault true;
-
-            services.openssh.hostKeys = [
-              {
-                path = "/etc/ssh/ssh_host_ed25519_key";
-                type = "ed25519";
-              }
-            ];
-
-            sops = {
-              defaultSopsFile = ./secrets.yaml;
-              secrets."ssh/ssh_host_ed25519_key" = {
-                group = "root";
-                mode = "0600";
-                owner = "root";
-                path = "/etc/ssh/ssh_host_ed25519_key";
-                restartUnits = [ "sshd.service" ];
-              };
-            };
 
             swapDevices = [
               { device = "/dev/disk/by-uuid/ef842ad0-2a1b-4e24-a71b-61bb49cc4c55"; }
