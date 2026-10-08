@@ -1,3 +1,6 @@
+# DO-NOT-EDIT. This file was auto-generated from sops-file config.
+# Edit Nix sources and regenerate it.
+
 %YAML 1.1
 ---
 creation_rules:

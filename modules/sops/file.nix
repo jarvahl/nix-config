@@ -26,16 +26,23 @@ in
   config.perSystem =
     { pkgs, ... }:
     lib.optionalAttrs (cfg.creation_rules != [ ]) {
-      files.file.${cfg.path}.source = (pkgs.formats.yaml { }).generate cfg.path {
-        creation_rules = map (
-          rule:
-          rule
-          // {
-            key_groups = map keyGroup rule.key_groups;
-            path_regex = pathRegex rule.path_regex;
-          }
-        ) cfg.creation_rules;
-      };
+      files.file.${cfg.path}.source = pkgs.concatText cfg.path [
+        (pkgs.writeText "sops-file-header" ''
+          # DO-NOT-EDIT. This file was auto-generated from sops-file config.
+          # Edit Nix sources and regenerate it.
+
+        '')
+        ((pkgs.formats.yaml { }).generate cfg.path {
+          creation_rules = map (
+            rule:
+            rule
+            // {
+              key_groups = map keyGroup rule.key_groups;
+              path_regex = pathRegex rule.path_regex;
+            }
+          ) cfg.creation_rules;
+        })
+      ];
     };
 
   options."sops-file" = {
