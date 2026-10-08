@@ -1,4 +1,4 @@
-{ ... }:
+{ lib, ... }:
 {
   den.aspects.ssh.provisionHostKey =
     {
@@ -20,5 +20,25 @@
           restartUnits = [ "sshd.service" ];
         };
       };
+    };
+
+  den.aspects.ssh.provisionUserKey =
+    {
+      path,
+      secretName ? "ssh/${baseNameOf path}",
+    }:
+    {
+      homeManager =
+        { config, ... }:
+        {
+          sops.secrets.${secretName} = {
+            mode = "0600";
+            path =
+              if lib.hasPrefix "/" path then
+                path
+              else
+                "${config.home.homeDirectory}/${lib.removePrefix "./" path}";
+          };
+        };
     };
 }
