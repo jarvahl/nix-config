@@ -4,4 +4,4 @@ creation_rules:
 - key_groups:
   - age:
     - age1y8xgchal8k9gu2hgl4jde53ap0rxj4p3kfs3a0xt2c5cmx3ztexs96dm04
-  path_regex: modules/den/aspects/zero\+/secrets\.yml$
+  path_regex: modules/den/aspects/zero\+/secrets\.yaml$

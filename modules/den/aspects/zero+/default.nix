@@ -61,7 +61,7 @@ lib.mkMerge [
             ];
 
             sops = {
-              defaultSopsFile = ./secrets.yml;
+              defaultSopsFile = ./secrets.yaml;
               secrets."ssh/ssh_host_ed25519_key" = {
                 group = "root";
                 mode = "0600";
@@ -86,7 +86,7 @@ lib.mkMerge [
           key_groups = [
             { age = [ host ]; }
           ];
-          path_regex = ./secrets.yml;
+          path_regex = ./secrets.yaml;
         }
       ];
 
