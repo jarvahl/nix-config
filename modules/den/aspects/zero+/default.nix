@@ -1,4 +1,8 @@
-{ den, lib, ... }:
+{
+  den,
+  lib,
+  ...
+}:
 let
   host = "zero";
 in
@@ -89,28 +93,35 @@ lib.mkMerge [
     in
     {
       den = {
-        aspects."${user}@${host}".includes =
-          (with den.aspects; [
-            # UI
-            foot
-            (hyperland {
-              includes = { autologin, ... }: [
-                autologin
-              ];
-            })
-            hypridle
-            quickshell
-            swaybg
+        aspects."${user}@${host}" = {
+          includes =
+            (with den.aspects; [
+              # UI
+              foot
+              (hyperland {
+                includes = { autologin, ... }: [
+                  autologin
+                ];
+              })
+              hypridle
+              quickshell
+              swaybg
 
-            # Console
-            pi
-            zsh
-          ])
-          ++ (with den.batteries; [
-            (user-shell "zsh")
-          ]);
+              # Console
+              pi
+              zsh
+            ])
+            ++ (with den.batteries; [
+              (user-shell "zsh")
+            ]);
 
-        hosts.x86_64-linux.${host}.users.${user}.classes = [ "hjem" ];
+          homeManager = { };
+        };
+
+        hosts.x86_64-linux.${host}.users.${user}.classes = [
+          "hjem"
+          "homeManager"
+        ];
       };
     }
   )
