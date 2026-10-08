@@ -4,16 +4,28 @@ let
 in
 {
   den = {
-    aspects.${host}.includes = with den.aspects; [
-      (sops.loadSecretsFrom ./secrets.yaml)
-      (sops.decryptWithSshKey "/etc/ssh/ssh_host_ed25519_key")
-      ssh
-      (ssh.provisionHostKey {
-        path = "/etc/ssh/ssh_host_ed25519_key";
-        type = "ed25519";
-      })
-      podman
-    ];
+    aspects.${host}.includes =
+      (with den.aspects; [
+        ssh
+        (ssh.hostKey {
+          path = "/etc/ssh/ssh_host_ed25519_key";
+          type = "ed25519";
+        })
+        podman
+      ])
+      ++ (with den.aspects.sops.for-nixos; [
+        (loadSecretsFrom {
+          file = ./secrets.yaml;
+          sshKeyPath = "/etc/ssh/ssh_host_ed25519_key";
+        })
+        (provision {
+          group = "root";
+          name = "ssh/ssh_host_ed25519_key";
+          owner = "root";
+          path = "/etc/ssh/ssh_host_ed25519_key";
+          restartUnits = [ "sshd.service" ];
+        })
+      ]);
 
     hosts.x86_64-linux.${host} = {
       users.nixos-user = {
