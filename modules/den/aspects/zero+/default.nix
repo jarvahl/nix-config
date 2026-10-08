@@ -8,6 +8,7 @@ lib.mkMerge [
       aspects.${host} = {
         includes = with den.aspects; [
           (sops.file ./secrets.yaml)
+          (sops.useAsIdentity "/etc/ssh/ssh_host_ed25519_key")
           ssh
           (ssh.host-key {
             path = "/etc/ssh/ssh_host_ed25519_key";
