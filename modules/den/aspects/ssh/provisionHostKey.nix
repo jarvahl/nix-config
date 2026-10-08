@@ -1,6 +1,6 @@
 { ... }:
 {
-  den.aspects.ssh.host-key =
+  den.aspects.ssh.provisionHostKey =
     {
       path,
       type,

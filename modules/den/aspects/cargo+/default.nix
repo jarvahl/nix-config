@@ -5,10 +5,10 @@ in
 {
   den = {
     aspects.${host}.includes = with den.aspects; [
-      (sops.file ./secrets.yaml)
-      (sops.useAsIdentity "/etc/ssh/ssh_host_ed25519_key")
+      (sops.loadSecretsFrom ./secrets.yaml)
+      (sops.decryptWithSshKey "/etc/ssh/ssh_host_ed25519_key")
       ssh
-      (ssh.host-key {
+      (ssh.provisionHostKey {
         path = "/etc/ssh/ssh_host_ed25519_key";
         type = "ed25519";
       })

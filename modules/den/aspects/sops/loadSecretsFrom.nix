@@ -1,6 +1,6 @@
 { ... }:
 {
-  den.aspects.sops.file = sopsFile: {
+  den.aspects.sops.loadSecretsFrom = sopsFile: {
     nixos.sops.defaultSopsFile = sopsFile;
   };
 }

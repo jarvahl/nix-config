@@ -1,6 +1,6 @@
 { lib, ... }:
 {
-  den.aspects.sops.useAsIdentity = path: {
+  den.aspects.sops.decryptWithSshKey = path: {
     nixos.sops.age = {
       keyFile = lib.mkForce null;
       sshKeyPaths = [ path ];
