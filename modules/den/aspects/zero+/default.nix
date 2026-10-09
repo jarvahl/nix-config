@@ -1,6 +1,7 @@
 {
   den,
   lib,
+  recovery,
   ...
 }:
 let
@@ -85,8 +86,8 @@ lib.mkMerge [
       hosts.x86_64-linux.${host} = { };
     };
 
-    "sops-file" = {
-      creation_rules = [
+    sops-file = {
+      creation_rules = recovery [
         {
           key_groups = [
             { age = [ host ]; }
@@ -140,8 +141,8 @@ lib.mkMerge [
         ];
       };
 
-      "sops-file" = {
-        creation_rules = [
+      sops-file = {
+        creation_rules = recovery [
           {
             key_groups = [
               { age = [ "${user}@${host}" ]; }

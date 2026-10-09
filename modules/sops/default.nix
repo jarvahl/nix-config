@@ -1,6 +1,20 @@
-{ inputs, ... }:
+{ inputs, lib, ... }:
 {
-  imports = [ inputs.sops-file.flakeModules.default ];
+  _module.args.recovery =
+    rules:
+    map (
+      rule:
+      rule
+      // {
+        key_groups = map (
+          group:
+          group
+          // {
+            age = lib.unique (group.age ++ [ "recovery" ]);
+          }
+        ) rule.key_groups;
+      }
+    ) rules;
 
   den.default.nixos =
     { config, ... }:
@@ -32,6 +46,8 @@
     };
   };
 
+  imports = [ inputs.sops-file.flakeModules.default ];
+
   perSystem = { pkgs, ... }: {
     devShells.sops-recovery = pkgs.mkShell {
       packages = [
@@ -40,11 +56,11 @@
       ];
 
       shellHook = ''
-        encrypted_key="''${SOPS_RECOVERY_KEY:-$PWD/recovery.agekey.age}"
+        encrypted_key="''${SOPS_RECOVERY_KEY:-$PWD/recovery.key.age}"
 
         if [ ! -f "$encrypted_key" ]; then
           echo "missing recovery key: $encrypted_key" >&2
-          echo "set SOPS_RECOVERY_KEY=/path/to/recovery.agekey.age" >&2
+          echo "set SOPS_RECOVERY_KEY=/path/to/recovery.key.age" >&2
           return 1
         fi
 
@@ -67,4 +83,6 @@
       '';
     };
   };
+
+  sops-file.keys.recovery = "age17dkg84wglz4nq2523fayp528qr82njr2znlwc6fvdhzy8k3pg3gsusgx2q";
 }

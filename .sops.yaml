@@ -7,16 +7,20 @@ creation_rules:
 - key_groups:
   - age:
     - age1y8xgchal8k9gu2hgl4jde53ap0rxj4p3kfs3a0xt2c5cmx3ztexs96dm04
+    - age17dkg84wglz4nq2523fayp528qr82njr2znlwc6fvdhzy8k3pg3gsusgx2q
   path_regex: modules/den/aspects/zero\+/secrets\.yaml$
 - key_groups:
   - age:
     - age1y8xgchal8k9gu2hgl4jde53ap0rxj4p3kfs3a0xt2c5cmx3ztexs96dm04
+    - age17dkg84wglz4nq2523fayp528qr82njr2znlwc6fvdhzy8k3pg3gsusgx2q
   path_regex: modules/den/aspects/zero\+/secrets\.jarvahl\.yaml$
 - key_groups:
   - age:
     - age1y8xgchal8k9gu2hgl4jde53ap0rxj4p3kfs3a0xt2c5cmx3ztexs96dm04
+    - age17dkg84wglz4nq2523fayp528qr82njr2znlwc6fvdhzy8k3pg3gsusgx2q
   path_regex: modules/den/aspects/gaia\+/secrets\.yaml$
 - key_groups:
   - age:
     - age1y8xgchal8k9gu2hgl4jde53ap0rxj4p3kfs3a0xt2c5cmx3ztexs96dm04
+    - age17dkg84wglz4nq2523fayp528qr82njr2znlwc6fvdhzy8k3pg3gsusgx2q
   path_regex: modules/den/aspects/cargo\+/secrets\.yaml$

@@ -1,4 +1,4 @@
-{ den, ... }:
+{ den, recovery, ... }:
 let
   host = "cargo";
 in
@@ -36,8 +36,8 @@ in
     };
   };
 
-  "sops-file" = {
-    creation_rules = [
+  sops-file = {
+    creation_rules = recovery [
       {
         key_groups = [
           { age = [ host ]; }
