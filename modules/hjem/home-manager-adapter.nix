@@ -11,6 +11,28 @@ let
 
   hmLib = lib.extend (_: _: { hm.dag = hmDag; });
 
+  systemdUnitKinds = [
+    "paths"
+    "services"
+    "sockets"
+    "targets"
+    "timers"
+  ];
+
+  xdgFilePrefixes = {
+    cacheFile = ".cache";
+    configFile = ".config";
+    dataFile = ".local/share";
+    stateFile = ".local/state";
+  };
+
+  xdgHomeDirs = {
+    cacheHome = ".cache";
+    configHome = ".config";
+    dataHome = ".local/share";
+    stateHome = ".local/state";
+  };
+
   compatOptionsModule =
     { config, lib, ... }:
     let
@@ -52,28 +74,13 @@ let
 
         launchd.agents = emptyAnythingAttrs;
 
-        systemd.user =
-          lib.genAttrs [
-            "paths"
-            "services"
-            "sockets"
-            "targets"
-            "timers"
-          ] (_: emptyAnythingAttrs)
-          // {
-            systemctlPath = mkOpt types.str null;
-          };
-
-        xdg = {
-          cacheFile = mkOpt fileType { };
-          cacheHome = mkOpt types.str "${config.home.homeDirectory}/.cache";
-          configFile = mkOpt fileType { };
-          configHome = mkOpt types.str "${config.home.homeDirectory}/.config";
-          dataFile = mkOpt fileType { };
-          dataHome = mkOpt types.str "${config.home.homeDirectory}/.local/share";
-          stateFile = mkOpt fileType { };
-          stateHome = mkOpt types.str "${config.home.homeDirectory}/.local/state";
+        systemd.user = lib.genAttrs systemdUnitKinds (_: emptyAnythingAttrs) // {
+          systemctlPath = mkOpt types.str null;
         };
+
+        xdg =
+          lib.mapAttrs (_: _: mkOpt fileType { }) xdgFilePrefixes
+          // lib.mapAttrs (_: dir: mkOpt types.str "${config.home.homeDirectory}/${dir}") xdgHomeDirs;
       };
     };
 
@@ -86,20 +93,23 @@ let
       prefixFiles =
         prefix:
         lib.mapAttrs' (
-          name: file: {
-            name = "${prefix}/${file.target or name}";
+          name: file:
+          let
+            target = "${prefix}/${file.target or name}";
+          in
+          {
+            name = target;
             value = file // {
-              target = "${prefix}/${file.target or name}";
+              inherit target;
             };
           }
         );
 
       hmFiles =
         hmConfig.home.file
-        // prefixFiles ".cache" hmConfig.xdg.cacheFile
-        // prefixFiles ".config" hmConfig.xdg.configFile
-        // prefixFiles ".local/share" hmConfig.xdg.dataFile
-        // prefixFiles ".local/state" hmConfig.xdg.stateFile;
+        // lib.concatMapAttrs (
+          fileAttr: prefix: prefixFiles prefix hmConfig.xdg.${fileAttr}
+        ) xdgFilePrefixes;
 
       fileSource =
         name: file:
@@ -177,12 +187,9 @@ let
       }) (removeAttrs hmConfig.home.activation skippedActivationNodes);
 
       hasActivation = activationServices != { };
-      mappedSystemdUnits = lib.genAttrs [
-        "paths"
-        "services"
-        "sockets"
-        "timers"
-      ] (kind: lib.mapAttrs (_: mapUnit) hmConfig.systemd.user.${kind});
+      mappedSystemdUnits = lib.genAttrs (lib.remove "targets" systemdUnitKinds) (
+        kind: lib.mapAttrs (_: mapUnit) hmConfig.systemd.user.${kind}
+      );
     in
     {
       files = lib.mapAttrs mapFile (lib.filterAttrs (_: file: file.enable) hmFiles);
