@@ -134,6 +134,19 @@ lib.mkMerge [
               (user-shell "zsh")
             ]);
 
+          nixos =
+            { config, lib, ... }:
+            let
+              passwordSecret = "users/${user}/hashedPassword";
+            in
+            {
+              sops.secrets.${passwordSecret}.neededForUsers = true;
+
+              users.users.${user} = {
+                hashedPasswordFile = config.sops.secrets.${passwordSecret}.path;
+                initialPassword = lib.mkForce null;
+              };
+            };
         };
 
         hosts.x86_64-linux.${host}.users.${user}.classes = [
