@@ -5,7 +5,7 @@
       packages = with pkgs; [
         age
         just
-        mdsh
+        runme
         sops
       ];
 
