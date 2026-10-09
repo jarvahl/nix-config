@@ -3,12 +3,8 @@
   den.default.nixos =
     { config, ... }:
     {
-      hjem.extraModules = [
-        ({ wrap-home-manager-module, ... }: {
-          imports = [
-            (wrap-home-manager-module inputs.sops-nix.homeManagerModules.sops)
-          ];
-        })
+      hjem.homeManagerModules = [
+        inputs.sops-nix.homeManagerModules.sops
       ];
       hjem.specialArgs.sops = config.sops;
       imports = [ inputs.sops-nix.nixosModules.sops ];
