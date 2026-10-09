@@ -32,10 +32,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     hjem-home-manager = {
-      url = "git+ssh://git@github.com/jarvahl/hjem-home-manager.git";
+      url = "github:jarvahl/hjem-home-manager";
       inputs = {
         flake-file.follows = "flake-file";
         flake-parts.follows = "flake-parts";
+        git-hooks-nix.follows = "git-hooks-nix";
         hjem.follows = "hjem";
         import-tree.follows = "import-tree";
         nixpkgs.follows = "nixpkgs";
@@ -69,6 +70,18 @@
         };
         flake-parts.follows = "flake-parts";
         nixpkgs.follows = "nixpkgs";
+      };
+    };
+    sops-file = {
+      url = "github:jarvahl/sops-file";
+      inputs = {
+        files.follows = "files";
+        flake-file.follows = "flake-file";
+        flake-parts.follows = "flake-parts";
+        git-hooks-nix.follows = "git-hooks-nix";
+        import-tree.follows = "import-tree";
+        nixpkgs.follows = "nixpkgs";
+        treefmt-nix.follows = "treefmt-nix";
       };
     };
     sops-nix = {

@@ -1,5 +1,7 @@
 { inputs, ... }:
 {
+  imports = [ inputs.sops-file.flakeModules.default ];
+
   den.default.nixos =
     { config, ... }:
     {
@@ -11,9 +13,23 @@
       sops.age.keyFile = "/var/lib/sops-nix/key.txt";
     };
 
-  flake-file.inputs.sops-nix = {
-    inputs.nixpkgs.follows = "nixpkgs";
-    url = "github:Mic92/sops-nix";
+  flake-file.inputs = {
+    sops-file = {
+      url = "github:jarvahl/sops-file";
+      inputs = {
+        files.follows = "files";
+        flake-file.follows = "flake-file";
+        flake-parts.follows = "flake-parts";
+        git-hooks-nix.follows = "git-hooks-nix";
+        import-tree.follows = "import-tree";
+        nixpkgs.follows = "nixpkgs";
+        treefmt-nix.follows = "treefmt-nix";
+      };
+    };
+    sops-nix = {
+      inputs.nixpkgs.follows = "nixpkgs";
+      url = "github:Mic92/sops-nix";
+    };
   };
 
   perSystem = { pkgs, ... }: {

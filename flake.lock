@@ -256,6 +256,9 @@
         "flake-parts": [
           "flake-parts"
         ],
+        "git-hooks-nix": [
+          "git-hooks-nix"
+        ],
         "hjem": [
           "hjem"
         ],
@@ -271,17 +274,17 @@
         ]
       },
       "locked": {
-        "lastModified": 1791538858,
-        "narHash": "sha256-p41SFK/YqmxztHE7Nu3c+ZnhNE9Gtd9NOXLgggVFS3Q=",
-        "ref": "refs/heads/main",
-        "rev": "8757c5627245d9328e7060cc66a55b20072ac878",
-        "revCount": 1,
-        "type": "git",
-        "url": "ssh://git@github.com/jarvahl/hjem-home-manager.git"
+        "lastModified": 1791539293,
+        "narHash": "sha256-JcTHrdpDgOIUYX3ggXOZPjqiRY+yMLwAO/T7vmUXODE=",
+        "owner": "jarvahl",
+        "repo": "hjem-home-manager",
+        "rev": "b7610a859c1691e57e1eba00c60c8ce24c6fe4d8",
+        "type": "github"
       },
       "original": {
-        "type": "git",
-        "url": "ssh://git@github.com/jarvahl/hjem-home-manager.git"
+        "owner": "jarvahl",
+        "repo": "hjem-home-manager",
+        "type": "github"
       }
     },
     "hjem-rum": {
@@ -482,9 +485,48 @@
         "nixos-wsl": "nixos-wsl",
         "nixpkgs": "nixpkgs",
         "pi": "pi",
+        "sops-file": "sops-file",
         "sops-nix": "sops-nix",
         "treefmt-nix": "treefmt-nix",
         "wrappers": "wrappers"
+      }
+    },
+    "sops-file": {
+      "inputs": {
+        "files": [
+          "files"
+        ],
+        "flake-file": [
+          "flake-file"
+        ],
+        "flake-parts": [
+          "flake-parts"
+        ],
+        "git-hooks-nix": [
+          "git-hooks-nix"
+        ],
+        "import-tree": [
+          "import-tree"
+        ],
+        "nixpkgs": [
+          "nixpkgs"
+        ],
+        "treefmt-nix": [
+          "treefmt-nix"
+        ]
+      },
+      "locked": {
+        "lastModified": 1791539771,
+        "narHash": "sha256-kW1cjJX/a7/7l9CkK30ZUsXP965RfJGtBVBM2jQ8VPI=",
+        "owner": "jarvahl",
+        "repo": "sops-file",
+        "rev": "b6274c7774b15433023982e919100e3349ab52d9",
+        "type": "github"
+      },
+      "original": {
+        "owner": "jarvahl",
+        "repo": "sops-file",
+        "type": "github"
       }
     },
     "sops-nix": {

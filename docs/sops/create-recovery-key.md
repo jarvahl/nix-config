@@ -12,7 +12,7 @@ Encrypt it with a passphrase:
 age -p -a -o recovery.agekey.age recovery.agekey
 ```
 
-Show public recipient for `"sops-file".recovery_key`:
+Show public recipient if you later want to add it to SOPS rules:
 
 ```shell
 age-keygen -y recovery.agekey
