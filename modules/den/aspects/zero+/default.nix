@@ -125,27 +125,12 @@ lib.mkMerge [
             ++ (with den.aspects.sops; [
               (secretsFile ./secrets.${user}.yaml)
               (keyFile ".config/sops/age/key.txt")
+              hashedPassword
             ])
             ++ (with den.batteries; [
               (user-shell "zsh")
             ]);
 
-          nixos =
-            { config, lib, ... }:
-            let
-              passwordSecret = "users/${user}/hashedPassword";
-            in
-            {
-              sops.secrets.${passwordSecret} = {
-                neededForUsers = true;
-                sopsFile = ./secrets.yaml;
-              };
-
-              users.users.${user} = {
-                hashedPasswordFile = config.sops.secrets.${passwordSecret}.path;
-                initialPassword = lib.mkForce null;
-              };
-            };
         };
 
         hosts.x86_64-linux.${host}.users.${user}.classes = [

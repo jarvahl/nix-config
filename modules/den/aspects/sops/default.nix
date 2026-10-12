@@ -63,5 +63,27 @@ in
         hjem.hjem.sops.defaultSopsFile = file;
         nixos.nixos.sops.defaultSopsFile = file;
       };
+
+    hashedPassword = {
+      nixos =
+        {
+          config,
+          lib,
+          user,
+          ...
+        }:
+        let
+          userName = user.userName;
+          secretName = "users/${userName}/hashedPassword";
+        in
+        {
+          sops.secrets.${secretName}.neededForUsers = true;
+
+          users.users.${userName} = {
+            hashedPasswordFile = config.sops.secrets.${secretName}.path;
+            initialPassword = lib.mkForce null;
+          };
+        };
+    };
   };
 }
