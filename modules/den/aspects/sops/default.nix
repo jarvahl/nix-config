@@ -74,7 +74,7 @@ in
         }:
         let
           userName = user.userName;
-          secretName = "users/${userName}/hashedPassword";
+          secretName = "${userName}/hashedPassword";
         in
         {
           sops.secrets.${secretName}.neededForUsers = true;
