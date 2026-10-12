@@ -13,7 +13,7 @@ creation_rules:
   - age:
     - age1gfhnnsfzf839uvyr3nf6r3cl85zk4hvewkjpfpncxe8y7dxraeeqyr4y82
     - age17dkg84wglz4nq2523fayp528qr82njr2znlwc6fvdhzy8k3pg3gsusgx2q
-  path_regex: modules/den/aspects/zero\+/secrets\.jarvahl\.yaml$
+  path_regex: modules/den/aspects/zero\+/secrets-jarvahl\.yaml$
 - key_groups:
   - age:
     - age1g54ya2lf87wg9verfd5aqk8xrptgmed7dn2v3850wjxt330jwfkskngg04
@@ -23,7 +23,7 @@ creation_rules:
   - age:
     - age183kk96xwp5c4w0qznxklmuqu0rmyt74chxr6snmwp8qeuts2zfgsygp6dg
     - age17dkg84wglz4nq2523fayp528qr82njr2znlwc6fvdhzy8k3pg3gsusgx2q
-  path_regex: modules/den/aspects/gaia\+/secrets\.nixos\.yaml$
+  path_regex: modules/den/aspects/gaia\+/secrets-nixos\.yaml$
 - key_groups:
   - age:
     - age1muvk3n4qdla548vsgqmpg2xr2tnrkv70aeykncmvttrg2dlfzyustnyawd
@@ -33,4 +33,4 @@ creation_rules:
   - age:
     - age1d3qae5nevuu0vrt33ehjck00tyt6ym23gdjf9r5fatxaplh6yg6szgzeqx
     - age17dkg84wglz4nq2523fayp528qr82njr2znlwc6fvdhzy8k3pg3gsusgx2q
-  path_regex: modules/den/aspects/cargo\+/secrets\.nixos\.yaml$
+  path_regex: modules/den/aspects/cargo\+/secrets-nixos\.yaml$

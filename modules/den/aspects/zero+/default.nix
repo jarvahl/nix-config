@@ -123,7 +123,7 @@ lib.mkMerge [
               zsh
             ])
             ++ (with den.aspects.sops; [
-              (secretsFile ./secrets.${user}.yaml)
+              (secretsFile ./secrets-${user}.yaml)
               (keyFile ".config/sops/age/key.txt")
             ])
             ++ (with den.batteries; [
@@ -143,7 +143,7 @@ lib.mkMerge [
             key_groups = [
               { age = [ "${user}@${host}" ]; }
             ];
-            path_regex = ./secrets.${user}.yaml;
+            path_regex = ./secrets-${user}.yaml;
           }
         ];
 
