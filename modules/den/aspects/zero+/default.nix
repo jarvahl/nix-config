@@ -19,28 +19,34 @@ lib.mkMerge [
           ])
           ++ (with den.aspects.sops; [
             (from ./secrets-host.yaml)
-            (secret {
-              module = { path, ... }: {
-                sops.age.keyFile = path;
-              };
-              name = "age/key";
-              path = "/var/lib/sops-nix/key.txt";
-            })
-            (secret {
-              group = "root";
-              module = { path, ... }: {
-                services.openssh.hostKeys = [
+            (secret (
+              let
+                path = "/var/lib/sops-nix/key.txt";
+              in
+              {
+                aspect.sops.age.keyFile = path;
+                name = "age/key";
+                inherit path;
+              }
+            ))
+            (secret (
+              let
+                path = "/etc/ssh/ssh_host_ed25519_key";
+              in
+              {
+                aspect.services.openssh.hostKeys = [
                   {
                     inherit path;
                     type = "ed25519";
                   }
                 ];
-              };
-              name = "ssh/host_key";
-              owner = "root";
-              path = "/etc/ssh/ssh_host_ed25519_key";
-              restartUnits = [ "sshd.service" ];
-            })
+                group = "root";
+                name = "ssh/host_key";
+                owner = "root";
+                inherit path;
+                restartUnits = [ "sshd.service" ];
+              }
+            ))
           ]);
 
         nixos =
@@ -134,13 +140,16 @@ lib.mkMerge [
             ])
             ++ (with den.aspects.sops; [
               (from ./secrets-user-${user}.yaml)
-              (secret {
-                module = { path, ... }: {
-                  sops.age.keyFile = path;
-                };
-                name = "age/key";
-                path = ".config/sops/age/key.txt";
-              })
+              (secret (
+                let
+                  path = ".config/sops/age/key.txt";
+                in
+                {
+                  aspect.sops.age.keyFile = path;
+                  name = "age/key";
+                  inherit path;
+                }
+              ))
             ])
             ++ (with den.batteries; [
               (user-shell "zsh")

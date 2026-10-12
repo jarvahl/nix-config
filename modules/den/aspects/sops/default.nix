@@ -24,9 +24,9 @@ in
 
     secret =
       {
+        aspect ? { },
         group ? null,
         mode ? "0600",
-        module ? null,
         name,
         owner ? null,
         path,
@@ -52,10 +52,7 @@ in
                 path = secretPath;
               };
             }
-            (lib.optionalAttrs (module != null) (module {
-              inherit name;
-              path = secretPath;
-            }))
+            aspect
           ];
 
         nixos.nixos =
@@ -75,18 +72,14 @@ in
               // lib.optionalAttrs (owner != null) { inherit owner; }
               // lib.optionalAttrs (group != null) { inherit group; };
             }
-            (lib.optionalAttrs (module != null) (module {
-              inherit name path;
-            }))
+            aspect
           ];
       };
 
     keyFile =
       path:
       secret {
-        module = { path, ... }: {
-          sops.age.keyFile = path;
-        };
+        aspect.sops.age.keyFile = path;
         name = "age/key";
         inherit path;
       };
