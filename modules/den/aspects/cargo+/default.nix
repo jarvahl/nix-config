@@ -67,7 +67,10 @@ lib.mkMerge [
               passwordSecret = "users/${user}/hashedPassword";
             in
             {
-              sops.secrets.${passwordSecret}.neededForUsers = true;
+              sops.secrets.${passwordSecret} = {
+                neededForUsers = true;
+                sopsFile = ./secrets.yaml;
+              };
               users.users.${user} = {
                 hashedPasswordFile = config.sops.secrets.${passwordSecret}.path;
                 initialPassword = lib.mkForce null;
