@@ -20,7 +20,7 @@ lib.mkMerge [
           podman
         ])
         ++ (with den.aspects.sops; [
-          (secretsFile ./secrets.yaml)
+          (secretsFile ./secrets-host.yaml)
           (keyFile "/var/lib/sops-nix/key.txt")
           (provision {
             group = "root";
@@ -42,7 +42,7 @@ lib.mkMerge [
           key_groups = [
             { age = [ host ]; }
           ];
-          path_regex = ./secrets.yaml;
+          path_regex = ./secrets-host.yaml;
         }
       ];
 
@@ -57,7 +57,7 @@ lib.mkMerge [
       den = {
         aspects."${user}@${host}" = {
           includes = with den.aspects.sops; [
-            (secretsFile ./secrets-${user}.yaml)
+            (secretsFile ./secrets-user-${user}.yaml)
             (keyFile ".config/sops/age/key.txt")
           ];
         };
@@ -73,7 +73,7 @@ lib.mkMerge [
             key_groups = [
               { age = [ "${user}@${host}" ]; }
             ];
-            path_regex = ./secrets-${user}.yaml;
+            path_regex = ./secrets-user-${user}.yaml;
           }
         ];
 
