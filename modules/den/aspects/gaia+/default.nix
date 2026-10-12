@@ -13,18 +13,28 @@ lib.mkMerge [
       aspects.${host}.includes =
         (with den.aspects; [
           ssh
-          (ssh.hostKey {
-            path = "/etc/ssh/ssh_host_ed25519_key";
-            type = "ed25519";
-          })
           podman
         ])
         ++ (with den.aspects.sops; [
-          (secretsFile ./secrets-host.yaml)
-          (keyFile "/var/lib/sops-nix/key.txt")
-          (provision {
+          (from ./secrets-host.yaml)
+          (secret {
+            module = { path, ... }: {
+              sops.age.keyFile = path;
+            };
+            name = "age/key";
+            path = "/var/lib/sops-nix/key.txt";
+          })
+          (secret {
             group = "root";
-            name = "ssh/ssh_host_ed25519_key";
+            module = { path, ... }: {
+              services.openssh.hostKeys = [
+                {
+                  inherit path;
+                  type = "ed25519";
+                }
+              ];
+            };
+            name = "ssh/host_key";
             owner = "root";
             path = "/etc/ssh/ssh_host_ed25519_key";
             restartUnits = [ "sshd.service" ];
@@ -57,8 +67,14 @@ lib.mkMerge [
       den = {
         aspects."${user}@${host}" = {
           includes = with den.aspects.sops; [
-            (secretsFile ./secrets-user-${user}.yaml)
-            (keyFile ".config/sops/age/key.txt")
+            (from ./secrets-user-${user}.yaml)
+            (secret {
+              module = { path, ... }: {
+                sops.age.keyFile = path;
+              };
+              name = "age/key";
+              path = ".config/sops/age/key.txt";
+            })
           ];
         };
 

@@ -14,55 +14,84 @@ let
     if inUserContext ctx || (ctx.class or null) == "hjem" then backend.hjem else backend.nixos;
 in
 {
-  den.aspects.sops = {
-    keyFile =
-      path:
-      contextual {
-        hjem.hjem =
-          { config, ... }:
-          let
-            keyPath = homePath path { inherit config; };
-          in
-          {
-            sops.age.keyFile = keyPath;
-            sops.secrets.ageKey.path = keyPath;
-          };
-        nixos.nixos.sops = {
-          age.keyFile = path;
-          secrets.ageKey.path = path;
-        };
-      };
-
-    provision =
-      {
-        name,
-        path,
-        mode ? "0600",
-        owner ? null,
-        group ? null,
-        restartUnits ? [ ],
-      }:
-      contextual {
-        hjem.hjem = { config, ... }: {
-          sops.secrets.${name} = {
-            inherit mode;
-            path = homePath path { inherit config; };
-          };
-        };
-
-        nixos.nixos.sops.secrets.${name} = {
-          inherit mode path restartUnits;
-        }
-        // lib.optionalAttrs (owner != null) { inherit owner; }
-        // lib.optionalAttrs (group != null) { inherit group; };
-      };
-
-    secretsFile =
+  den.aspects.sops = rec {
+    from =
       file:
       contextual {
         hjem.hjem.sops.defaultSopsFile = file;
         nixos.nixos.sops.defaultSopsFile = file;
       };
+
+    secret =
+      {
+        group ? null,
+        mode ? "0600",
+        module ? null,
+        name,
+        owner ? null,
+        path,
+        restartUnits ? [ ],
+      }:
+      contextual {
+        hjem.hjem =
+          { config, ... }:
+          let
+            secretPath = homePath path { inherit config; };
+          in
+          lib.mkMerge [
+            {
+              assertions = [
+                {
+                  assertion = config.sops.defaultSopsFile != null;
+                  message = "sops.secret ${name}: missing `(from ./secrets.yaml)`";
+                }
+              ];
+
+              sops.secrets.${name} = {
+                inherit mode;
+                path = secretPath;
+              };
+            }
+            (lib.optionalAttrs (module != null) (module {
+              inherit name;
+              path = secretPath;
+            }))
+          ];
+
+        nixos.nixos =
+          { config, ... }:
+          lib.mkMerge [
+            {
+              assertions = [
+                {
+                  assertion = config.sops.defaultSopsFile != null;
+                  message = "sops.secret ${name}: missing `(from ./secrets.yaml)`";
+                }
+              ];
+
+              sops.secrets.${name} = {
+                inherit mode path restartUnits;
+              }
+              // lib.optionalAttrs (owner != null) { inherit owner; }
+              // lib.optionalAttrs (group != null) { inherit group; };
+            }
+            (lib.optionalAttrs (module != null) (module {
+              inherit name path;
+            }))
+          ];
+      };
+
+    keyFile =
+      path:
+      secret {
+        module = { path, ... }: {
+          sops.age.keyFile = path;
+        };
+        name = "age/key";
+        inherit path;
+      };
+    provision = secret;
+    secretsFile = from;
 
     hashedPassword = {
       nixos =
@@ -74,9 +103,16 @@ in
         }:
         let
           userName = user.userName;
-          secretName = "${userName}/hashedPassword";
+          secretName = "users/${userName}/hashed_password";
         in
         {
+          assertions = [
+            {
+              assertion = config.sops.defaultSopsFile != null;
+              message = "sops.hashedPassword ${userName}: missing `(from ./secrets.yaml)`";
+            }
+          ];
+
           sops.secrets.${secretName}.neededForUsers = true;
 
           users.users.${userName} = {
