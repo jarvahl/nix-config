@@ -51,48 +51,46 @@ lib.mkMerge [
   }
   (
     let
-      user = "nixos-user";
-      userName = "nixos";
+      user = "nixos";
     in
     {
       den = {
-        aspects."${userName}@${host}" = {
+        aspects."${user}@${host}" = {
           includes = with den.aspects.sops; [
-            (secretsFile ./secrets.${userName}.yaml)
+            (secretsFile ./secrets.${user}.yaml)
             (keyFile ".config/sops/age/key.txt")
           ];
 
           nixos =
             { config, lib, ... }:
             let
-              passwordSecret = "users/${userName}/hashedPassword";
+              passwordSecret = "users/${user}/hashedPassword";
             in
             {
               sops.secrets.${passwordSecret}.neededForUsers = true;
-              users.users.${userName} = {
+              users.users.${user} = {
                 hashedPasswordFile = config.sops.secrets.${passwordSecret}.path;
                 initialPassword = lib.mkForce null;
               };
             };
         };
 
-        hosts.x86_64-linux.${host}.users.${user} = {
-          classes = [ "hjem" ];
-          inherit userName;
-        };
+        hosts.x86_64-linux.${host}.users.${user}.classes = [
+          "hjem"
+        ];
       };
 
       sops-file = {
         creation_rules = recovery [
           {
             key_groups = [
-              { age = [ "${userName}@${host}" ]; }
+              { age = [ "${user}@${host}" ]; }
             ];
-            path_regex = ./secrets.${userName}.yaml;
+            path_regex = ./secrets.${user}.yaml;
           }
         ];
 
-        keys."${userName}@${host}" = "age1d3qae5nevuu0vrt33ehjck00tyt6ym23gdjf9r5fatxaplh6yg6szgzeqx";
+        keys."${user}@${host}" = "age1d3qae5nevuu0vrt33ehjck00tyt6ym23gdjf9r5fatxaplh6yg6szgzeqx";
       };
     }
   )
