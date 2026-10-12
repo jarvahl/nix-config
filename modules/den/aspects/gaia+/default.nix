@@ -12,6 +12,8 @@ lib.mkMerge [
     den = {
       aspects.${host}.includes =
         (with den.aspects; [
+          comma
+          fonts
           podman
           ssh
           (certificates {
@@ -74,10 +76,17 @@ lib.mkMerge [
     {
       den = {
         aspects."${user}@${host}" = {
-          includes = with den.aspects.sops; [
-            (from ./secrets-user-${user}.yaml)
-            (keyFile ".config/sops/age/key.txt")
-          ];
+          includes =
+            (with den.aspects; [
+              bat
+              eza
+              fzf
+              worktrunk
+            ])
+            ++ (with den.aspects.sops; [
+              (from ./secrets-user-${user}.yaml)
+              (keyFile ".config/sops/age/key.txt")
+            ]);
         };
 
         hosts.x86_64-linux.${host}.users.${user}.classes = [

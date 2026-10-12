@@ -13,8 +13,10 @@ lib.mkMerge [
       aspects.${host} = {
         includes =
           (with den.aspects; [
-            ssh
+            comma
+            fonts
             podman
+            ssh
             tailscale
           ])
           ++ (with den.aspects.sops; [
@@ -126,7 +128,11 @@ lib.mkMerge [
               swaybg
 
               # Console
+              bat
+              eza
+              fzf
               pi
+              worktrunk
               zsh
             ])
             ++ (with den.aspects.sops; [
