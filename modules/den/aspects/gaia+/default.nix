@@ -12,8 +12,19 @@ lib.mkMerge [
     den = {
       aspects.${host}.includes =
         (with den.aspects; [
-          ssh
           podman
+          ssh
+          (certificates {
+            includes = { ... }: [
+              {
+                nixos = { pkgs, ... }: {
+                  security.pki.certificateFiles = [
+                    "${pkgs.zscaler-cacert}/etc/ssl/certs/zscaler-ca.crt"
+                  ];
+                };
+              }
+            ];
+          })
         ])
         ++ (with den.aspects.sops; [
           (from ./secrets-host.yaml)
