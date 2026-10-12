@@ -31,24 +31,16 @@
       url = "github:feel-co/hjem";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    hjem-home-manager = {
-      url = "github:jarvahl/hjem-home-manager";
-      inputs = {
-        flake-file.follows = "flake-file";
-        flake-parts.follows = "flake-parts";
-        git-hooks-nix.follows = "git-hooks-nix";
-        hjem.follows = "hjem";
-        import-tree.follows = "import-tree";
-        nixpkgs.follows = "nixpkgs";
-        treefmt-nix.follows = "treefmt-nix";
-      };
-    };
     hjem-rum = {
       url = "github:snugnug/hjem-rum";
       inputs = {
         hjem.follows = "hjem";
         nixpkgs.follows = "nixpkgs";
       };
+    };
+    home-manager = {
+      url = "github:nix-community/home-manager";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
     import-tree = {
       url = "github:denful/import-tree";

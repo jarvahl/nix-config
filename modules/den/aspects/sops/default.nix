@@ -6,82 +6,107 @@ let
     if lib.hasPrefix "/" (toString path) then
       path
     else
-      "${config.directory}/${lib.removePrefix "./" (toString path)}";
+      "${config.home.homeDirectory}/${lib.removePrefix "./" (toString path)}";
 
-  inUserContext = ctx: ctx ? user || ctx ? home;
-  contextual =
-    backend: ctx:
-    if inUserContext ctx || (ctx.class or null) == "hjem" then backend.hjem else backend.nixos;
+  hostSecret =
+    {
+      aspect ? { },
+      group ? null,
+      mode ? "0600",
+      name,
+      owner ? null,
+      path,
+      restartUnits ? [ ],
+    }:
+    { config, ... }:
+    lib.mkMerge [
+      {
+        assertions = [
+          {
+            assertion = config.sops.defaultSopsFile != null;
+            message = "sops.secret ${name}: missing `(from ./secrets.yaml)`";
+          }
+        ];
+
+        sops.secrets.${name} = {
+          inherit mode path restartUnits;
+        }
+        // lib.optionalAttrs (owner != null) { inherit owner; }
+        // lib.optionalAttrs (group != null) { inherit group; };
+      }
+      aspect
+    ];
+
+  userSecret =
+    {
+      aspect ? { },
+      mode ? "0600",
+      name,
+      path,
+      ...
+    }:
+    { config, ... }:
+    let
+      secretPath = homePath path { inherit config; };
+    in
+    lib.mkMerge [
+      {
+        assertions = [
+          {
+            assertion = config.sops.defaultSopsFile != null;
+            message = "sops.secret ${name}: missing `(from ./secrets.yaml)`";
+          }
+        ];
+
+        sops.secrets.${name} = {
+          inherit mode;
+          path = secretPath;
+        };
+      }
+      aspect
+    ];
+
+  inUserContext =
+    ctx:
+    ctx ? user || ctx ? home || (ctx.class or null) == "homeManager" || (ctx.class or null) == "hjem";
+  contextual = backend: ctx: if inUserContext ctx then backend.homeManager else backend.nixos;
 in
 {
   den.aspects.sops = rec {
     from =
       file:
       contextual {
-        hjem.hjem.sops.defaultSopsFile = file;
+        homeManager.homeManager.sops.defaultSopsFile = file;
         nixos.nixos.sops.defaultSopsFile = file;
       };
 
     secret =
-      {
-        aspect ? { },
-        group ? null,
-        mode ? "0600",
-        name,
-        owner ? null,
-        path,
-        restartUnits ? [ ],
-      }:
+      args:
       contextual {
-        hjem.hjem =
+        homeManager.homeManager = userSecret args;
+        nixos.nixos = hostSecret args;
+      };
+
+    keyFile =
+      path:
+      contextual {
+        homeManager.homeManager =
           { config, ... }:
           let
             secretPath = homePath path { inherit config; };
           in
           lib.mkMerge [
-            {
-              assertions = [
-                {
-                  assertion = config.sops.defaultSopsFile != null;
-                  message = "sops.secret ${name}: missing `(from ./secrets.yaml)`";
-                }
-              ];
-
-              sops.secrets.${name} = {
-                inherit mode;
-                path = secretPath;
-              };
-            }
-            aspect
+            (userSecret {
+              name = "age/key";
+              inherit path;
+            } { inherit config; })
+            { sops.age.keyFile = secretPath; }
           ];
-
-        nixos.nixos =
-          { config, ... }:
-          lib.mkMerge [
-            {
-              assertions = [
-                {
-                  assertion = config.sops.defaultSopsFile != null;
-                  message = "sops.secret ${name}: missing `(from ./secrets.yaml)`";
-                }
-              ];
-
-              sops.secrets.${name} = {
-                inherit mode path restartUnits;
-              }
-              // lib.optionalAttrs (owner != null) { inherit owner; }
-              // lib.optionalAttrs (group != null) { inherit group; };
-            }
-            aspect
-          ];
-      };
-
-    keyFile =
-      path:
-      secret {
-        aspect.sops.age.keyFile = path;
-        name = "age/key";
-        inherit path;
+        nixos.nixos = hostSecret {
+          aspect.sops.age.keyFile = path;
+          name = "age/key";
+          inherit path;
+        };
       };
     provision = secret;
     secretsFile = from;

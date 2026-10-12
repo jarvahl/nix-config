@@ -19,16 +19,7 @@ lib.mkMerge [
           ])
           ++ (with den.aspects.sops; [
             (from ./secrets-host.yaml)
-            (secret (
-              let
-                path = "/var/lib/sops-nix/key.txt";
-              in
-              {
-                aspect.sops.age.keyFile = path;
-                name = "age/key";
-                inherit path;
-              }
-            ))
+            (keyFile "/var/lib/sops-nix/key.txt")
             (secret (
               let
                 path = "/etc/ssh/ssh_host_ed25519_key";
@@ -140,16 +131,7 @@ lib.mkMerge [
             ])
             ++ (with den.aspects.sops; [
               (from ./secrets-user-${user}.yaml)
-              (secret (
-                let
-                  path = ".config/sops/age/key.txt";
-                in
-                {
-                  aspect.sops.age.keyFile = path;
-                  name = "age/key";
-                  inherit path;
-                }
-              ))
+              (keyFile ".config/sops/age/key.txt")
             ])
             ++ (with den.batteries; [
               (user-shell "zsh")
@@ -158,6 +140,7 @@ lib.mkMerge [
         };
 
         hosts.x86_64-linux.${host}.users.${user}.classes = [
+          "homeManager"
           "hjem"
         ];
       };

@@ -248,45 +248,6 @@
         "type": "github"
       }
     },
-    "hjem-home-manager": {
-      "inputs": {
-        "flake-file": [
-          "flake-file"
-        ],
-        "flake-parts": [
-          "flake-parts"
-        ],
-        "git-hooks-nix": [
-          "git-hooks-nix"
-        ],
-        "hjem": [
-          "hjem"
-        ],
-        "home-manager": "home-manager",
-        "import-tree": [
-          "import-tree"
-        ],
-        "nixpkgs": [
-          "nixpkgs"
-        ],
-        "treefmt-nix": [
-          "treefmt-nix"
-        ]
-      },
-      "locked": {
-        "lastModified": 1791808298,
-        "narHash": "sha256-Wx0lba8z8ws69LD9Hu/21HW6NZ160HxELtSDViGdzMo=",
-        "owner": "jarvahl",
-        "repo": "hjem-home-manager",
-        "rev": "ae47d876b6d723eb7ca8d9c2828ba4d8316d1995",
-        "type": "github"
-      },
-      "original": {
-        "owner": "jarvahl",
-        "repo": "hjem-home-manager",
-        "type": "github"
-      }
-    },
     "hjem-rum": {
       "inputs": {
         "hjem": [
@@ -313,16 +274,15 @@
     "home-manager": {
       "inputs": {
         "nixpkgs": [
-          "hjem-home-manager",
           "nixpkgs"
         ]
       },
       "locked": {
-        "lastModified": 1791484883,
-        "narHash": "sha256-iKxFHJrg7Sltwhq3ssCZYQ4CFEDVvReVVuVuO9dj3sE=",
+        "lastModified": 1791642191,
+        "narHash": "sha256-0bK0A59rVUn1SRZzo4cNi4VSqAe7vR1gL2/MZl53Frw=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "dfadbe5162d5e86bc0808badec8f346f81b4b3f0",
+        "rev": "c58f54c733a7894d84fa2fdff26cc12088c4b78c",
         "type": "github"
       },
       "original": {
@@ -479,8 +439,8 @@
         "flake-parts": "flake-parts",
         "git-hooks-nix": "git-hooks-nix",
         "hjem": "hjem",
-        "hjem-home-manager": "hjem-home-manager",
         "hjem-rum": "hjem-rum",
+        "home-manager": "home-manager",
         "import-tree": "import-tree",
         "nixos-wsl": "nixos-wsl",
         "nixpkgs": "nixpkgs",
