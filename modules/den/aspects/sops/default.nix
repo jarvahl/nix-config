@@ -18,10 +18,19 @@ in
     keyFile =
       path:
       contextual {
-        hjem.hjem = { config, ... }: {
-          sops.age.keyFile = homePath path { inherit config; };
+        hjem.hjem =
+          { config, ... }:
+          let
+            keyPath = homePath path { inherit config; };
+          in
+          {
+            sops.age.keyFile = keyPath;
+            sops.secrets.ageKey.path = keyPath;
+          };
+        nixos.nixos.sops = {
+          age.keyFile = path;
+          secrets.ageKey.path = path;
         };
-        nixos.nixos.sops.age.keyFile = path;
       };
 
     provision =

@@ -94,7 +94,7 @@ lib.mkMerge [
         }
       ];
 
-      keys.${host} = "age1y8xgchal8k9gu2hgl4jde53ap0rxj4p3kfs3a0xt2c5cmx3ztexs96dm04";
+      keys.${host} = "age1wxm2g87tj35cthkl02lx3jzefkkfxkpr4kseyrzpuwhwkpfwm34smhjuuz";
     };
   }
 
@@ -160,7 +160,7 @@ lib.mkMerge [
           }
         ];
 
-        keys."${user}@${host}" = "age1y8xgchal8k9gu2hgl4jde53ap0rxj4p3kfs3a0xt2c5cmx3ztexs96dm04";
+        keys."${user}@${host}" = "age1gfhnnsfzf839uvyr3nf6r3cl85zk4hvewkjpfpncxe8y7dxraeeqyr4y82";
       };
     }
   )
