@@ -274,11 +274,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1791806937,
-        "narHash": "sha256-Io+WYxQSyPKq12A5DxO2XOUZeiEI/kThfNO/yknjmJc=",
+        "lastModified": 1791808298,
+        "narHash": "sha256-Wx0lba8z8ws69LD9Hu/21HW6NZ160HxELtSDViGdzMo=",
         "owner": "jarvahl",
         "repo": "hjem-home-manager",
-        "rev": "bfb70f20705de04159309d35b31b663aa5a3d255",
+        "rev": "ae47d876b6d723eb7ca8d9c2828ba4d8316d1995",
         "type": "github"
       },
       "original": {
