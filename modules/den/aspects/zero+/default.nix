@@ -21,11 +21,9 @@ lib.mkMerge [
             podman
             tailscale
           ])
-          ++ (with den.aspects.sops.for-nixos; [
-            (loadSecretsFrom {
-              file = ./secrets.yaml;
-              sshKeyPath = "/etc/ssh/ssh_host_ed25519_key";
-            })
+          ++ (with den.aspects.sops; [
+            (secretsFile ./secrets.yaml)
+            (keyFile "/var/lib/sops-nix/key.txt")
             (provision {
               group = "root";
               name = "ssh/ssh_host_ed25519_key";
@@ -124,11 +122,9 @@ lib.mkMerge [
               pi
               zsh
             ])
-            ++ (with den.aspects.sops.for-hjem; [
-              (loadSecretsFrom {
-                file = ./secrets.${user}.yaml;
-                sshKeyPath = "/home/${user}/.ssh/id_ed25519";
-              })
+            ++ (with den.aspects.sops; [
+              (secretsFile ./secrets.${user}.yaml)
+              (keyFile ".config/sops/age/key.txt")
             ])
             ++ (with den.batteries; [
               (user-shell "zsh")

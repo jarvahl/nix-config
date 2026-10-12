@@ -13,11 +13,9 @@ in
         })
         podman
       ])
-      ++ (with den.aspects.sops.for-nixos; [
-        (loadSecretsFrom {
-          file = ./secrets.yaml;
-          sshKeyPath = "/etc/ssh/ssh_host_ed25519_key";
-        })
+      ++ (with den.aspects.sops; [
+        (secretsFile ./secrets.yaml)
+        (keyFile "/var/lib/sops-nix/key.txt")
         (provision {
           group = "root";
           name = "ssh/ssh_host_ed25519_key";
