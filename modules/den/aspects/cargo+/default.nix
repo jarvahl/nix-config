@@ -59,7 +59,6 @@ lib.mkMerge [
           includes = with den.aspects.sops; [
             (secretsFile ./secrets.${user}.yaml)
             (keyFile ".config/sops/age/key.txt")
-            hashedPassword
           ];
         };
 

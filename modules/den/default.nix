@@ -12,6 +12,7 @@
       ++ (with den.aspects; [
         nix
         passwordless-sudo
+        sops.hashedPassword
       ])
       ++ [
         {

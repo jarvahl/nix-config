@@ -125,7 +125,6 @@ lib.mkMerge [
             ++ (with den.aspects.sops; [
               (secretsFile ./secrets.${user}.yaml)
               (keyFile ".config/sops/age/key.txt")
-              hashedPassword
             ])
             ++ (with den.batteries; [
               (user-shell "zsh")
