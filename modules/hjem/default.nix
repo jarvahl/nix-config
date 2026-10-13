@@ -1,10 +1,7 @@
 { inputs, ... }:
 {
   den.default.nixos = {
-    hjem.extraModules = [
-      inputs.hjem-rum.hjemModules.default
-      inputs.sops-nix.homeManagerModules.sops
-    ];
+    hjem.extraModules = [ inputs.hjem-rum.hjemModules.default ];
     imports = [ inputs.hjem-hm-modules.nixosModules.default ];
 
   };
