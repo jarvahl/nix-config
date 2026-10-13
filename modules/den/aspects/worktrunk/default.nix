@@ -1,7 +1,7 @@
 { lib, ... }:
 
 {
-  den.aspects.worktrunk.hjem =
+  den.aspects.worktrunk.homeManager =
     { pkgs, ... }:
     let
       shellIntegration = pkgs.runCommand "worktrunk-zsh-integration" { } ''
@@ -11,8 +11,8 @@
       '';
     in
     {
-      packages = [ pkgs.worktrunk ];
-      rum.programs.zsh.initConfig = ''
+      home.packages = [ pkgs.worktrunk ];
+      programs.zsh.initContent = ''
         source "${shellIntegration}/share/zsh/plugins/worktrunk/worktrunk.plugin.zsh"
       '';
     };

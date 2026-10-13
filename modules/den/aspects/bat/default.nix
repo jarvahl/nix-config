@@ -1,12 +1,10 @@
 { lib, ... }:
 
 {
-  den.aspects.bat.hjem =
-    { pkgs, ... }:
-    {
-      packages = [ pkgs.bat ];
-      rum.programs.zsh.initConfig = ''
-        alias cat='${lib.getExe pkgs.bat}'
-      '';
-    };
+  den.aspects.bat.homeManager = { pkgs, ... }: {
+    home.packages = [ pkgs.bat ];
+    programs.zsh.initContent = ''
+      alias cat='${lib.getExe pkgs.bat}'
+    '';
+  };
 }

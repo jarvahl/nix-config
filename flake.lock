@@ -63,6 +63,21 @@
         "type": "github"
       }
     },
+    "dag": {
+      "locked": {
+        "lastModified": 1776409857,
+        "narHash": "sha256-Oe2lNRE1RyjVu1xZ3PK5uYEFszIEWEpch7c/NLKvjvM=",
+        "owner": "denful",
+        "repo": "dag",
+        "rev": "c85fa5c7b6970ff90f79a3f2b645696195609930",
+        "type": "github"
+      },
+      "original": {
+        "owner": "denful",
+        "repo": "dag",
+        "type": "github"
+      }
+    },
     "den": {
       "locked": {
         "lastModified": 1791228708,
@@ -477,6 +492,45 @@
         "type": "github"
       }
     },
+    "nzf": {
+      "inputs": {
+        "dag": "dag",
+        "flake-file": [
+          "flake-file"
+        ],
+        "flake-parts": [
+          "flake-parts"
+        ],
+        "git-hooks-nix": [
+          "git-hooks-nix"
+        ],
+        "home-manager": [
+          "home-manager"
+        ],
+        "import-tree": [
+          "import-tree"
+        ],
+        "nixpkgs": [
+          "nixpkgs"
+        ],
+        "treefmt-nix": [
+          "treefmt-nix"
+        ]
+      },
+      "locked": {
+        "lastModified": 1791890588,
+        "narHash": "sha256-5z+WcxbHKFuENkp1v5IiYU5JFsOnHmJrwqrDi9nrdks=",
+        "owner": "jarvahl",
+        "repo": "nzf",
+        "rev": "4f1b35a4e503be3efd31ce3c23f46b3765a7e16a",
+        "type": "github"
+      },
+      "original": {
+        "owner": "jarvahl",
+        "repo": "nzf",
+        "type": "github"
+      }
+    },
     "pi": {
       "inputs": {
         "bun2nix": "bun2nix",
@@ -519,6 +573,7 @@
         "nixos-wsl": "nixos-wsl",
         "nixpkgs": "nixpkgs",
         "nvf": "nvf",
+        "nzf": "nzf",
         "pi": "pi",
         "sops-file": "sops-file",
         "sops-nix": "sops-nix",
