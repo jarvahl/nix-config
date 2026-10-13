@@ -34,10 +34,6 @@ lib.mkMerge [
           ))
         ])
         ++ (with den.aspects; [
-          comma
-          fonts
-          podman
-          ssh
           (certificates {
             includes = { ... }: [
               {
@@ -49,6 +45,12 @@ lib.mkMerge [
               }
             ];
           })
+        ])
+        ++ (with den.aspects; [
+          comma
+          fonts
+          podman
+          ssh
         ]);
 
       hosts.x86_64-linux.${host} = {
