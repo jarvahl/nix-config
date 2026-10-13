@@ -131,6 +131,7 @@ lib.mkMerge [
               bat
               eza
               fzf
+              nvim
               pi
               worktrunk
               zsh

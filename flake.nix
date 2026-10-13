@@ -56,6 +56,10 @@
     nixpkgs = {
       url = "https://channels.nixos.org/nixpkgs-unstable/nixexprs.tar.zst";
     };
+    nvf = {
+      url = "github:notashelf/nvf";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     pi = {
       url = "github:lukasl-dev/pi.nix";
       inputs = {

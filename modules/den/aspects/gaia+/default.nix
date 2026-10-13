@@ -81,6 +81,7 @@ lib.mkMerge [
               bat
               eza
               fzf
+              nvim
               worktrunk
             ])
             ++ (with den.aspects.sops; [
