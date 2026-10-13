@@ -77,7 +77,7 @@ lib.mkMerge [
               nvim
               worktrunk
             ])
-            ++ (with den.aspects; [
+            ++ (with den.aspects.accounts; [
               github
             ]);
         };

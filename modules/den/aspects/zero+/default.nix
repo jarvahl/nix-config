@@ -140,7 +140,7 @@ lib.mkMerge [
               worktrunk
               zsh
             ])
-            ++ (with den.aspects; [
+            ++ (with den.aspects.accounts; [
               github
             ])
             ++ (with den.batteries; [
