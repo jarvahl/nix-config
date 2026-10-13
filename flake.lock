@@ -279,6 +279,39 @@
         "type": "github"
       }
     },
+    "hjem-hm-modules": {
+      "inputs": {
+        "flake-file": [
+          "flake-file"
+        ],
+        "flake-parts": [
+          "flake-parts"
+        ],
+        "hjem": [
+          "hjem"
+        ],
+        "home-manager": "home-manager",
+        "import-tree": [
+          "import-tree"
+        ],
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1791926359,
+        "narHash": "sha256-yu9nbAI+2Ln4QJOB6OF9BRbuwwIQTdzBPeqrjKl+dNc=",
+        "owner": "jarvahl",
+        "repo": "hjem-hm-modules",
+        "rev": "35543736f3ecfdd74d1ab36189213e95d1bc4543",
+        "type": "github"
+      },
+      "original": {
+        "owner": "jarvahl",
+        "repo": "hjem-hm-modules",
+        "type": "github"
+      }
+    },
     "hjem-rum": {
       "inputs": {
         "hjem": [
@@ -305,6 +338,7 @@
     "home-manager": {
       "inputs": {
         "nixpkgs": [
+          "hjem-hm-modules",
           "nixpkgs"
         ]
       },
@@ -527,8 +561,8 @@
         "flake-parts": "flake-parts",
         "git-hooks-nix": "git-hooks-nix",
         "hjem": "hjem",
+        "hjem-hm-modules": "hjem-hm-modules",
         "hjem-rum": "hjem-rum",
-        "home-manager": "home-manager",
         "import-tree": "import-tree",
         "nix-index-database": "nix-index-database",
         "nixos-wsl": "nixos-wsl",
@@ -683,6 +717,7 @@
           "git-hooks-nix"
         ],
         "home-manager": [
+          "hjem-hm-modules",
           "home-manager"
         ],
         "import-tree": [

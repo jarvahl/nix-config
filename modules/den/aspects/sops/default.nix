@@ -69,13 +69,19 @@ let
   inUserContext =
     ctx:
     ctx ? user || ctx ? home || (ctx.class or null) == "homeManager" || (ctx.class or null) == "hjem";
-  contextual = backend: ctx: if inUserContext ctx then backend.homeManager else backend.nixos;
+  contextual =
+    backend: ctx:
+    if inUserContext ctx then
+      if (ctx.class or null) == "homeManager" then backend.homeManager else backend.hjem
+    else
+      backend.nixos;
 in
 {
   den.aspects.sops = rec {
     from =
       file:
       contextual {
+        hjem.hjem.sops.defaultSopsFile = file;
         homeManager.homeManager.sops.defaultSopsFile = file;
         nixos.nixos.sops.defaultSopsFile = file;
       };
@@ -83,6 +89,7 @@ in
     secret =
       args:
       contextual {
+        hjem.hjem = userSecret args;
         homeManager.homeManager = userSecret args;
         nixos.nixos = hostSecret args;
       };
@@ -90,6 +97,18 @@ in
     keyFile =
       path:
       contextual {
+        hjem.hjem =
+          { config, ... }:
+          let
+            secretPath = homePath path { inherit config; };
+          in
+          lib.mkMerge [
+            (userSecret {
+              name = "age/key";
+              inherit path;
+            } { inherit config; })
+            { sops.age.keyFile = secretPath; }
+          ];
         homeManager.homeManager =
           { config, ... }:
           let

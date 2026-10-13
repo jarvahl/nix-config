@@ -91,7 +91,6 @@ lib.mkMerge [
         };
 
         hosts.x86_64-linux.${host}.users.${user}.classes = [
-          "homeManager"
           "hjem"
         ];
       };

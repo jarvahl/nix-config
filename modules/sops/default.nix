@@ -17,9 +17,6 @@
     ) rules;
 
   den.default.nixos = {
-    home-manager.sharedModules = [
-      inputs.sops-nix.homeManagerModules.sops
-    ];
     imports = [ inputs.sops-nix.nixosModules.sops ];
     sops.age.keyFile = "/var/lib/sops-nix/key.txt";
   };

@@ -1,7 +1,7 @@
 { inputs, ... }:
 
 {
-  den.aspects.nvim.homeManager = {
+  den.aspects.nvim.hjem = {
     imports = [ inputs.nvf.homeManagerModules.default ];
 
     programs.nvf = {
