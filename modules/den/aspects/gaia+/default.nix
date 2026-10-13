@@ -90,7 +90,7 @@ lib.mkMerge [
               nvim
               worktrunk
 
-              # Accounts
+              # accounts
               github
             ]);
         };

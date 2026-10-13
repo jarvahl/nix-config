@@ -120,7 +120,7 @@ lib.mkMerge [
               (keyFile ".config/sops/age/key.txt")
             ])
             ++ (with den.aspects; [
-              # UI
+              # ui
               foot
               (hyperland {
                 includes = { autologin, ... }: [
@@ -131,7 +131,7 @@ lib.mkMerge [
               quickshell
               swaybg
 
-              # Console
+              # console
               bat
               eza
               fzf
@@ -140,7 +140,7 @@ lib.mkMerge [
               worktrunk
               zsh
 
-              # Accounts
+              # accounts
               github
             ])
             ++ (with den.batteries; [
