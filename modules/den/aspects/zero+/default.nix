@@ -115,7 +115,11 @@ lib.mkMerge [
       den = {
         aspects."${user}@${host}" = {
           includes =
-            (with den.aspects; [
+            (with den.aspects.sops; [
+              (from ./secrets-user-${user}.yaml)
+              (keyFile ".config/sops/age/key.txt")
+            ])
+            ++ (with den.aspects; [
               # UI
               foot
               (hyperland {
@@ -136,9 +140,8 @@ lib.mkMerge [
               worktrunk
               zsh
             ])
-            ++ (with den.aspects.sops; [
-              (from ./secrets-user-${user}.yaml)
-              (keyFile ".config/sops/age/key.txt")
+            ++ (with den.aspects; [
+              github
             ])
             ++ (with den.batteries; [
               (user-shell "zsh")
