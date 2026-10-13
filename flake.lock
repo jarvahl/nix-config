@@ -299,11 +299,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1791926359,
-        "narHash": "sha256-yu9nbAI+2Ln4QJOB6OF9BRbuwwIQTdzBPeqrjKl+dNc=",
+        "lastModified": 1791926425,
+        "narHash": "sha256-bHzC6zITogSQd1Wz7UhyZKNK5jpWaHH8lMoXp1kuryk=",
         "owner": "jarvahl",
         "repo": "hjem-hm-modules",
-        "rev": "35543736f3ecfdd74d1ab36189213e95d1bc4543",
+        "rev": "d3bc1ebb9aef54468eab6f438d2efd2e5caa9dca",
         "type": "github"
       },
       "original": {

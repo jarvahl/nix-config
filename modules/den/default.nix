@@ -1,4 +1,9 @@
-{ den, inputs, ... }:
+{
+  den,
+  inputs,
+  lib,
+  ...
+}:
 {
   den.default = {
     includes =
@@ -16,6 +21,8 @@
       ]);
 
     nixos = { pkgs, ... }: {
+      system.stateVersion = lib.mkDefault "25.11";
+
       environment.systemPackages = with pkgs; [
         jq
         python3
