@@ -492,45 +492,6 @@
         "type": "github"
       }
     },
-    "nzf": {
-      "inputs": {
-        "dag": "dag",
-        "flake-file": [
-          "flake-file"
-        ],
-        "flake-parts": [
-          "flake-parts"
-        ],
-        "git-hooks-nix": [
-          "git-hooks-nix"
-        ],
-        "home-manager": [
-          "home-manager"
-        ],
-        "import-tree": [
-          "import-tree"
-        ],
-        "nixpkgs": [
-          "nixpkgs"
-        ],
-        "treefmt-nix": [
-          "treefmt-nix"
-        ]
-      },
-      "locked": {
-        "lastModified": 1791890588,
-        "narHash": "sha256-5z+WcxbHKFuENkp1v5IiYU5JFsOnHmJrwqrDi9nrdks=",
-        "owner": "jarvahl",
-        "repo": "nzf",
-        "rev": "4f1b35a4e503be3efd31ce3c23f46b3765a7e16a",
-        "type": "github"
-      },
-      "original": {
-        "owner": "jarvahl",
-        "repo": "nzf",
-        "type": "github"
-      }
-    },
     "pi": {
       "inputs": {
         "bun2nix": "bun2nix",
@@ -573,12 +534,12 @@
         "nixos-wsl": "nixos-wsl",
         "nixpkgs": "nixpkgs",
         "nvf": "nvf",
-        "nzf": "nzf",
         "pi": "pi",
         "sops-file": "sops-file",
         "sops-nix": "sops-nix",
         "treefmt-nix": "treefmt-nix",
-        "wrappers": "wrappers"
+        "wrappers": "wrappers",
+        "zsh-nix": "zsh-nix"
       }
     },
     "sops-file": {
@@ -706,6 +667,45 @@
       "original": {
         "owner": "lassulus",
         "repo": "wrappers",
+        "type": "github"
+      }
+    },
+    "zsh-nix": {
+      "inputs": {
+        "dag": "dag",
+        "flake-file": [
+          "flake-file"
+        ],
+        "flake-parts": [
+          "flake-parts"
+        ],
+        "git-hooks-nix": [
+          "git-hooks-nix"
+        ],
+        "home-manager": [
+          "home-manager"
+        ],
+        "import-tree": [
+          "import-tree"
+        ],
+        "nixpkgs": [
+          "nixpkgs"
+        ],
+        "treefmt-nix": [
+          "treefmt-nix"
+        ]
+      },
+      "locked": {
+        "lastModified": 1791892128,
+        "narHash": "sha256-BKtqAuvEsFgcGF0EoEpwsR8piE3hjBzKM3Emah+ECao=",
+        "owner": "jarvahl",
+        "repo": "zsh.nix",
+        "rev": "e50dead58a70d2eff4a8d1d4bda6a32a1786d621",
+        "type": "github"
+      },
+      "original": {
+        "owner": "jarvahl",
+        "repo": "zsh.nix",
         "type": "github"
       }
     }
