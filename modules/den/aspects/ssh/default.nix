@@ -1,7 +1,7 @@
 { ... }:
 {
   den.aspects.ssh = {
-    hjem.files.".ssh/config".text = ''
+    provides.to-users.hjem.files.".ssh/config".text = ''
       Include ~/.ssh/config.d/*
     '';
 
