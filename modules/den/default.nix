@@ -11,7 +11,7 @@
       ])
       ++ (with den.aspects; [
         nix
-        passwordless-sudo
+        sudo
         sops.hashedPassword
       ]);
 

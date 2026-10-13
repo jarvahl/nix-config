@@ -1,6 +1,6 @@
 { ... }:
 {
-  den.aspects.passwordless-sudo = {
+  den.aspects.sudo = {
     nixos.security.sudo.wheelNeedsPassword = false;
     user.extraGroups = [ "wheel" ];
   };
