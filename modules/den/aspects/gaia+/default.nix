@@ -92,6 +92,7 @@ lib.mkMerge [
 
               # accounts
               github
+              gitlab
             ]);
         };
 
