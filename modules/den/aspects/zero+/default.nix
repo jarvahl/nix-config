@@ -139,8 +139,8 @@ lib.mkMerge [
               pi
               worktrunk
               zsh
-            ])
-            ++ (with den.aspects.accounts; [
+
+              # Accounts
               github
             ])
             ++ (with den.batteries; [

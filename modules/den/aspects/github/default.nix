@@ -1,6 +1,6 @@
 { ... }:
 {
-  den.aspects.accounts.github.hjem =
+  den.aspects.github.hjem =
     {
       config,
       pkgs,
