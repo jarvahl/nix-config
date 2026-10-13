@@ -11,24 +11,7 @@ lib.mkMerge [
   {
     den = {
       aspects.${host}.includes =
-        (with den.aspects; [
-          comma
-          fonts
-          podman
-          ssh
-          (certificates {
-            includes = { ... }: [
-              {
-                nixos = { pkgs, ... }: {
-                  security.pki.certificateFiles = [
-                    "${pkgs.zscaler-cacert}/etc/ssl/certs/zscaler-ca.crt"
-                  ];
-                };
-              }
-            ];
-          })
-        ])
-        ++ (with den.aspects.sops; [
+        (with den.aspects.sops; [
           (from ./secrets-host.yaml)
           (keyFile "/var/lib/sops-nix/key.txt")
           (secret (
@@ -49,6 +32,23 @@ lib.mkMerge [
               restartUnits = [ "sshd.service" ];
             }
           ))
+        ])
+        ++ (with den.aspects; [
+          comma
+          fonts
+          podman
+          ssh
+          (certificates {
+            includes = { ... }: [
+              {
+                nixos = { pkgs, ... }: {
+                  security.pki.certificateFiles = [
+                    "${pkgs.zscaler-cacert}/etc/ssl/certs/zscaler-ca.crt"
+                  ];
+                };
+              }
+            ];
+          })
         ]);
 
       hosts.x86_64-linux.${host} = {

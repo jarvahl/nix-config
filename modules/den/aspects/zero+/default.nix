@@ -12,14 +12,7 @@ lib.mkMerge [
     den = {
       aspects.${host} = {
         includes =
-          (with den.aspects; [
-            comma
-            fonts
-            podman
-            ssh
-            tailscale
-          ])
-          ++ (with den.aspects.sops; [
+          (with den.aspects.sops; [
             (from ./secrets-host.yaml)
             (keyFile "/var/lib/sops-nix/key.txt")
             (secret (
@@ -40,6 +33,13 @@ lib.mkMerge [
                 restartUnits = [ "sshd.service" ];
               }
             ))
+          ])
+          ++ (with den.aspects; [
+            comma
+            fonts
+            podman
+            ssh
+            tailscale
           ]);
 
         nixos =
