@@ -3,8 +3,6 @@
   den.aspects.zsh.homeManager = { ... }: {
     imports = [ inputs.nzf.homeManagerModules.default ];
 
-    programs.fzf.enable = true;
-
     programs.nzf = {
       enable = true;
       settings.zsh = {
