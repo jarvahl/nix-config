@@ -1,7 +1,8 @@
-{ den
-, lib
-, recovery
-, ...
+{
+  den,
+  lib,
+  recovery,
+  ...
 }:
 let
   host = "zero";
@@ -40,7 +41,10 @@ lib.mkMerge [
                 aspect.services.tailscale.authKeyFile = path;
                 name = "tailscale/auth_key";
                 inherit path;
-                restartUnits = [ "tailscaled-autoconnect.service" ];
+                restartUnits = [
+                  "tailscaled-logout.service"
+                  "tailscaled-autoconnect.service"
+                ];
               }
             ))
           ])
@@ -54,11 +58,12 @@ lib.mkMerge [
           ]);
 
         nixos =
-          { config
-          , lib
-          , modulesPath
-          , pkgs
-          , ...
+          {
+            config,
+            lib,
+            modulesPath,
+            pkgs,
+            ...
           }:
           {
             boot.extraModulePackages = [ ];
