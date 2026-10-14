@@ -37,6 +37,7 @@ lib.mkMerge [
           ++ (with den.aspects; [
             comma
             fonts
+            herdr
             podman
             ssh
             tailscale
