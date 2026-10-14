@@ -96,31 +96,37 @@ in
 
     keyFile =
       path:
+      let
+        userHostSecret =
+          { config, user, ... }:
+          let
+            userName = user.name;
+          in
+          hostSecret {
+            group = "users";
+            mode = "0600";
+            name = "users/${userName}/age_key";
+            owner = userName;
+            path = homePath path { config.home.homeDirectory = config.users.users.${userName}.home; };
+          } { inherit config; };
+      in
       contextual {
-        hjem.hjem =
-          { config, ... }:
-          let
-            secretPath = homePath path { inherit config; };
-          in
-          lib.mkMerge [
-            (userSecret {
-              name = "age/key";
-              inherit path;
-            } { inherit config; })
-            { sops.age.keyFile = secretPath; }
-          ];
-        homeManager.homeManager =
-          { config, ... }:
-          let
-            secretPath = homePath path { inherit config; };
-          in
-          lib.mkMerge [
-            (userSecret {
-              name = "age/key";
-              inherit path;
-            } { inherit config; })
-            { sops.age.keyFile = secretPath; }
-          ];
+        hjem = {
+          hjem =
+            { config, ... }:
+            {
+              sops.age.keyFile = homePath path { inherit config; };
+            };
+          provides.to-hosts.nixos = userHostSecret;
+        };
+        homeManager = {
+          homeManager =
+            { config, ... }:
+            {
+              sops.age.keyFile = homePath path { inherit config; };
+            };
+          provides.to-hosts.nixos = userHostSecret;
+        };
         nixos.nixos = hostSecret {
           aspect.sops.age.keyFile = path;
           name = "age/key";
