@@ -4,6 +4,18 @@
   outputs = inputs: import ./outputs.nix inputs;
 
   inputs = {
+    agent-files = {
+      url = "github:jarvahl/agent-files";
+      inputs = {
+        files.follows = "files";
+        flake-file.follows = "flake-file";
+        flake-parts.follows = "flake-parts";
+        git-hooks-nix.follows = "git-hooks-nix";
+        import-tree.follows = "import-tree";
+        nixpkgs.follows = "nixpkgs";
+        treefmt-nix.follows = "treefmt-nix";
+      };
+    };
     den = {
       url = "github:denful/den";
     };

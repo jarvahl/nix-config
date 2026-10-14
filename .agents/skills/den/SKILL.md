@@ -1,6 +1,6 @@
 ---
-name: den
-description: Routing guide for this repo's Den usage. Use when editing modules/den/**, especially Den aspects, host includes, callable aspects, or import-tree merged aspect namespaces.
+name: "den"
+description: "Routing guide for this repo's Den usage. Use when editing modules/den/**, especially Den aspects, host includes, callable aspects, or import-tree merged aspect namespaces."
 ---
 
 # Den
@@ -18,3 +18,8 @@ Use this skill before editing `modules/den/**`.
 | Unsure | Start with `references/aspects.md` |
 
 Keep this file light. Detailed rules live in `references/`.
+
+
+## References
+- [Den aspects](references/aspects.md)
+- [Callable aspects](references/callable-aspects.md)
