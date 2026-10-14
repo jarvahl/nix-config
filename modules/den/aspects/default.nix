@@ -20,7 +20,6 @@
         ```nix
         includes = with den.aspects; [
           ssh
-          (ssh.provisionHostKey { ... })
 
           (hyperland {
             includes = { autologin, ... }: [
@@ -35,7 +34,7 @@
         ```nix
         sops.loadSecretsFrom
         sops.decryptWithSshKey
-        ssh.provisionHostKey
+        ssh
         ```
 
         Avoid vague helpers and compatibility aliases unless there is a real external caller.
