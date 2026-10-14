@@ -47,6 +47,7 @@ lib.mkMerge [
             config,
             lib,
             modulesPath,
+            pkgs,
             ...
           }:
           {
@@ -82,7 +83,10 @@ lib.mkMerge [
 
             imports = [ (modulesPath + "/installer/scan/not-detected.nix") ];
 
+            networking.networkmanager.enable = true;
             networking.useDHCP = lib.mkDefault true;
+
+            environment.systemPackages = [ pkgs.networkmanager ];
 
             swapDevices = [
               { device = "/dev/disk/by-uuid/ef842ad0-2a1b-4e24-a71b-61bb49cc4c55"; }

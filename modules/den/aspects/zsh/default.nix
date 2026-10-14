@@ -20,7 +20,11 @@
           config = lib.mkIf cfg.enable {
             rum.programs.zsh = {
               enable = true;
-              initConfig = cfg.initContent;
+              initConfig = lib.concatStringsSep "\n" [
+                cfg.bundle.initConfig
+                cfg.initContent
+              ];
+              package = cfg.bundle.package;
             };
           };
         }
