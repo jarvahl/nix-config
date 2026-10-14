@@ -127,13 +127,9 @@ in
             };
           provides.to-hosts.nixos = userHostSecret;
         };
-        nixos.nixos = hostSecret {
-          aspect.sops.age = {
-            keyFile = path;
-            sshKeyPaths = lib.mkForce [ ];
-          };
-          name = "age/key";
-          inherit path;
+        nixos.nixos.sops.age = {
+          keyFile = path;
+          sshKeyPaths = lib.mkForce [ ];
         };
       };
     provision = secret;

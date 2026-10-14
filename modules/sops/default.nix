@@ -44,6 +44,61 @@
   imports = [ inputs.sops-file.flakeModules.default ];
 
   perSystem = { pkgs, ... }: {
+    apps.bootstrap = {
+      meta.description = "Install a host age key from secrets-bootstrap.yaml";
+      type = "app";
+      program = lib.getExe (
+        pkgs.writeShellApplication {
+          name = "bootstrap";
+          runtimeInputs = [ pkgs.sops ];
+          text = ''
+            set -euo pipefail
+
+            if [ "''${1:-}" = "--help" ] || [ "''${1:-}" = "-h" ]; then
+              echo "usage: nix run .#bootstrap [-- hostname]"
+              echo "installs host age key from secrets-bootstrap.yaml to /var/lib/sops-nix/key.txt"
+              echo
+              echo "without an explicit hostname, uses: $(hostname)"
+              exit 0
+            fi
+
+            host="''${1:-$(hostname)}"
+            secrets_file="''${BOOTSTRAP_SECRETS_FILE:-secrets-bootstrap.yaml}"
+            target="/var/lib/sops-nix/key.txt"
+
+            if [ ! -f "''${secrets_file}" ]; then
+              echo "missing bootstrap secrets file: ''${secrets_file}" >&2
+              echo "run from the repository root or set BOOTSTRAP_SECRETS_FILE" >&2
+              exit 1
+            fi
+
+            tmp="$(mktemp)"
+            trap 'rm -f "$tmp"' EXIT
+
+            if ! sops -d --extract "[\"hosts\"][\"''${host}\"][\"age_key\"]" "''${secrets_file}" > "$tmp"; then
+              echo "failed to decrypt bootstrap key for host: ''${host}" >&2
+              echo "if this machine hostname is not the target host, pass it explicitly:" >&2
+              echo "  nix run .#bootstrap -- <hostname>" >&2
+              exit 1
+            fi
+
+            if ! grep -q '^AGE-SECRET-KEY-' "$tmp"; then
+              echo "decrypted value for host ''${host} does not look like an age secret key" >&2
+              exit 1
+            fi
+
+            if [ "$(id -u)" -eq 0 ]; then
+              install -D -m 0600 -o root -g root "$tmp" "''${target}"
+            else
+              sudo install -D -m 0600 -o root -g root "$tmp" "''${target}"
+            fi
+
+            echo "installed host age key for ''${host} at ''${target}"
+          '';
+        }
+      );
+    };
+
     devShells.sops-recovery = pkgs.mkShell {
       packages = [
         pkgs.age
@@ -79,5 +134,16 @@
     };
   };
 
-  sops-file.keys.recovery = "age17dkg84wglz4nq2523fayp528qr82njr2znlwc6fvdhzy8k3pg3gsusgx2q";
+  sops-file = {
+    creation_rules = [
+      {
+        key_groups = [
+          { age = [ "recovery" ]; }
+        ];
+        path_regex = ../../secrets-bootstrap.yaml;
+      }
+    ];
+
+    keys.recovery = "age17dkg84wglz4nq2523fayp528qr82njr2znlwc6fvdhzy8k3pg3gsusgx2q";
+  };
 }
