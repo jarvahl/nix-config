@@ -10,15 +10,15 @@ Available tools:
 
 - `age` — create and inspect age keys
 - `just` — run repo tasks; see `just --list`
-- `mdsh` — run markdown docs from `docs/`
+- `mdsh` — run markdown runbooks from agent skill references
 - `sops` — edit and decrypt secrets
 
-## Docs
+## Runbooks
 
-Run executable docs with `mdsh`:
+Run executable runbooks with `mdsh`, for example:
 
 ```sh
-mdsh docs/sops/create-recovery-key.md
+mdsh .agents/skills/sops/references/create-recovery-key.md
 ```
 
 ## SOPS recovery shell

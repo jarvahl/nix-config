@@ -16,6 +16,56 @@
       }
     ) rules;
 
+  agents.skills.sops = {
+    description = "SOPS operational runbooks for this repo, including recovery keys and bootstrap secrets.";
+    instructions = { references, ... }: ''
+      # SOPS
+
+      Use this skill for SOPS maintenance in this repo.
+
+      ## Routing
+
+      | Task | Read |
+      | --- | --- |
+      | Creating or rotating the passphrase-encrypted recovery age identity | `${references.create-recovery-key}` |
+      | Unsure | Start with `${references.create-recovery-key}` |
+
+      Keep this file light. Detailed runbooks live in `references/`.
+    '';
+    references.create-recovery-key = {
+      description = "Create SOPS recovery key";
+      text = ''
+        # Create SOPS recovery key
+
+        Generate age identity:
+
+        ```shell
+        age-keygen -o recovery.key
+        ```
+
+        Encrypt it with a passphrase:
+
+        ```shell
+        age -p -a -o recovery.key.age recovery.key
+        ```
+
+        Show public recipient if you later want to add it to SOPS rules:
+
+        ```shell
+        age-keygen -y recovery.key
+        ```
+
+        Remove plaintext identity:
+
+        ```shell
+        rm recovery.key
+        ```
+
+        This creates `recovery.key.age`: a passphrase-encrypted age identity safe to keep in the repo.
+      '';
+    };
+  };
+
   den.default.nixos = {
     hjem.extraModules = [ inputs.sops-nix.homeManagerModules.sops ];
     imports = [ inputs.sops-nix.nixosModules.sops ];
