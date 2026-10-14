@@ -9,14 +9,14 @@ let
       "${config.home.homeDirectory}/${lib.removePrefix "./" (toString path)}";
 
   hostSecret =
-    {
-      aspect ? { },
-      group ? null,
-      mode ? "0600",
-      name,
-      owner ? null,
-      path,
-      restartUnits ? [ ],
+    { aspect ? { }
+    , group ? null
+    , mode ? "0600"
+    , name
+    , owner ? null
+    , path
+    , restartUnits ? [ ]
+    ,
     }:
     { config, ... }:
     lib.mkMerge [
@@ -38,12 +38,11 @@ let
     ];
 
   userSecret =
-    {
-      aspect ? { },
-      mode ? "0600",
-      name,
-      path,
-      ...
+    { aspect ? { }
+    , mode ? "0600"
+    , name
+    , path
+    , ...
     }:
     { config, ... }:
     let
@@ -102,13 +101,15 @@ in
           let
             userName = user.name;
           in
-          hostSecret {
-            group = "users";
-            mode = "0600";
-            name = "users/${userName}/age_key";
-            owner = userName;
-            path = homePath path { config.home.homeDirectory = config.users.users.${userName}.home; };
-          } { inherit config; };
+          hostSecret
+            {
+              group = "users";
+              mode = "0600";
+              name = "users/${userName}/age_key";
+              owner = userName;
+              path = homePath path { config.home.homeDirectory = config.users.users.${userName}.home; };
+            }
+            { inherit config; };
       in
       contextual {
         hjem = {
@@ -137,11 +138,10 @@ in
 
     hashedPassword = {
       nixos =
-        {
-          config,
-          lib,
-          user,
-          ...
+        { config
+        , lib
+        , user
+        , ...
         }:
         let
           userName = user.userName;
@@ -156,6 +156,8 @@ in
           ];
 
           sops.secrets.${secretName}.neededForUsers = true;
+
+          users.mutableUsers = false;
 
           users.users.${userName} = {
             hashedPasswordFile = config.sops.secrets.${secretName}.path;
