@@ -1,4 +1,9 @@
-{ inputs, lib, ... }:
+{
+  config,
+  inputs,
+  lib,
+  ...
+}:
 let
   hostArg = [
     {
@@ -68,6 +73,27 @@ let
       });
 in
 {
+  readme.sections = lib.mkOrder 200 [
+    {
+      title = "Available commands";
+      text = lib.concatMapStringsSep "\n" (
+        name:
+        let
+          recipe = config.just.recipes.${name};
+          description =
+            if lib.isAttrs recipe then
+              let
+                value = recipe.description or null;
+              in
+              if value == null then "" else value
+            else
+              "";
+        in
+        "- `${name}`${lib.optionalString (description != "") " — ${description}"}"
+      ) (builtins.attrNames config.just.recipes);
+    }
+  ];
+
   flake-file.inputs.just-file = {
     url = "github:jarvahl/just-file";
     inputs = {

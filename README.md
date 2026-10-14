@@ -13,6 +13,14 @@ Available tools:
 - `mdsh` — run markdown runbooks from agent skill references
 - `sops` — edit and decrypt secrets
 
+## Available commands
+
+- `boot` — [boot] Schedule configuration for next boot
+- `build` — [build] Build configuration for host
+- `default`
+- `switch` — [switch] Apply configuration to host
+- `vm` — [vm] Build and run host in an ephemeral VM
+
 ## Runbooks
 
 Run executable runbooks with `mdsh`, for example:
@@ -29,8 +37,8 @@ Unlock an encrypted recovery age identity for SOPS:
 nix develop .#sops-recovery
 ```
 
-By default it reads `./recovery.agekey.age`. Override with:
+By default it reads `./recovery.key.age`. Override with:
 
 ```sh
-SOPS_RECOVERY_KEY=/path/to/recovery.agekey.age nix develop .#sops-recovery
+SOPS_RECOVERY_KEY=/path/to/recovery.key.age nix develop .#sops-recovery
 ```

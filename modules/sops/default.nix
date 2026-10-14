@@ -1,5 +1,24 @@
 { inputs, lib, ... }:
 {
+  readme.sections = lib.mkOrder 400 [
+    {
+      title = "SOPS recovery shell";
+      text = ''
+        Unlock an encrypted recovery age identity for SOPS:
+
+        ```sh
+        nix develop .#sops-recovery
+        ```
+
+        By default it reads `./recovery.key.age`. Override with:
+
+        ```sh
+        SOPS_RECOVERY_KEY=/path/to/recovery.key.age nix develop .#sops-recovery
+        ```
+      '';
+    }
+  ];
+
   _module.args.recovery =
     rules:
     map (
