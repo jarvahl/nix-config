@@ -1,3 +1,5 @@
+# DO-NOT-EDIT. This file was auto-generated using github:jarvahl/just-file.
+# Use `nix run .#write-files` to regenerate it.
 # [boot] Schedule configuration for next boot
 [no-exit-message]
 boot host=`hostname`:
