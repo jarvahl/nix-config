@@ -71,6 +71,20 @@ let
           }
           .${action};
       });
+
+  recipeDescription =
+    recipe:
+    if lib.isAttrs recipe then
+      let
+        value = recipe.description or null;
+      in
+      if value == null then "" else value
+    else
+      "";
+
+  describedRecipes = lib.filter (name: recipeDescription config.just.recipes.${name} != "") (
+    builtins.attrNames config.just.recipes
+  );
 in
 {
   readme.sections = lib.mkOrder 200 [
@@ -79,18 +93,10 @@ in
       text = lib.concatMapStringsSep "\n" (
         name:
         let
-          recipe = config.just.recipes.${name};
-          description =
-            if lib.isAttrs recipe then
-              let
-                value = recipe.description or null;
-              in
-              if value == null then "" else value
-            else
-              "";
+          description = recipeDescription config.just.recipes.${name};
         in
-        "- `${name}`${lib.optionalString (description != "") " — ${description}"}"
-      ) (builtins.attrNames config.just.recipes);
+        "- `${name}` — ${description}"
+      ) describedRecipes;
     }
   ];
 

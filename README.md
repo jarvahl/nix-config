@@ -19,7 +19,6 @@ Available tools:
 
 - `boot` — [boot] Schedule configuration for next boot
 - `build` — [build] Build configuration for host
-- `default`
 - `switch` — [switch] Apply configuration to host
 - `vm` — [vm] Build and run host in an ephemeral VM
 
