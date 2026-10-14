@@ -1,18 +1,5 @@
-{ inputs, lib, ... }:
+{ inputs, ... }:
 {
-  readme.sections = lib.mkOrder 300 [
-    {
-      title = "Runbooks";
-      text = ''
-        Run executable runbooks with `mdsh`, for example:
-
-        ```sh
-        mdsh .agents/skills/sops/references/create-recovery-key.md
-        ```
-      '';
-    }
-  ];
-
   flake-file.inputs.agent-files = {
     url = "github:jarvahl/agent-files";
     inputs = {

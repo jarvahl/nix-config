@@ -650,11 +650,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1792001350,
-        "narHash": "sha256-di3D2xRjl4H4KgV+VyjBSz2HD5hIQAvRHgjGhVuoSjY=",
+        "lastModified": 1792003213,
+        "narHash": "sha256-9r5/VIYprhA/2VnvT6m+LCkh4/XSdkOMi+OuavkuOvI=",
         "owner": "jarvahl",
         "repo": "readme-file",
-        "rev": "b22555e93d853f59db04eed45dc99b1ad5056946",
+        "rev": "006736dc3018c39dc3ba82d1bc19ba78febb2b27",
         "type": "github"
       },
       "original": {

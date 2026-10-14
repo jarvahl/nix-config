@@ -1,3 +1,5 @@
+<!-- DO-NOT-EDIT. This file was auto-generated using github:jarvahl/readme-file. Use nix run .#write-files to regenerate it. -->
+
 # nix-config
 
 ## Dev shell
