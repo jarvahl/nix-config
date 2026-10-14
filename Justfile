@@ -1,10 +1,18 @@
-set quiet := true
+# [boot] Schedule configuration for next boot
+[no-exit-message]
+boot host=`hostname`:
+    #!/usr/bin/env bash
+    set -euo pipefail
 
-host := `hostname`
+    nixos-rebuild boot \
+        --flake ".#{{host}}" \
+        --elevate=sudo \
+        -L \
+        --accept-flake-config
 
 # [build] Build configuration for host
 [no-exit-message]
-build host=host:
+build host=`hostname`:
     #!/usr/bin/env bash
     set -euo pipefail
 
@@ -14,9 +22,11 @@ build host=host:
         --show-trace \
         --accept-flake-config
 
+default:
+    just --list
 # [switch] Apply configuration to host
 [no-exit-message]
-switch host=host:
+switch host=`hostname`:
     #!/usr/bin/env bash
     set -euo pipefail
 
@@ -33,21 +43,9 @@ switch host=host:
 
     printf '\n'
 
-# [boot] Schedule configuration for next boot
-[no-exit-message]
-boot host=host:
-    #!/usr/bin/env bash
-    set -euo pipefail
-
-    nixos-rebuild boot \
-        --flake ".#{{host}}" \
-        --elevate=sudo \
-        -L \
-        --accept-flake-config
-
 # [vm] Build and run host in an ephemeral VM
 [no-exit-message]
-vm host=host:
+vm host=`hostname`:
     #!/usr/bin/env bash
     set -euo pipefail
 
@@ -62,6 +60,3 @@ vm host=host:
         --accept-flake-config
 
     "./result/bin/run-{{host}}-vm"
-
-default:
-    just --list

@@ -49,7 +49,7 @@
           "pi",
           "nixpkgs"
         ],
-        "systems": "systems_3",
+        "systems": "systems_4",
         "treefmt-nix": [
           "treefmt-nix"
         ]
@@ -425,6 +425,45 @@
         "type": "sourcehut"
       }
     },
+    "just-file": {
+      "inputs": {
+        "files": [
+          "files"
+        ],
+        "flake-file": [
+          "flake-file"
+        ],
+        "flake-parts": [
+          "flake-parts"
+        ],
+        "git-hooks-nix": [
+          "git-hooks-nix"
+        ],
+        "import-tree": [
+          "import-tree"
+        ],
+        "nixpkgs": [
+          "nixpkgs"
+        ],
+        "systems": "systems_3",
+        "treefmt-nix": [
+          "treefmt-nix"
+        ]
+      },
+      "locked": {
+        "lastModified": 1791972389,
+        "narHash": "sha256-2ICwYoJzcO2IU+yfFYQYsY6St8hXbqs87BesxPyOk7c=",
+        "owner": "jarvahl",
+        "repo": "just-file",
+        "rev": "9236ae4ff14095ae78ab1c8ce0506e2a7fe6203f",
+        "type": "github"
+      },
+      "original": {
+        "owner": "jarvahl",
+        "repo": "just-file",
+        "type": "github"
+      }
+    },
     "make-shell": {
       "inputs": {
         "flake-compat": "flake-compat"
@@ -604,6 +643,7 @@
         "hjem-hm-modules": "hjem-hm-modules",
         "hjem-rum": "hjem-rum",
         "import-tree": "import-tree",
+        "just-file": "just-file",
         "nix-index-database": "nix-index-database",
         "nixos-wsl": "nixos-wsl",
         "nixpkgs": "nixpkgs",
@@ -705,6 +745,21 @@
       }
     },
     "systems_3": {
+      "locked": {
+        "lastModified": 1791244623,
+        "narHash": "sha256-uuanbkFk8a313Zfrxdcz8Us/yQtaxNnKJtX8v0ZPpd8=",
+        "owner": "nix-systems",
+        "repo": "default",
+        "rev": "d36eeed142f88b5a636f2e3856a53c61654cf29b",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-systems",
+        "repo": "default",
+        "type": "github"
+      }
+    },
+    "systems_4": {
       "locked": {
         "lastModified": 1681028828,
         "narHash": "sha256-Vy1rq5AaRuLzOxct8nz4T6wlgyUR7zLU309k9mBC768=",
