@@ -55,6 +55,15 @@ lib.mkMerge [
             podman
             ssh
             tailscale
+          ])
+          ++ (with den.aspects; [
+            # hardware
+            (power-management {
+              includes =
+                aspects: with aspects; [
+                  ignore-lid-on-ac
+                ];
+            })
           ]);
 
         nixos =
