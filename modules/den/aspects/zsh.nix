@@ -9,6 +9,7 @@
 
         bundle = {
           enable = true;
+          sourceHomeZshrc = false;
           autosuggestion.enable = true;
           syntaxHighlighting.integrations.patina.enable = true;
           completion = {
@@ -75,7 +76,7 @@
               rum.programs.zsh = {
                 enable = true;
                 initConfig = lib.concatStringsSep "\n" [
-                  cfg.bundle.initConfig
+                  ''source "${cfg.bundle.package}/share/zsh-bundle/.zshrc"''
                   cfg.initContent
                 ];
                 package = cfg.bundle.package;
@@ -86,20 +87,6 @@
       ];
     };
 
-    nixos =
-      {
-        config,
-        lib,
-        user,
-        ...
-      }:
-      let
-        shell = config.hjem.users.${user.userName}.programs.zsh.bundle.package;
-      in
-      {
-        environment.shells = [ shell ];
-        users.users.${user.userName}.shell = lib.mkForce shell;
-      };
   };
 
   flake-file.inputs.zsh-nix = {
