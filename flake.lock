@@ -451,11 +451,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1792040579,
-        "narHash": "sha256-+ZF9l8IyYJ8rUhsSgi6ifiFMyHBXls2dGowNsT8pNco=",
+        "lastModified": 1792040666,
+        "narHash": "sha256-W1fTcuMW7WdfMc1E/gcRlCyLZ3GLoD4B2rDiR9c+TpA=",
         "owner": "jarvahl",
         "repo": "just-file",
-        "rev": "35c57ec4721702bc3382d9453588bbb1d2105cd5",
+        "rev": "6b048bd8b2a9d67c278590d59a802cb78bbaf93f",
         "type": "github"
       },
       "original": {

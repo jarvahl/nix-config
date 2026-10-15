@@ -119,7 +119,7 @@ in
     default = "just --list";
 
     vm = {
-      description = "[vm] Build and run host in an ephemeral VM";
+      description = "Build and run host in an ephemeral VM";
       attributes.no-exit-message = true;
       args = hostArg;
       text = ''

@@ -13,7 +13,6 @@ boot host=`hostname`:
         -L \
         --accept-flake-config
 
-
 # Build configuration for host
 [no-exit-message]
 build host=`hostname`:
@@ -25,7 +24,6 @@ build host=`hostname`:
         -L \
         --show-trace \
         --accept-flake-config
-
 
 default:
     just --list
@@ -49,8 +47,7 @@ switch host=`hostname`:
 
     printf '\n'
 
-
-# [vm] Build and run host in an ephemeral VM
+# Build and run host in an ephemeral VM
 [no-exit-message]
 vm host=`hostname`:
     #!/usr/bin/env bash
