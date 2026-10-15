@@ -9,6 +9,7 @@
 
         bundle = {
           enable = true;
+          executableName = "zsh";
           autosuggestion.enable = true;
           syntaxHighlighting.integrations.patina.enable = true;
           completion = {
@@ -94,7 +95,7 @@
         ...
       }:
       let
-        shell = "${config.hjem.users.${user.userName}.programs.zsh.bundle.package}/bin/zsh-bundle";
+        shell = "${config.hjem.users.${user.userName}.programs.zsh.bundle.package}/bin/zsh";
       in
       {
         environment.shells = [ shell ];
