@@ -9,7 +9,6 @@
 
         bundle = {
           enable = true;
-          sourceHomeZshrc = false;
           autosuggestion.enable = true;
           syntaxHighlighting.integrations.patina.enable = true;
           completion = {
