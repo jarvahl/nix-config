@@ -87,6 +87,7 @@ lib.mkMerge [
               bat
               eza
               fzf
+              git
               nvim
               worktrunk
               zsh
