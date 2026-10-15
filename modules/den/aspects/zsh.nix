@@ -76,7 +76,7 @@
               rum.programs.zsh = {
                 enable = true;
                 initConfig = lib.concatStringsSep "\n" [
-                  ''source "${cfg.bundle.package}/share/zsh-bundle/.zshrc"''
+                  cfg.bundle.initConfig
                   cfg.initContent
                 ];
                 package = cfg.bundle.package;
@@ -87,6 +87,20 @@
       ];
     };
 
+    nixos =
+      {
+        config,
+        lib,
+        user,
+        ...
+      }:
+      let
+        shell = "${config.hjem.users.${user.userName}.programs.zsh.bundle.package}/bin/zsh-bundle";
+      in
+      {
+        environment.shells = [ shell ];
+        users.users.${user.userName}.shell = lib.mkForce shell;
+      };
   };
 
   flake-file.inputs.zsh-nix = {
