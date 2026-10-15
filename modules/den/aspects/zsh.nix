@@ -37,6 +37,7 @@
       bundle = {
         enable = true;
         autosuggestion.enable = true;
+        syntaxHighlighting.integrations.patina.enable = true;
         completion = {
           enable = true;
           integrations.fzf.enable = true;
