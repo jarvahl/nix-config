@@ -1,6 +1,7 @@
 # DO-NOT-EDIT. This file was auto-generated using github:jarvahl/just-file.
 # Use `nix run .#write-files` to regenerate it.
-# [boot] Schedule configuration for next boot
+
+# Schedule configuration for next boot
 [no-exit-message]
 boot host=`hostname`:
     #!/usr/bin/env bash
@@ -12,7 +13,8 @@ boot host=`hostname`:
         -L \
         --accept-flake-config
 
-# [build] Build configuration for host
+
+# Build configuration for host
 [no-exit-message]
 build host=`hostname`:
     #!/usr/bin/env bash
@@ -24,9 +26,11 @@ build host=`hostname`:
         --show-trace \
         --accept-flake-config
 
+
 default:
     just --list
-# [switch] Apply configuration to host
+
+# Apply configuration to host
 [no-exit-message]
 switch host=`hostname`:
     #!/usr/bin/env bash
@@ -44,6 +48,7 @@ switch host=`hostname`:
         --accept-flake-config
 
     printf '\n'
+
 
 # [vm] Build and run host in an ephemeral VM
 [no-exit-message]

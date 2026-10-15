@@ -22,9 +22,9 @@ let
       (action: {
         description =
           {
-            boot = "[boot] Schedule configuration for next boot";
-            build = "[build] Build configuration for host";
-            switch = "[switch] Apply configuration to host";
+            boot = "Schedule configuration for next boot";
+            build = "Build configuration for host";
+            switch = "Apply configuration to host";
           }
           .${action};
         attributes.no-exit-message = true;
