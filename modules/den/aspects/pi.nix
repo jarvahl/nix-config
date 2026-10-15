@@ -1,6 +1,11 @@
 { inputs, ... }:
 
 {
+  flake-file.inputs = {
+    pi.url = "github:lukasl-dev/pi.nix";
+    wrappers.url = "github:lassulus/wrappers";
+  };
+
   den.aspects.pi = {
     hjem = { pkgs, ... }: {
       packages = [
@@ -24,4 +29,8 @@
     };
 
   };
+
+  den.default.nixos.nixpkgs.overlays = [
+    inputs.pi.overlays.default
+  ];
 }

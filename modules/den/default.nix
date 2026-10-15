@@ -56,30 +56,6 @@
       };
     }
     {
-      # comma
-      nixos.imports = [
-        inputs.nix-index-database.nixosModules.nix-index
-      ];
-    }
-    {
-      # nvim
-      nixos.hjem.extraModules = [
-        inputs.nvf.homeManagerModules.default
-      ];
-    }
-    {
-      # pi
-      nixos.nixpkgs.overlays = [
-        inputs.pi.overlays.default
-      ];
-    }
-    {
-      # zsh
-      nixos.hjem.extraModules = [
-        inputs.zsh-nix.homeManagerModules.default
-      ];
-    }
-    {
       # system version
       nixos.system.stateVersion = lib.mkDefault "25.11";
     }
