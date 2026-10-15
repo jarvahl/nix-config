@@ -26,31 +26,64 @@
     '';
   };
 
-  den.default = {
-    includes =
-      (with den.batteries; [
+  den.default = lib.mkMerge [
+    {
+      # batteries
+      includes = with den.batteries; [
         define-user
         hostname
         inputs'
         primary-user
         self'
-      ])
-      ++ (with den.aspects; [
+      ];
+    }
+    {
+      # default aspects
+      includes = with den.aspects; [
         nix
         sudo
         sops.hashedPassword
-      ]);
-
-    nixos = { pkgs, ... }: {
-      system.stateVersion = lib.mkDefault "25.11";
-
-      environment.systemPackages = with pkgs; [
-        jq
-        python3
-        wget
       ];
-    };
-  };
+    }
+    {
+      # core
+      nixos = { pkgs, ... }: {
+        environment.systemPackages = with pkgs; [
+          jq
+          python3
+          wget
+        ];
+      };
+    }
+    {
+      # comma
+      nixos.imports = [
+        inputs.nix-index-database.nixosModules.nix-index
+      ];
+    }
+    {
+      # nvim
+      nixos.hjem.extraModules = [
+        inputs.nvf.homeManagerModules.default
+      ];
+    }
+    {
+      # pi
+      nixos.nixpkgs.overlays = [
+        inputs.pi.overlays.default
+      ];
+    }
+    {
+      # zsh
+      nixos.hjem.extraModules = [
+        inputs.zsh-nix.homeManagerModules.default
+      ];
+    }
+    {
+      # system version
+      nixos.system.stateVersion = lib.mkDefault "25.11";
+    }
+  ];
 
   flake-file.inputs.den.url = "github:denful/den";
 

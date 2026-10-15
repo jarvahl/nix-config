@@ -23,13 +23,5 @@
       ];
     };
 
-    nixos.nixpkgs.overlays = [
-      inputs.pi.overlays.default
-    ];
-  };
-
-  flake-file.inputs = {
-    pi.url = "github:lukasl-dev/pi.nix";
-    wrappers.url = "github:lassulus/wrappers";
   };
 }
