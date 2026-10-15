@@ -714,11 +714,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1791539771,
-        "narHash": "sha256-kW1cjJX/a7/7l9CkK30ZUsXP965RfJGtBVBM2jQ8VPI=",
+        "lastModified": 1792049030,
+        "narHash": "sha256-B/JEcPf/9VZgciW25GWRzp3LH+eVQHugQTUmyvsqc2s=",
         "owner": "jarvahl",
         "repo": "sops-file",
-        "rev": "b6274c7774b15433023982e919100e3349ab52d9",
+        "rev": "a90d6ae1b5a41e734635e5e477c665b2235d93a3",
         "type": "github"
       },
       "original": {

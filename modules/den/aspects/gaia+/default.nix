@@ -58,7 +58,7 @@ lib.mkMerge [
       };
     };
 
-    sops-file = {
+    sopsFile = {
       creation_rules = recovery [
         {
           key_groups = [
@@ -101,7 +101,7 @@ lib.mkMerge [
         ];
       };
 
-      sops-file = {
+      sopsFile = {
         creation_rules = recovery [
           {
             key_groups = [

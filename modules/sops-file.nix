@@ -31,7 +31,7 @@
 
   imports = [ inputs.sops-file.flakeModules.default ];
 
-  sops-file = {
+  sopsFile = {
     creation_rules = [
       {
         key_groups = [
