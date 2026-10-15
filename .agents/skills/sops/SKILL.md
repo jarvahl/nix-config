@@ -3,6 +3,8 @@ name: "sops"
 description: "SOPS operational runbooks for this repo, including recovery keys and bootstrap secrets."
 ---
 
+<!-- DO-NOT-EDIT. This file was auto-generated using github:jarvahl/agent-files. Use nix run .#write-files to regenerate it. -->
+
 # SOPS
 
 Use this skill for SOPS maintenance in this repo.

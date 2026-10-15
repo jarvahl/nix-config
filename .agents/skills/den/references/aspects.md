@@ -1,3 +1,5 @@
+<!-- DO-NOT-EDIT. This file was auto-generated using github:jarvahl/agent-files. Use nix run .#write-files to regenerate it. -->
+
 # Den aspects
 
 This repo keeps reusable Den behavior under:
@@ -15,7 +17,6 @@ Host includes should read declaratively:
 ```nix
 includes = with den.aspects; [
   ssh
-  (ssh.provisionHostKey { ... })
 
   (hyperland {
     includes = { autologin, ... }: [
@@ -30,7 +31,7 @@ Prefer names that say what happens:
 ```nix
 sops.loadSecretsFrom
 sops.decryptWithSshKey
-ssh.provisionHostKey
+ssh
 ```
 
 Avoid vague helpers and compatibility aliases unless there is a real external caller.

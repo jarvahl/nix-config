@@ -1,3 +1,5 @@
+<!-- DO-NOT-EDIT. This file was auto-generated using github:jarvahl/agent-files. Use nix run .#write-files to regenerate it. -->
+
 # Create SOPS recovery key
 
 Generate age identity:

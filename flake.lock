@@ -26,11 +26,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1792001117,
-        "narHash": "sha256-LNVXw++ks41TMFs6i+7L6Dv8o3wVr5cluKKRsusFYXk=",
+        "lastModified": 1792040514,
+        "narHash": "sha256-gTrssGw1O7xKErCYnl4CP22azoXbFwjNLKZaU2J6lHo=",
         "owner": "jarvahl",
         "repo": "agent-files",
-        "rev": "9e5fd0e7aab9c8a85c5428aa16275d92039cef8a",
+        "rev": "15e897da518aab5950665f539e54fea13bfad70d",
         "type": "github"
       },
       "original": {

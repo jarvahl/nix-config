@@ -17,10 +17,10 @@ Available tools:
 
 ## Available commands
 
-- `boot` — [boot] Schedule configuration for next boot
-- `build` — [build] Build configuration for host
-- `switch` — [switch] Apply configuration to host
-- `vm` — [vm] Build and run host in an ephemeral VM
+- `boot` — Schedule configuration for next boot
+- `build` — Build configuration for host
+- `switch` — Apply configuration to host
+- `vm` — Build and run host in an ephemeral VM
 
 ## Runbooks
 
