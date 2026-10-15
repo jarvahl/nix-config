@@ -13,7 +13,7 @@
 
   imports = [ inputs.agent-files.flakeModules.default ];
 
-  agents.instructions = ''
+  "agent-files".instructions = ''
     # Project rules
 
     - This flake is evaluated from the Git tree. After creating, moving, or renaming files that Nix must import, stage the new paths before `nix eval`, `nix flake check`, or `direnv reload` (`git add <path>`). Untracked files are invisible to flake evaluation.

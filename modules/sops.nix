@@ -19,7 +19,7 @@
     }
   ];
 
-  agents.skills.sops = {
+  "agent-files".skills.sops = {
     description = "SOPS operational runbooks for this repo, including recovery keys and bootstrap secrets.";
     instructions = { references, ... }: ''
       # SOPS
