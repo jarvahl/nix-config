@@ -38,6 +38,19 @@ lib.mkMerge [
           fonts
           podman
           ssh
+        ])
+        ++ (with den.aspects; [
+          (certificates {
+            includes = { ... }: [
+              {
+                nixos = { pkgs, ... }: {
+                  security.pki.certificateFiles = [
+                    "${pkgs.zscaler-cacert}/etc/ssl/certs/zscaler-ca.crt"
+                  ];
+                };
+              }
+            ];
+          })
         ]);
 
       hosts.x86_64-linux.${host} = {
