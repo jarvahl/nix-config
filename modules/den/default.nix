@@ -5,7 +5,7 @@
   ...
 }:
 {
-  "agent-files".skills.den = {
+  agentFiles.skills.den = {
     description = "Routing guide for this repo's Den usage. Use when editing modules/den/**, especially Den aspects, host includes, callable aspects, or import-tree merged aspect namespaces.";
     instructions = { references, ... }: ''
       # Den

@@ -82,18 +82,18 @@ let
     else
       "";
 
-  describedRecipes = lib.filter (name: recipeDescription config.just.recipes.${name} != "") (
-    builtins.attrNames config.just.recipes
+  describedRecipes = lib.filter (name: recipeDescription config.justFile.recipes.${name} != "") (
+    builtins.attrNames config.justFile.recipes
   );
 in
 {
-  readme.sections = lib.mkOrder 200 [
+  readmeFile.sections = lib.mkOrder 200 [
     {
       title = "Available commands";
       text = lib.concatMapStringsSep "\n" (
         name:
         let
-          description = recipeDescription config.just.recipes.${name};
+          description = recipeDescription config.justFile.recipes.${name};
         in
         "- `${name}` — ${description}"
       ) describedRecipes;
@@ -115,7 +115,7 @@ in
 
   imports = [ inputs.just-file.flakeModules.default ];
 
-  just.recipes = rebuildRecipes // {
+  justFile.recipes = rebuildRecipes // {
     default = "just --list";
 
     vm = {

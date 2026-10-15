@@ -1,6 +1,6 @@
 { inputs, ... }:
 {
-  readme.title = "nix-config";
+  readmeFile.title = "nix-config";
 
   flake-file.inputs = {
     flake-file.url = "github:denful/flake-file";
