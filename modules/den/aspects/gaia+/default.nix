@@ -89,10 +89,14 @@ lib.mkMerge [
               fzf
               nvim
               worktrunk
+              zsh
 
               # accounts
               github
               gitlab
+            ])
+            ++ (with den.batteries; [
+              (user-shell "zsh")
             ]);
         };
 
