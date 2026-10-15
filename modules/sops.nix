@@ -1,6 +1,6 @@
 { inputs, lib, ... }:
 {
-  readmeFile.sections = lib.mkOrder 400 [
+  readme-file.sections = lib.mkOrder 400 [
     {
       title = "SOPS recovery shell";
       text = ''
@@ -19,7 +19,7 @@
     }
   ];
 
-  agentFiles.skills.sops = {
+  agent-files.skills.sops = {
     description = "SOPS operational runbooks for this repo, including recovery keys and bootstrap secrets.";
     instructions = { references, ... }: ''
       # SOPS

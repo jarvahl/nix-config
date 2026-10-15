@@ -1,5 +1,5 @@
 {
-  agentFiles.skills.den.references = {
+  agent-files.skills.den.references = {
     aspects = {
       description = "Den aspects";
       text = ''

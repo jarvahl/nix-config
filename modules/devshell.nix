@@ -1,6 +1,6 @@
 { lib, ... }:
 {
-  readmeFile.sections = lib.mkMerge [
+  readme-file.sections = lib.mkMerge [
     (lib.mkOrder 100 [
       {
         title = "Dev shell";
