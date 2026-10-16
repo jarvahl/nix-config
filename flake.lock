@@ -685,7 +685,6 @@
         "sops-file": "sops-file",
         "sops-nix": "sops-nix",
         "treefmt-nix": "treefmt-nix",
-        "wrappers": "wrappers",
         "zsh-nix": "zsh-nix"
       }
     },
@@ -824,26 +823,6 @@
       "original": {
         "owner": "numtide",
         "repo": "treefmt-nix",
-        "type": "github"
-      }
-    },
-    "wrappers": {
-      "inputs": {
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1791312500,
-        "narHash": "sha256-Wr358xHHD0XHNzl2V6bzHJRvnrwLpa1/o+AjdYKDs1g=",
-        "owner": "lassulus",
-        "repo": "wrappers",
-        "rev": "d814b84aa832bb01630439c6b3566652da83a786",
-        "type": "github"
-      },
-      "original": {
-        "owner": "lassulus",
-        "repo": "wrappers",
         "type": "github"
       }
     },

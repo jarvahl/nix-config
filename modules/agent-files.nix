@@ -13,6 +13,45 @@
 
   imports = [ inputs.agent-files.flakeModules.default ];
 
+  agent-files.skills.agent-files = {
+    description = "Add and organize repository skills declaratively in this Nix configuration.";
+    instructions = ''
+      # Agent files
+
+      Declare skills with `agent-files.skills.<name>`.
+
+      A skill may be declared in any imported Nix module, preferably next to the functionality it documents.
+
+      Use:
+
+      - `description` for skill metadata;
+      - `instructions` for the generated `SKILL.md` content.
+
+      Generated skills are written to `.agents/skills/<name>/SKILL.md`.
+      Do not edit generated files directly. Regenerate them with `nix run .#write-files`.
+
+      Use references only when the skill needs larger supporting documentation.
+    '';
+  };
+
+  agent-files.skills.knowledge-distillation = {
+    description = "Extract reusable knowledge from completed tasks and decide whether it belongs in a skill or reference.";
+    instructions = ''
+      # Knowledge distillation
+
+      After completing a non-trivial task, identify what is reusable.
+
+      1. Separate general principles from implementation details.
+      2. Keep only knowledge likely to be useful again.
+      3. Put workflows and rules in a skill.
+      4. Put detailed examples and supporting material in references.
+      5. Keep project-specific knowledge near the module it describes.
+      6. Avoid creating a skill for a one-off observation.
+
+      Describe the result briefly and propose its location before adding it.
+    '';
+  };
+
   agent-files.instructions = ''
     # Project rules
 

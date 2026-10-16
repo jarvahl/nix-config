@@ -132,10 +132,6 @@
       url = "github:numtide/treefmt-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    wrappers = {
-      url = "github:lassulus/wrappers";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
     zsh-nix = {
       url = "github:jarvahl/zsh.nix";
       inputs = {
