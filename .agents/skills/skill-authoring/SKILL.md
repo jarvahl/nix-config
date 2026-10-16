@@ -1,11 +1,11 @@
 ---
-name: "agent-files"
-description: "Use when adding, organizing, or regenerating repository skills declared through agent-files; not for skill-specific domain guidance."
+name: "skill-authoring"
+description: "Use when defining, organizing, or regenerating repository skills; not for skill-specific domain guidance."
 ---
 
 <!-- DO-NOT-EDIT. This file was auto-generated using github:jarvahl/agent-files. Use nix run .#write-files to regenerate it. -->
 
-# Agent files
+# Skill authoring
 
 Declare skills with `agent-files.skills.<name>`.
 
@@ -15,6 +15,10 @@ Use:
 
 - `description` for skill metadata;
 - `instructions` for the generated `SKILL.md` content.
+
+Write concise descriptions using WHAT, WHEN, and NOT-WHEN:
+what the skill covers, when it should trigger, and when it should not be used.
+Prefer one sentence of roughly 15–25 words.
 
 Generated skills are written to `.agents/skills/<name>/SKILL.md`.
 Do not edit generated files directly. Regenerate them with `nix run .#write-files`.

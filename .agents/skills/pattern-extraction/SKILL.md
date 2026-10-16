@@ -1,11 +1,11 @@
 ---
-name: "knowledge-distillation"
-description: "Use after non-trivial work to extract reusable project knowledge and decide between a skill and a reference; not for one-off details."
+name: "pattern-extraction"
+description: "Use after non-trivial work to extract reusable patterns and decide between a skill and a reference; not for one-off details."
 ---
 
 <!-- DO-NOT-EDIT. This file was auto-generated using github:jarvahl/agent-files. Use nix run .#write-files to regenerate it. -->
 
-# Knowledge distillation
+# Pattern extraction
 
 After completing a non-trivial task, identify what is reusable.
 

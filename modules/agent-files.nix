@@ -13,10 +13,10 @@
 
   imports = [ inputs.agent-files.flakeModules.default ];
 
-  agent-files.skills.agent-files = {
-    description = "Use when adding, organizing, or regenerating repository skills declared through agent-files; not for skill-specific domain guidance.";
+  agent-files.skills.skill-authoring = {
+    description = "Use when defining, organizing, or regenerating repository skills; not for skill-specific domain guidance.";
     instructions = ''
-      # Agent files
+      # Skill authoring
 
       Declare skills with `agent-files.skills.<name>`.
 
@@ -27,6 +27,10 @@
       - `description` for skill metadata;
       - `instructions` for the generated `SKILL.md` content.
 
+      Write concise descriptions using WHAT, WHEN, and NOT-WHEN:
+      what the skill covers, when it should trigger, and when it should not be used.
+      Prefer one sentence of roughly 15–25 words.
+
       Generated skills are written to `.agents/skills/<name>/SKILL.md`.
       Do not edit generated files directly. Regenerate them with `nix run .#write-files`.
 
@@ -34,10 +38,10 @@
     '';
   };
 
-  agent-files.skills.knowledge-distillation = {
-    description = "Use after non-trivial work to extract reusable project knowledge and decide between a skill and a reference; not for one-off details.";
+  agent-files.skills.pattern-extraction = {
+    description = "Use after non-trivial work to extract reusable patterns and decide between a skill and a reference; not for one-off details.";
     instructions = ''
-      # Knowledge distillation
+      # Pattern extraction
 
       After completing a non-trivial task, identify what is reusable.
 
