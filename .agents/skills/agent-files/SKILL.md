@@ -1,6 +1,6 @@
 ---
 name: "agent-files"
-description: "Add and organize repository skills declaratively in this Nix configuration."
+description: "Use when adding, organizing, or regenerating repository skills declared through agent-files; not for skill-specific domain guidance."
 ---
 
 <!-- DO-NOT-EDIT. This file was auto-generated using github:jarvahl/agent-files. Use nix run .#write-files to regenerate it. -->

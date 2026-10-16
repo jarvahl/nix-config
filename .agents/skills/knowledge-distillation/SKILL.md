@@ -1,6 +1,6 @@
 ---
 name: "knowledge-distillation"
-description: "Extract reusable knowledge from completed tasks and decide whether it belongs in a skill or reference."
+description: "Use after non-trivial work to extract reusable project knowledge and decide between a skill and a reference; not for one-off details."
 ---
 
 <!-- DO-NOT-EDIT. This file was auto-generated using github:jarvahl/agent-files. Use nix run .#write-files to regenerate it. -->

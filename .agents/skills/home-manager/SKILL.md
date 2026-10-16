@@ -1,6 +1,6 @@
 ---
 name: "home-manager"
-description: "Use Home Manager modules inside Hjem in this repository."
+description: "Use when configuring Home Manager modules through Hjem or registering external homeModules; not for standalone Home Manager setups."
 ---
 
 <!-- DO-NOT-EDIT. This file was auto-generated using github:jarvahl/agent-files. Use nix run .#write-files to regenerate it. -->

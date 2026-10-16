@@ -20,7 +20,7 @@
   ];
 
   agent-files.skills.sops = {
-    description = "SOPS operational runbooks for this repo, including recovery keys and bootstrap secrets.";
+    description = "Use when managing SOPS secrets, age keys, or recovery in this repository; not for general encryption.";
     instructions = { references, ... }: ''
       # SOPS
 

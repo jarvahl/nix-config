@@ -1,6 +1,6 @@
 ---
 name: "sops"
-description: "SOPS operational runbooks for this repo, including recovery keys and bootstrap secrets."
+description: "Use when managing SOPS secrets, age keys, or recovery in this repository; not for general encryption."
 ---
 
 <!-- DO-NOT-EDIT. This file was auto-generated using github:jarvahl/agent-files. Use nix run .#write-files to regenerate it. -->

@@ -1,7 +1,7 @@
 { inputs, ... }:
 {
   agent-files.skills.home-manager = {
-    description = "Use Home Manager modules inside Hjem in this repository.";
+    description = "Use when configuring Home Manager modules through Hjem or registering external homeModules; not for standalone Home Manager setups.";
     instructions = ''
       # Home Manager modules in Hjem
 

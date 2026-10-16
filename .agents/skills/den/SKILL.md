@@ -1,6 +1,6 @@
 ---
 name: "den"
-description: "Routing guide for this repo's Den usage. Use when editing modules/den/**, especially Den aspects, host includes, callable aspects, or import-tree merged aspect namespaces."
+description: "Use when editing Den aspects, host includes, namespaces, or callable aspects in modules/den/**; not for unrelated NixOS configuration."
 ---
 
 <!-- DO-NOT-EDIT. This file was auto-generated using github:jarvahl/agent-files. Use nix run .#write-files to regenerate it. -->

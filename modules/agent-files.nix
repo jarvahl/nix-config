@@ -14,7 +14,7 @@
   imports = [ inputs.agent-files.flakeModules.default ];
 
   agent-files.skills.agent-files = {
-    description = "Add and organize repository skills declaratively in this Nix configuration.";
+    description = "Use when adding, organizing, or regenerating repository skills declared through agent-files; not for skill-specific domain guidance.";
     instructions = ''
       # Agent files
 
@@ -35,7 +35,7 @@
   };
 
   agent-files.skills.knowledge-distillation = {
-    description = "Extract reusable knowledge from completed tasks and decide whether it belongs in a skill or reference.";
+    description = "Use after non-trivial work to extract reusable project knowledge and decide between a skill and a reference; not for one-off details.";
     instructions = ''
       # Knowledge distillation
 
