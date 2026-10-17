@@ -15,7 +15,7 @@ lib.mkMerge [
           };
           extensions = [
             "${pkgs.pi-core-skill-tool}/pi-core-skill-tool/index.ts"
-            "${pkgs.pi-self-compact}/pi-self-compact/extensions/index.ts"
+            "${pkgs.pi-self-compact}/pi-self-compact/index.ts"
           ];
           extraArgs = [
             "--tui-mode"
@@ -71,7 +71,7 @@ lib.mkMerge [
 
           pi-self-compact = mkPiExtension {
             pname = "pi-self-compact";
-            sourcePath = "extensions";
+            sourcePath = "extensions/index.ts";
             src = final.fetchFromGitHub {
               hash = "sha256-csv/g4XGsL7v9rk9ybhU/g2ec2xHlgglwhj3tyzvmdk=";
               owner = "saiday";
