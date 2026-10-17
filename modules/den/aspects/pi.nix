@@ -73,7 +73,7 @@ lib.mkMerge [
             pname = "pi-self-compact";
             sourcePath = "extensions";
             src = final.fetchFromGitHub {
-              hash = "sha256-bJgfMA1JGGGfItic9cTYN6BAG8LBbrFTqMg/igfAaoE=";
+              hash = "sha256-csv/g4XGsL7v9rk9ybhU/g2ec2xHlgglwhj3tyzvmdk=";
               owner = "saiday";
               repo = "pi-self-compact";
               rev = "de04f436207cf4fc45458739366cd7f7f61f11e7";
