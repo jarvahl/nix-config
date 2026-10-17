@@ -9,6 +9,7 @@
 - When including Den aspects, prefer `with den.aspects; [ ... ]` for local aspect names, especially names with hyphens like `dynamic-island`. Avoid direct long references unless needed.
 - When including Den batteries, use `with den.batteries; [ ... ]`; put batteries at the end of `includes` in a separate array, e.g. `(with den.aspects; [ ... ]) ++ (with den.batteries; [ ... ])`.
 - Keep secret helper includes in their own `(with den.aspects.sops.for-*; [ ... ])` group between the main aspects group and the final batteries group.
+- In modules containing `agent-files` declarations, use a top-level `lib.mkMerge`; keep the `agent-files` declarations in the last attribute set.
 
 ## Commit rules
 
