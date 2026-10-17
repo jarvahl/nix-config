@@ -109,6 +109,7 @@ lib.mkMerge [
           2. Inspect `package.json` to confirm the version and extension entry point.
           3. Pin an immutable commit with `fetchFromGitHub` and record its hash.
           4. Package only the extension files needed at runtime with a small derivation.
+             Install the entrypoint as `$out/<pname>/index.ts`; Pi uses this path to display the extension name.
           5. Add the resulting extension path to `programs.pi.coding-agent.extensions`.
           6. Run `nix flake check --no-build` and build the affected derivation when possible.
 
