@@ -2,7 +2,7 @@
 
 lib.mkMerge [
   {
-    flake-file.inputs.pi.url = "github:lukasl-dev/pi.nix";
+    flake-file.inputs.pi.url = "github:jarvahl/pi.nix";
 
     den.aspects.pi.hjem =
       { pkgs, ... }:
@@ -13,9 +13,12 @@ lib.mkMerge [
             PI_SKIP_VERSION_CHECK.value = "1";
             PI_TELEMETRY.value = "0";
           };
-          extensions = [
-            "${pkgs.pi-core-skill-tool}/pi-core-skill-tool/index.ts"
-            "${pkgs.pi-self-compact}/pi-self-compact/index.ts"
+          extensions = with pkgs.pi; [
+            "${pi-core-skill-tool}/pi-core-skill-tool/index.ts"
+            "${pi-diff-review}/pi-diff-review/index.ts"
+            "${pi-prompt-timer}/pi-prompt-timer/index.ts"
+            "${pi-self-compact}/pi-self-compact/index.ts"
+            "${ponytail}/pi-ponytail/index.js"
           ];
           extraArgs = [
             "--tui-mode"
@@ -28,62 +31,8 @@ lib.mkMerge [
       inputs.pi.homeModules.default
     ];
 
-    den.default.nixos.nixpkgs.overlays = [
-      inputs.pi.overlays.default
-    ];
   }
 
-  {
-    den.default.nixos.nixpkgs.overlays = [
-      (
-        final: _prev:
-        let
-          mkPiExtension =
-            {
-              pname,
-              sourcePath,
-              src,
-              version,
-            }:
-            final.stdenvNoCC.mkDerivation {
-              inherit pname src version;
-
-              dontBuild = true;
-
-              installPhase = ''
-                mkdir -p "$out/${pname}"
-                cp -r ${sourcePath} "$out/${pname}/"
-              '';
-            };
-        in
-        {
-          pi-core-skill-tool = mkPiExtension {
-            pname = "pi-core-skill-tool";
-            sourcePath = "packages/core/pi-core-skill-tool/src/index.ts";
-            src = final.fetchFromGitHub {
-              hash = "sha256-SCvTHU3aoSVuEovb6F5La7F/YPt63m8Bg1I/Y0fM2eM=";
-              owner = "arhen";
-              repo = "pi-extensions";
-              rev = "267bbdb";
-            };
-            version = "1.0.12";
-          };
-
-          pi-self-compact = mkPiExtension {
-            pname = "pi-self-compact";
-            sourcePath = "extensions/index.ts";
-            src = final.fetchFromGitHub {
-              hash = "sha256-csv/g4XGsL7v9rk9ybhU/g2ec2xHlgglwhj3tyzvmdk=";
-              owner = "saiday";
-              repo = "pi-self-compact";
-              rev = "de04f436207cf4fc45458739366cd7f7f61f11e7";
-            };
-            version = "0.2.0";
-          };
-        }
-      )
-    ];
-  }
   {
     agent-files.skills.pi = {
       description = "Use when configuring Pi or adding Pi extensions; not for unrelated coding-agent configuration.";

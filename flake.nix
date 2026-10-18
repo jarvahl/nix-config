@@ -91,16 +91,13 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     pi = {
-      url = "github:lukasl-dev/pi.nix";
-      inputs = {
-        bun2nix.inputs.treefmt-nix.follows = "treefmt-nix";
-        bun2nix-x86_64-darwin.inputs = {
-          nixpkgs.follows = "nixpkgs";
-          treefmt-nix.follows = "treefmt-nix";
-        };
-        flake-parts.follows = "flake-parts";
-        nixpkgs.follows = "nixpkgs";
-      };
+      url = "github:jarvahl/pi.nix";
+      inputs.flake-file.follows = "flake-file";
+      inputs.flake-parts.follows = "flake-parts";
+      inputs.git-hooks-nix.follows = "git-hooks-nix";
+      inputs.import-tree.follows = "import-tree";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.treefmt-nix.follows = "treefmt-nix";
     };
     readme-file = {
       url = "github:jarvahl/readme-file";
