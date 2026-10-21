@@ -38,7 +38,7 @@
             mode = "local";
           };
           enable = true;
-          environment.OPENCLAW_GATEWAY_TOKEN = config.sops.secrets."openclaw/gateway_token".path;
+          environment.OPENCLAW_GATEWAY_TOKEN = "${config.home.homeDirectory}/.config/openclaw/gateway-token";
         };
       };
 

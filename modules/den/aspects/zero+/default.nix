@@ -144,10 +144,6 @@ lib.mkMerge [
             (with den.aspects.sops; [
               (from ./secrets-user-${user}.yaml)
               (keyFile ".config/sops/age/key.txt")
-              (secret {
-                name = "openclaw/gateway_token";
-                path = ".config/openclaw/gateway-token";
-              })
             ])
             ++ (with den.aspects; [
               # ui
@@ -177,12 +173,20 @@ lib.mkMerge [
             ])
             ++ (with den.aspects; [
               (openclaw {
-                includes = { ... }: [
-                  (tailscale.service {
-                    name = "openclaw";
-                    port = 18789;
-                  })
-                ];
+                includes =
+                  { ... }:
+                  (with den.aspects.sops; [
+                    (secret {
+                      name = "openclaw/gateway_token";
+                      path = ".config/openclaw/gateway-token";
+                    })
+                  ])
+                  ++ (with den.aspects.tailscale; [
+                    (service {
+                      name = "openclaw";
+                      port = 18789;
+                    })
+                  ]);
               })
             ])
             ++ (with den.batteries; [

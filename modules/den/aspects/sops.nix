@@ -90,13 +90,17 @@ in
         nixos.nixos.sops.defaultSopsFile = file;
       };
 
-    secret =
-      args:
-      contextual {
-        hjem.hjem = userSecret args;
-        homeManager.homeManager = userSecret args;
-        nixos.nixos = hostSecret args;
-      };
+    secret = args: {
+      includes = [
+        (
+          {
+            user ? null,
+            ...
+          }:
+          if user != null then { hjem = userSecret args; } else { nixos = hostSecret args; }
+        )
+      ];
+    };
 
     keyFile =
       path:
