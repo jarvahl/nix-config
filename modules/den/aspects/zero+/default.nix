@@ -13,6 +13,7 @@ lib.mkMerge [
       aspects.${host} = {
         includes =
           (with den.aspects.sops; [
+            # secrets
             (from ./secrets-host.yaml)
             (keyFile "/var/lib/sops-nix/key.txt")
             (secret rec {
@@ -47,6 +48,7 @@ lib.mkMerge [
             })
           ])
           ++ (with den.aspects; [
+            # system
             comma
             fonts
             herdr
@@ -142,6 +144,7 @@ lib.mkMerge [
         aspects."${user}@${host}" = {
           includes =
             (with den.aspects.sops; [
+              # secrets
               (from ./secrets-user-${user}.yaml)
               (keyFile ".config/sops/age/key.txt")
             ])
@@ -157,7 +160,8 @@ lib.mkMerge [
               linger
               quickshell
               swaybg
-
+            ])
+            ++ (with den.aspects; [
               # console
               bat
               eza
@@ -167,11 +171,13 @@ lib.mkMerge [
               pi
               worktrunk
               zsh
-
+            ])
+            ++ (with den.aspects; [
               # accounts
               github
             ])
             ++ (with den.aspects; [
+              # services
               (openclaw {
                 includes =
                   { ... }:
@@ -190,6 +196,7 @@ lib.mkMerge [
               })
             ])
             ++ (with den.batteries; [
+              # batteries
               (user-shell "zsh")
             ]);
 

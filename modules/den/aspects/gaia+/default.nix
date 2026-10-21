@@ -12,6 +12,7 @@ lib.mkMerge [
     den = {
       aspects.${host}.includes =
         (with den.aspects.sops; [
+          # secrets
           (from ./secrets-host.yaml)
           (keyFile "/var/lib/sops-nix/key.txt")
           (secret rec {
@@ -33,6 +34,7 @@ lib.mkMerge [
           })
         ])
         ++ (with den.aspects; [
+          # certificates
           (certificates {
             includes = { ... }: [
               {
@@ -46,6 +48,7 @@ lib.mkMerge [
           })
         ])
         ++ (with den.aspects; [
+          # system
           comma
           fonts
           podman
@@ -79,10 +82,12 @@ lib.mkMerge [
         aspects."${user}@${host}" = {
           includes =
             (with den.aspects.sops; [
+              # secrets
               (from ./secrets-user-${user}.yaml)
               (keyFile ".config/sops/age/key.txt")
             ])
             ++ (with den.aspects; [
+              # console
               bat
               eza
               fzf
@@ -96,6 +101,7 @@ lib.mkMerge [
               gitlab
             ])
             ++ (with den.batteries; [
+              # batteries
               (user-shell "zsh")
             ]);
         };
