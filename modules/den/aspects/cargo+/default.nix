@@ -14,24 +14,23 @@ lib.mkMerge [
         (with den.aspects.sops; [
           (from ./secrets-host.yaml)
           (keyFile "/var/lib/sops-nix/key.txt")
-          (secret (
-            let
-              path = "/etc/ssh/ssh_host_ed25519_key";
-            in
-            {
-              aspect.services.openssh.hostKeys = [
-                {
-                  inherit path;
-                  type = "ed25519";
-                }
-              ];
-              group = "root";
-              name = "ssh/host_key";
-              owner = "root";
-              inherit path;
-              restartUnits = [ "sshd.service" ];
-            }
-          ))
+          (secret rec {
+            group = "root";
+            includes = [
+              {
+                services.openssh.hostKeys = [
+                  {
+                    inherit path;
+                    type = "ed25519";
+                  }
+                ];
+              }
+            ];
+            name = "ssh/host_key";
+            owner = "root";
+            path = "/etc/ssh/ssh_host_ed25519_key";
+            restartUnits = [ "sshd.service" ];
+          })
         ])
         ++ (with den.aspects; [
           comma

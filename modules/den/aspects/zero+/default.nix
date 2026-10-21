@@ -15,38 +15,36 @@ lib.mkMerge [
           (with den.aspects.sops; [
             (from ./secrets-host.yaml)
             (keyFile "/var/lib/sops-nix/key.txt")
-            (secret (
-              let
-                path = "/etc/ssh/ssh_host_ed25519_key";
-              in
-              {
-                aspect.services.openssh.hostKeys = [
-                  {
-                    inherit path;
-                    type = "ed25519";
-                  }
-                ];
-                group = "root";
-                name = "ssh/host_key";
-                owner = "root";
-                inherit path;
-                restartUnits = [ "sshd.service" ];
-              }
-            ))
-            (secret (
-              let
-                path = "/run/secrets/tailscale/auth_key";
-              in
-              {
-                aspect.services.tailscale.authKeyFile = path;
-                name = "tailscale/auth_key";
-                inherit path;
-                restartUnits = [
-                  "tailscaled-logout.service"
-                  "tailscaled-autoconnect.service"
-                ];
-              }
-            ))
+            (secret rec {
+              group = "root";
+              includes = [
+                {
+                  services.openssh.hostKeys = [
+                    {
+                      inherit path;
+                      type = "ed25519";
+                    }
+                  ];
+                }
+              ];
+              name = "ssh/host_key";
+              owner = "root";
+              path = "/etc/ssh/ssh_host_ed25519_key";
+              restartUnits = [ "sshd.service" ];
+            })
+            (secret rec {
+              includes = [
+                {
+                  services.tailscale.authKeyFile = path;
+                }
+              ];
+              name = "tailscale/auth_key";
+              path = "/run/secrets/tailscale/auth_key";
+              restartUnits = [
+                "tailscaled-logout.service"
+                "tailscaled-autoconnect.service"
+              ];
+            })
           ])
           ++ (with den.aspects; [
             comma

@@ -10,8 +10,8 @@ let
 
   hostSecret =
     {
-      aspect ? { },
       group ? null,
+      includes ? [ ],
       mode ? "0600",
       name,
       owner ? null,
@@ -19,27 +19,29 @@ let
       restartUnits ? [ ],
     }:
     { config, ... }:
-    lib.mkMerge [
-      {
-        assertions = [
-          {
-            assertion = config.sops.defaultSopsFile != null;
-            message = "sops.secret ${name}: missing `(from ./secrets.yaml)`";
-          }
-        ];
+    lib.mkMerge (
+      [
+        {
+          assertions = [
+            {
+              assertion = config.sops.defaultSopsFile != null;
+              message = "sops.secret ${name}: missing `(from ./secrets.yaml)`";
+            }
+          ];
 
-        sops.secrets.${name} = {
-          inherit mode path restartUnits;
+          sops.secrets.${name} = {
+            inherit mode path restartUnits;
+          }
+          // lib.optionalAttrs (owner != null) { inherit owner; }
+          // lib.optionalAttrs (group != null) { inherit group; };
         }
-        // lib.optionalAttrs (owner != null) { inherit owner; }
-        // lib.optionalAttrs (group != null) { inherit group; };
-      }
-      aspect
-    ];
+      ]
+      ++ includes
+    );
 
   userSecret =
     {
-      aspect ? { },
+      includes ? [ ],
       mode ? "0600",
       name,
       path,
@@ -49,22 +51,24 @@ let
     let
       secretPath = homePath path { inherit config; };
     in
-    lib.mkMerge [
-      {
-        assertions = [
-          {
-            assertion = config.sops.defaultSopsFile != null;
-            message = "sops.secret ${name}: missing `(from ./secrets.yaml)`";
-          }
-        ];
+    lib.mkMerge (
+      [
+        {
+          assertions = [
+            {
+              assertion = config.sops.defaultSopsFile != null;
+              message = "sops.secret ${name}: missing `(from ./secrets.yaml)`";
+            }
+          ];
 
-        sops.secrets.${name} = {
-          inherit mode;
-          path = secretPath;
-        };
-      }
-      aspect
-    ];
+          sops.secrets.${name} = {
+            inherit mode;
+            path = secretPath;
+          };
+        }
+      ]
+      ++ includes
+    );
 
   inUserContext =
     ctx:
