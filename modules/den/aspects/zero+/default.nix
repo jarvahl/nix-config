@@ -156,6 +156,7 @@ lib.mkMerge [
                 ];
               })
               hypridle
+              linger
               quickshell
               swaybg
 
