@@ -4,7 +4,10 @@
     { config, pkgs, ... }:
     {
       networking.firewall.trustedInterfaces = [ "tailscale0" ];
-      services.tailscale.enable = true;
+      services.tailscale = {
+        enable = true;
+        extraUpFlags = [ "--advertise-tags=tag:managed" ];
+      };
 
       systemd.services.tailscaled-logout = lib.mkIf (config.services.tailscale.authKeyFile != null) {
         after = [ "tailscaled.service" ];

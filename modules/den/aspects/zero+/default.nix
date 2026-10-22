@@ -176,25 +176,6 @@ lib.mkMerge [
               # accounts
               github
             ])
-            ++ (with den.aspects; [
-              # services
-              (openclaw {
-                includes =
-                  { ... }:
-                  (with den.aspects.sops; [
-                    (secret {
-                      name = "openclaw/gateway_token";
-                      path = ".config/openclaw/gateway-token";
-                    })
-                  ])
-                  ++ (with den.aspects.tailscale; [
-                    (service {
-                      name = "openclaw";
-                      port = 18789;
-                    })
-                  ]);
-              })
-            ])
             ++ (with den.batteries; [
               # batteries
               (user-shell "zsh")
