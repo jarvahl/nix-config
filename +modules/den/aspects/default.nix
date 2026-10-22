@@ -11,7 +11,7 @@ lib.mkMerge [
           This repo keeps reusable Den behavior under:
 
           ```text
-          modules/den/aspects/
+          +modules/den/aspects/
           ```
 
           `import-tree` merges files recursively. Do not manually import sibling aspect files.

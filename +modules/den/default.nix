@@ -49,11 +49,11 @@
   }
   {
     agent-files.skills.den = {
-      description = "Use when editing Den aspects, host includes, namespaces, or callable aspects in modules/den/**; not for unrelated NixOS configuration.";
+      description = "Use when editing Den aspects, host includes, namespaces, or callable aspects in +modules/den/**; not for unrelated NixOS configuration.";
       instructions = { references, ... }: ''
         # Den
 
-        Use this skill before editing `modules/den/**`.
+        Use this skill before editing `+modules/den/**`.
 
         ## Routing
 
