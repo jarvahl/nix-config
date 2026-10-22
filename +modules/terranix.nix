@@ -51,7 +51,7 @@ in
           package = pkgs.opentofu;
           prefixText = ''
             if [ -z "''${SOPS_AGE_KEY_FILE:-}" ]; then
-              echo "enter nix develop .#breakglass first" >&2
+              echo "enter nix develop .#sops first" >&2
               exit 1
             fi
 
