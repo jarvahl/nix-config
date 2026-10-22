@@ -77,7 +77,7 @@ lib.mkMerge [
               tmp="$(mktemp)"
               trap 'rm -f "$tmp"' EXIT
 
-              if ! sops -d --extract "[\"''${host}\"][\"age_key\"]" "''${secrets_file}" > "$tmp"; then
+              if ! sops -d --extract "[\"''${host}\"][\"age\"]" "''${secrets_file}" > "$tmp"; then
                 echo "failed to decrypt age key for host: ''${host}" >&2
                 echo "if this machine hostname is not the target host, pass it explicitly:" >&2
                 echo "  nix run .#pair -- <hostname>" >&2
