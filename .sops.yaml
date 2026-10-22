@@ -7,7 +7,7 @@ creation_rules:
 - key_groups:
   - age:
     - age17dkg84wglz4nq2523fayp528qr82njr2znlwc6fvdhzy8k3pg3gsusgx2q
-  path_regex: /nix/store/secrets-bootstrap\.yaml$
+  path_regex: /nix/store/keys\.yaml$
 - key_groups:
   - age:
     - age1wxm2g87tj35cthkl02lx3jzefkkfxkpr4kseyrzpuwhwkpfwm34smhjuuz

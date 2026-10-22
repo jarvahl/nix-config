@@ -32,31 +32,31 @@ lib.mkMerge [
     };
 
     perSystem = { pkgs, ... }: {
-      apps.bootstrap = {
-        meta.description = "Install a host age key from secrets-bootstrap.yaml";
+      apps.pair = {
+        meta.description = "Pair a host with its age key from keys.yaml";
         type = "app";
         program = lib.getExe (
           pkgs.writeShellApplication {
-            name = "bootstrap";
+            name = "pair";
             runtimeInputs = [ pkgs.sops ];
             text = ''
               set -euo pipefail
 
               if [ "''${1:-}" = "--help" ] || [ "''${1:-}" = "-h" ]; then
-                echo "usage: nix run .#bootstrap [-- hostname]"
-                echo "installs host age key from secrets-bootstrap.yaml to /var/lib/sops-nix/key.txt"
+                echo "usage: nix run .#pair [-- hostname]"
+                echo "installs host age key from keys.yaml to /var/lib/sops-nix/key.txt"
                 echo
                 echo "without an explicit hostname, uses: $(hostname)"
                 exit 0
               fi
 
               host="''${1:-$(hostname)}"
-              secrets_file="''${BOOTSTRAP_SECRETS_FILE:-secrets-bootstrap.yaml}"
+              secrets_file="''${PAIR_KEYS_FILE:-keys.yaml}"
               target="/var/lib/sops-nix/key.txt"
 
               if [ ! -f "''${secrets_file}" ]; then
-                echo "missing bootstrap secrets file: ''${secrets_file}" >&2
-                echo "run from the repository root or set BOOTSTRAP_SECRETS_FILE" >&2
+                echo "missing pair keys file: ''${secrets_file}" >&2
+                echo "run from the repository root or set PAIR_KEYS_FILE" >&2
                 exit 1
               fi
 
@@ -64,9 +64,9 @@ lib.mkMerge [
               trap 'rm -f "$tmp"' EXIT
 
               if ! sops -d --extract "[\"hosts\"][\"''${host}\"][\"age_key\"]" "''${secrets_file}" > "$tmp"; then
-                echo "failed to decrypt bootstrap key for host: ''${host}" >&2
+                echo "failed to decrypt age key for host: ''${host}" >&2
                 echo "if this machine hostname is not the target host, pass it explicitly:" >&2
-                echo "  nix run .#bootstrap -- <hostname>" >&2
+                echo "  nix run .#pair -- <hostname>" >&2
                 exit 1
               fi
 
@@ -81,7 +81,7 @@ lib.mkMerge [
                 sudo install -D -m 0600 -o root -g root "$tmp" "''${target}"
               fi
 
-              echo "installed host age key for ''${host} at ''${target}"
+              echo "paired host ''${host} with its age key at ''${target}"
             '';
           }
         );

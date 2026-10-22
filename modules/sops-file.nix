@@ -37,7 +37,7 @@
         key_groups = [
           { age = [ "recovery" ]; }
         ];
-        path_regex = ../../secrets-bootstrap.yaml;
+        path_regex = ../../keys.yaml;
       }
     ];
 
