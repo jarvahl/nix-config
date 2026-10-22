@@ -16,7 +16,7 @@ in
   perSystem =
     { pkgs, ... }:
     {
-      terranix.terranixConfigurations.infra = {
+      terranix.terranixConfigurations.terranix = {
         extraArgs.servicesByHost = servicesByHost;
 
         modules = [
