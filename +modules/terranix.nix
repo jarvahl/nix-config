@@ -13,25 +13,42 @@ in
 {
   imports = [ inputs.terranix.flakeModule ];
 
-  sopsFile.creation_rules = recovery [
-    {
-      key_groups = [
-        { age = [ "recovery" ]; }
-      ];
-      path_regex = "state\\.sops\\.json$";
-    }
-  ];
-
   perSystem =
     { pkgs, ... }:
     {
       terranix.terranixConfigurations.infra = {
+        extraArgs.servicesByHost = servicesByHost;
+
+        modules = [
+          (
+            {
+              lib,
+              servicesByHost,
+              ...
+            }:
+            let
+              services = lib.mergeAttrsList (builtins.attrValues servicesByHost);
+            in
+            {
+              resource.tailscale_service = lib.mapAttrs (name: service: {
+                name = "svc:${name}";
+                ports = [ "tcp:${toString service.port}" ];
+                tags = [ "tag:managed" ];
+              }) services;
+
+              terraform.required_providers.tailscale = {
+                source = "tailscale/tailscale";
+              };
+            }
+          )
+        ];
+
         terraformWrapper = {
-          package = pkgs.opentofu;
           extraRuntimeInputs = [
             pkgs.age
             pkgs.sops
           ];
+          package = pkgs.opentofu;
           prefixText = ''
             if [ -z "''${SOPS_AGE_KEY_FILE:-}" ]; then
               echo "enter nix develop .#breakglass first" >&2
@@ -64,32 +81,16 @@ in
           '';
         };
 
-        extraArgs.servicesByHost = servicesByHost;
         workdir = ".terranix";
-
-        modules = [
-          (
-            {
-              lib,
-              servicesByHost,
-              ...
-            }:
-            let
-              services = lib.mergeAttrsList (builtins.attrValues servicesByHost);
-            in
-            {
-              terraform.required_providers.tailscale = {
-                source = "tailscale/tailscale";
-              };
-
-              resource.tailscale_service = lib.mapAttrs (name: service: {
-                name = "svc:${name}";
-                ports = [ "tcp:${toString service.port}" ];
-                tags = [ "tag:managed" ];
-              }) services;
-            }
-          )
-        ];
       };
     };
+
+  sopsFile.creation_rules = recovery [
+    {
+      key_groups = [
+        { age = [ "recovery" ]; }
+      ];
+      path_regex = "state\\.sops\\.json$";
+    }
+  ];
 }
