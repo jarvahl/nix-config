@@ -35,11 +35,11 @@ mdsh .agents/skills/sops/references/create-recovery-key.md
 Unlock an encrypted recovery age identity for SOPS:
 
 ```sh
-nix develop .#sops-recovery
+nix develop .#breakglass
 ```
 
 By default it reads `./recovery.key.age`. Override with:
 
 ```sh
-SOPS_RECOVERY_KEY=/path/to/recovery.key.age nix develop .#sops-recovery
+SOPS_RECOVERY_KEY=/path/to/recovery.key.age nix develop .#breakglass
 ```
