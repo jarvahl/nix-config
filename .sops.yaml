@@ -7,11 +7,11 @@ creation_rules:
 - key_groups:
   - age:
     - age17dkg84wglz4nq2523fayp528qr82njr2znlwc6fvdhzy8k3pg3gsusgx2q
-  path_regex: secrets\.yaml$
+  path_regex: state\.sops\.json$
 - key_groups:
   - age:
     - age17dkg84wglz4nq2523fayp528qr82njr2znlwc6fvdhzy8k3pg3gsusgx2q
-  path_regex: state\.sops\.json$
+  path_regex: secrets\.yaml$
 - key_groups:
   - age:
     - age17dkg84wglz4nq2523fayp528qr82njr2znlwc6fvdhzy8k3pg3gsusgx2q

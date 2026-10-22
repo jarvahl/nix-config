@@ -1,6 +1,20 @@
-{ inputs, lib, ... }:
+{
+  inputs,
+  lib,
+  recovery,
+  ...
+}:
 lib.mkMerge [
   {
+    sopsFile.creation_rules = recovery [
+      {
+        key_groups = [
+          { age = [ "recovery" ]; }
+        ];
+        path_regex = "secrets\\.yaml$";
+      }
+    ];
+
     readme-file.sections = lib.mkOrder 400 [
       {
         title = "SOPS recovery shell";

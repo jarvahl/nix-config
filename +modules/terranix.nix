@@ -18,12 +18,6 @@ in
       key_groups = [
         { age = [ "recovery" ]; }
       ];
-      path_regex = "secrets\\.yaml$";
-    }
-    {
-      key_groups = [
-        { age = [ "recovery" ]; }
-      ];
       path_regex = "state\\.sops\\.json$";
     }
   ];
