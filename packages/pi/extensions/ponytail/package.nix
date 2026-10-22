@@ -14,7 +14,8 @@ stdenvNoCC.mkDerivation {
   dontBuild = true;
 
   installPhase = ''
-    mkdir -p "$out/pi-ponytail/skills"
+    mkdir -p "$out/hooks" "$out/pi-ponytail/skills"
+    cp hooks/ponytail-config.js hooks/ponytail-instructions.js "$out/hooks/"
     cp pi-extension/index.js "$out/pi-ponytail/index.js"
     cp -r skills/* "$out/pi-ponytail/skills/"
   '';

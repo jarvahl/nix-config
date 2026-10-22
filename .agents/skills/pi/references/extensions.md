@@ -14,3 +14,7 @@
 
 Keep one shared packaging helper for multiple source-only extensions when their
 derivations have the same shape, while keeping source paths explicit.
+
+Use `fetchFromGitHub` for source-only extensions. Use `buildNpmPackage` only when
+runtime dependencies are required, and first verify that the lockfile contains
+complete `resolved` URLs and `integrity` hashes.
