@@ -1,15 +1,9 @@
 {
-  config,
   inputs,
   lib,
   recovery,
   ...
 }:
-let
-  servicesByHost = lib.mapAttrs (
-    _host: nixos: nixos.config.services.tailscale.services or { }
-  ) config.flake.nixosConfigurations;
-in
 {
   imports = [ inputs.terranix.flakeModule ];
 
@@ -17,8 +11,6 @@ in
     { pkgs, ... }:
     {
       terranix.terranixConfigurations.terranix = {
-        extraArgs.servicesByHost = servicesByHost;
-
         modules = [
           (inputs.import-tree.initFilter (lib.hasInfix "/_terranix/") ./den/aspects)
         ];

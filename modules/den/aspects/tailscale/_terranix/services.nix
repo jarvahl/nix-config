@@ -1,6 +1,6 @@
-{ lib, servicesByHost, ... }:
+{ lib, tailscaleServicesByHost, ... }:
 let
-  services = lib.mergeAttrsList (builtins.attrValues servicesByHost);
+  services = lib.mergeAttrsList (builtins.attrValues tailscaleServicesByHost);
 in
 {
   resource.tailscale_service = lib.mapAttrs (name: service: {

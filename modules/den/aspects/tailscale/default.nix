@@ -1,4 +1,14 @@
-{ den, lib, ... }:
+{
+  config,
+  den,
+  lib,
+  ...
+}:
+let
+  tailscaleServicesByHost = lib.mapAttrs (
+    _host: nixos: nixos.config.services.tailscale.services or { }
+  ) config.flake.nixosConfigurations;
+in
 {
   den.aspects.tailscale = {
     includes = [
@@ -38,5 +48,10 @@
           serviceConfig.Type = "oneshot";
         };
       };
+  };
+
+  perSystem = {
+    terranix.terranixConfigurations.terranix.extraArgs.tailscaleServicesByHost =
+      tailscaleServicesByHost;
   };
 }
