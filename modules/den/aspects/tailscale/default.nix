@@ -4,11 +4,6 @@
   lib,
   ...
 }:
-let
-  tailscaleServicesByHost = lib.mapAttrs (
-    _host: nixos: nixos.config.services.tailscale.services or { }
-  ) config.flake.nixosConfigurations;
-in
 {
   den.aspects.tailscale = {
     includes = [
@@ -51,7 +46,8 @@ in
   };
 
   perSystem = {
-    terranix.terranixConfigurations.terranix.extraArgs.tailscaleServicesByHost =
-      tailscaleServicesByHost;
+    terranix.terranixConfigurations.terranix.extraArgs.tailscaleServicesByHost = lib.mapAttrs (
+      _host: nixos: nixos.config.services.tailscale.services or { }
+    ) config.flake.nixosConfigurations;
   };
 }
