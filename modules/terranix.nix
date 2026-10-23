@@ -20,13 +20,17 @@
             pkgs.age
             pkgs.jq
             pkgs.sops
+            pkgs.yq-go
           ];
           package = pkgs.opentofu;
           prefixText = ''
-            if [ -z "''${SOPS_AGE_KEY_FILE:-}" ]; then
-              echo "enter nix develop .#sops first" >&2
+            temporary_key="$(mktemp)"
+            if ! age -d "$PWD/sops-keys.age" | yq -r '.terranix' > "$temporary_key"; then
+              rm -f "$temporary_key"
               exit 1
             fi
+            chmod 600 "$temporary_key"
+            export SOPS_AGE_KEY_FILE="$temporary_key"
 
             state="$PWD/terraform.tfstate.sops.json"
             secrets="$PWD/secrets.yaml"
@@ -47,6 +51,7 @@
                 mv "$state.tmp" "$state"
                 rm -f terraform.tfstate
               fi
+              rm -f "$temporary_key"
               exit "$status"
             }
 
