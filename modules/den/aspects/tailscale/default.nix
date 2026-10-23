@@ -16,7 +16,7 @@
         networking.firewall.trustedInterfaces = [ "tailscale0" ];
         services.tailscale = {
           enable = true;
-          extraUpFlags = [ "--advertise-tags=tag:managed" ];
+          tags = [ "managed" ];
         };
 
         systemd.services.tailscaled-logout = lib.mkIf (config.services.tailscale.authKeyFile != null) {
@@ -46,8 +46,14 @@
   };
 
   perSystem = {
-    terranix.terranixConfigurations.terranix.extraArgs.tailscaleServicesByHost = lib.mapAttrs (
-      _host: nixos: nixos.config.services.tailscale.services or { }
-    ) config.flake.nixosConfigurations;
+    terranix.terranixConfigurations.terranix.extraArgs = {
+      tailscaleServicesByHost = lib.mapAttrs (
+        _host: nixos: nixos.config.services.tailscale.services or { }
+      ) config.flake.nixosConfigurations;
+      tailscaleTagsByHost = lib.mapAttrs (
+        _host: nixos:
+        if nixos.config.services.tailscale.enable then nixos.config.services.tailscale.tags or [ ] else [ ]
+      ) config.flake.nixosConfigurations;
+    };
   };
 }
