@@ -28,8 +28,8 @@
               exit 1
             fi
 
-            state="$PWD/../terraform.tfstate.sops.json"
-            secrets="$PWD/../secrets.yaml"
+            state="$PWD/terraform.tfstate.sops.json"
+            secrets="$PWD/secrets.yaml"
 
             if [ -f "$state" ] && sops -d "$state" | jq -e 'has("version")' >/dev/null; then
               sops -d "$state" > terraform.tfstate
@@ -54,7 +54,7 @@
           '';
         };
 
-        workdir = ".terranix";
+        workdir = ".";
       };
     };
 

@@ -1,4 +1,8 @@
 .direnv/
+/.terraform/
+/config.tf.json
+/terraform.tfstate
+/terraform.tfstate.backup
 .pre-commit-config.yaml
 recovery.key
 .keys/
