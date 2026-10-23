@@ -7,10 +7,6 @@ lib.mkMerge [
     };
 
     flake-file.inputs = {
-      home-manager = {
-        inputs.nixpkgs.follows = "nixpkgs";
-        url = "github:nix-community/home-manager";
-      };
       hjem = {
         inputs.nixpkgs.follows = "nixpkgs";
         url = "github:feel-co/hjem";
