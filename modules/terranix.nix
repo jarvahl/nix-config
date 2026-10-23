@@ -18,6 +18,7 @@
         terraformWrapper = {
           extraRuntimeInputs = [
             pkgs.age
+            pkgs.jq
             pkgs.sops
           ];
           package = pkgs.opentofu;
@@ -30,7 +31,7 @@
             state="$PWD/../state.sops.json"
             secrets="$PWD/../secrets.yaml"
 
-            if [ -f "$state" ]; then
+            if [ -f "$state" ] && sops -d "$state" | jq -e 'has("version")' >/dev/null; then
               sops -d "$state" > terraform.tfstate
             fi
 
