@@ -20,27 +20,7 @@ in
         extraArgs.servicesByHost = servicesByHost;
 
         modules = [
-          (
-            {
-              lib,
-              servicesByHost,
-              ...
-            }:
-            let
-              services = lib.mergeAttrsList (builtins.attrValues servicesByHost);
-            in
-            {
-              resource.tailscale_service = lib.mapAttrs (name: service: {
-                name = "svc:${name}";
-                ports = [ "tcp:${toString service.port}" ];
-                tags = [ "tag:managed" ];
-              }) services;
-
-              terraform.required_providers.tailscale = {
-                source = "tailscale/tailscale";
-              };
-            }
-          )
+          (inputs.import-tree.initFilter (lib.hasInfix "/_terranix/") ./den/aspects)
         ];
 
         terraformWrapper = {
