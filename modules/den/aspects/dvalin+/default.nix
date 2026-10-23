@@ -63,36 +63,57 @@ lib.mkMerge [
             })
           ]);
 
-        nixos = { ... }: {
-          imports = [ ./_hardware-configuration.nix ];
-
-          networking.hostName = host;
-          networking.networkmanager.enable = true;
-          boot.kernelParams = [ "nomodeset" ];
-          boot.loader.efi.canTouchEfiVariables = true;
-          boot.loader.systemd-boot.enable = true;
-
-          fileSystems."/" = {
-            device = "/dev/disk/by-partlabel/disk-main-root";
-            fsType = "ext4";
-            options = [ "x-initrd.mount" ];
-          };
-          fileSystems."/boot" = {
-            device = "/dev/disk/by-partlabel/disk-main-ESP";
-            fsType = "vfat";
-            options = [ "umask=0077" ];
-          };
-
-          users.users.nixos = {
-            extraGroups = [
-              "wheel"
-              "networkmanager"
+        nixos =
+          {
+            config,
+            lib,
+            modulesPath,
+            ...
+          }:
+          {
+            boot.initrd.availableKernelModules = [
+              "xhci_pci"
+              "ahci"
+              "ehci_pci"
+              "usbhid"
+              "usb_storage"
+              "sd_mod"
             ];
-            group = "users";
-            initialPassword = "nix";
-            isNormalUser = true;
+            boot.initrd.kernelModules = [ ];
+            boot.kernelModules = [ ];
+            boot.extraModulePackages = [ ];
+            boot.kernelParams = [ "nomodeset" ];
+            boot.loader.efi.canTouchEfiVariables = true;
+            boot.loader.systemd-boot.enable = true;
+
+            fileSystems."/" = {
+              device = "/dev/disk/by-partlabel/disk-main-root";
+              fsType = "ext4";
+              options = [ "x-initrd.mount" ];
+            };
+
+            fileSystems."/boot" = {
+              device = "/dev/disk/by-partlabel/disk-main-ESP";
+              fsType = "vfat";
+              options = [ "umask=0077" ];
+            };
+
+            hardware.cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
+
+            imports = [ (modulesPath + "/installer/scan/not-detected.nix") ];
+
+            networking.networkmanager.enable = true;
+
+            users.users.nixos = {
+              extraGroups = [
+                "wheel"
+                "networkmanager"
+              ];
+              group = "users";
+              initialPassword = "nix";
+              isNormalUser = true;
+            };
           };
-        };
       };
 
       hosts.x86_64-linux.${host} = { };
