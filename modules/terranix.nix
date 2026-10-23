@@ -59,7 +59,7 @@
     };
 
   sopsFile = {
-    creation_rules = recovery [
+    creation_rules = [
       {
         key_groups = [
           { age = [ "terranix" ]; }
