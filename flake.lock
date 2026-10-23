@@ -256,6 +256,32 @@
         "type": "github"
       }
     },
+    "gitignore-file": {
+      "inputs": {
+        "flake-parts": [
+          "flake-parts"
+        ],
+        "import-tree": [
+          "import-tree"
+        ],
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1792761113,
+        "narHash": "sha256-i0D4ICClxM1zj3FTb3v4z1gsY4vIKubIxA548JogyTw=",
+        "owner": "jarvahl",
+        "repo": "gitignore-file",
+        "rev": "e3a84a056110c8d8c8a63c4b1b3904ecce8cff65",
+        "type": "github"
+      },
+      "original": {
+        "owner": "jarvahl",
+        "repo": "gitignore-file",
+        "type": "github"
+      }
+    },
     "hjem": {
       "inputs": {
         "nixpkgs": [
@@ -678,6 +704,7 @@
         "flake-file": "flake-file",
         "flake-parts": "flake-parts",
         "git-hooks-nix": "git-hooks-nix",
+        "gitignore-file": "gitignore-file",
         "hjem": "hjem",
         "hjem-hm-modules": "hjem-hm-modules",
         "hjem-rum": "hjem-rum",

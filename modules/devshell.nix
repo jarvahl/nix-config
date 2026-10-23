@@ -1,5 +1,7 @@
 { lib, ... }:
 {
+  gitignore.patterns = [ ".direnv/" ];
+
   readme-file.sections = lib.mkMerge [
     (lib.mkOrder 100 [
       {

@@ -5,6 +5,8 @@
     url = "github:cachix/git-hooks.nix";
   };
 
+  gitignore.patterns = [ ".pre-commit-config.yaml" ];
+
   imports = [ inputs.git-hooks-nix.flakeModule ];
 
   perSystem = { ... }: {

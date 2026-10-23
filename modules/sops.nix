@@ -1,11 +1,15 @@
 {
   inputs,
   lib,
-  recovery,
   ...
 }:
 lib.mkMerge [
   {
+    gitignore.patterns = [
+      "recovery.key"
+      ".keys/"
+    ];
+
     readme-file.sections = lib.mkOrder 400 [
       {
         title = "SOPS recovery shell";

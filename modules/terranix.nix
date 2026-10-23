@@ -1,10 +1,16 @@
 {
   inputs,
   lib,
-  recovery,
   ...
 }:
 {
+  gitignore.patterns = [
+    "/.terraform/"
+    "/config.tf.json"
+    "/terraform.tfstate"
+    "/terraform.tfstate.backup"
+  ];
+
   imports = [ inputs.terranix.flakeModule ];
 
   perSystem =
