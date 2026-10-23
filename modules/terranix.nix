@@ -24,13 +24,19 @@
           ];
           package = pkgs.opentofu;
           prefixText = ''
-            temporary_key="$(mktemp)"
+            temporary_key_dir="$(mktemp -d "''${XDG_RUNTIME_DIR:-/tmp}/terranix.XXXXXX")"
+            temporary_key="$temporary_key_dir/key"
             if ! age -d "$PWD/sops-keys.age" | yq -r '.terranix' > "$temporary_key"; then
-              rm -f "$temporary_key"
+              rm -rf "$temporary_key_dir"
               exit 1
             fi
             chmod 600 "$temporary_key"
             export SOPS_AGE_KEY_FILE="$temporary_key"
+
+            cleanup_key() {
+              rm -rf "$temporary_key_dir"
+            }
+            trap cleanup_key EXIT
 
             state="$PWD/terraform.tfstate.sops.json"
             secrets="$PWD/secrets.yaml"
@@ -51,7 +57,7 @@
                 mv "$state.tmp" "$state"
                 rm -f terraform.tfstate
               fi
-              rm -f "$temporary_key"
+              rm -rf "$temporary_key_dir"
               exit "$status"
             }
 

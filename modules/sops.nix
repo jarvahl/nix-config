@@ -109,25 +109,26 @@ lib.mkMerge [
             return 1
           fi
 
-          key="$(mktemp)"
+          key_dir="$(mktemp -d "''${XDG_RUNTIME_DIR:-/tmp}/sops.XXXXXX")"
+          cleanup_sops_recovery() {
+            rm -rf "$key_dir"
+          }
+          trap cleanup_sops_recovery EXIT
+
+          key="$key_dir/key"
           if ! age -d "$encrypted_keys" | yq -r ".''${key_name}" > "$key"; then
-            rm -f "$key"
+            rm -rf "$key_dir"
             return 1
           fi
 
           if ! grep -q '^AGE-SECRET-KEY-' "$key"; then
             echo "missing age identity: $key_name" >&2
-            rm -f "$key"
+            rm -rf "$key_dir"
             return 1
           fi
 
           chmod 600 "$key"
           export SOPS_AGE_KEY_FILE="$key"
-
-          cleanup_sops_recovery() {
-            rm -f "$SOPS_AGE_KEY_FILE"
-          }
-          trap cleanup_sops_recovery EXIT
 
           echo "sops shell active"
           echo "using key: $key_name from $encrypted_keys"
