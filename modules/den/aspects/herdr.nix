@@ -5,11 +5,11 @@
   };
 
   den.default.nixos.hjem.extraModules = [
-    inputs.herdnix.homeManagerModules.default
+    (inputs.home-manager + "/modules/programs/herdr.nix")
   ];
 
-  flake-file.inputs.herdnix = {
+  flake-file.inputs.home-manager = {
     inputs.nixpkgs.follows = "nixpkgs";
-    url = "github:Ra77a3l3-jar/herdnix";
+    url = "github:nix-community/home-manager";
   };
 }
