@@ -8,8 +8,4 @@
     (inputs.home-manager + "/modules/programs/herdr.nix")
   ];
 
-  flake-file.inputs.home-manager = {
-    inputs.nixpkgs.follows = "nixpkgs";
-    url = "github:nix-community/home-manager";
-  };
 }
