@@ -90,17 +90,26 @@ in
         nixos.nixos.sops.defaultSopsFile = file;
       };
 
-    secret = args: {
-      includes = [
-        (
-          {
-            user ? null,
-            ...
-          }:
-          if user != null then { hjem = userSecret args; } else { nixos = hostSecret args; }
-        )
-      ];
-    };
+    secret =
+      {
+        includes ? [ ],
+        ...
+      }@args:
+      let
+        secretArgs = builtins.removeAttrs args [ "includes" ];
+      in
+      {
+        includes = [
+          (
+            {
+              user ? null,
+              ...
+            }:
+            if user != null then { hjem = userSecret secretArgs; } else { nixos = hostSecret secretArgs; }
+          )
+        ]
+        ++ includes;
+      };
 
     keyFile =
       path:

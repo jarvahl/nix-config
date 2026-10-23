@@ -19,12 +19,14 @@ lib.mkMerge [
             group = "root";
             includes = [
               {
-                services.openssh.hostKeys = [
-                  {
-                    inherit path;
-                    type = "ed25519";
-                  }
-                ];
+                nixos = { ... }: {
+                  services.openssh.hostKeys = [
+                    {
+                      inherit path;
+                      type = "ed25519";
+                    }
+                  ];
+                };
               }
             ];
             name = "ssh/host_key";

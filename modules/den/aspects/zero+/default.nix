@@ -20,12 +20,14 @@ lib.mkMerge [
               group = "root";
               includes = [
                 {
-                  services.openssh.hostKeys = [
-                    {
-                      inherit path;
-                      type = "ed25519";
-                    }
-                  ];
+                  nixos = { ... }: {
+                    services.openssh.hostKeys = [
+                      {
+                        inherit path;
+                        type = "ed25519";
+                      }
+                    ];
+                  };
                 }
               ];
               name = "ssh/host_key";
@@ -36,7 +38,9 @@ lib.mkMerge [
             (secret rec {
               includes = [
                 {
-                  services.tailscale.authKeyFile = path;
+                  nixos = { ... }: {
+                    services.tailscale.authKeyFile = path;
+                  };
                 }
               ];
               name = "tailscale/auth_key";
