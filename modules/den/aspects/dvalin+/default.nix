@@ -10,57 +10,90 @@ in
 lib.mkMerge [
   {
     den = {
-      aspects.${host}.includes =
-        (with den.aspects.sops; [
-          (from ./secrets-host.yaml)
-          (keyFile "/var/lib/sops-nix/key.txt")
-          (secret rec {
-            includes = [
-              {
-                services.tailscale.authKeyFile = path;
-              }
-            ];
-            name = "tailscale/auth_key";
-            path = "/run/secrets/tailscale/auth_key";
-            restartUnits = [
-              "tailscaled-logout.service"
-              "tailscaled-autoconnect.service"
-            ];
-          })
-          (secret rec {
-            group = "root";
-            includes = [
-              {
-                services.openssh.hostKeys = [
-                  {
-                    inherit path;
-                    type = "ed25519";
-                  }
-                ];
-              }
-            ];
-            name = "ssh/host_key";
-            owner = "root";
-            path = "/etc/ssh/ssh_host_ed25519_key";
-            restartUnits = [ "sshd.service" ];
-          })
-        ])
-        ++ (with den.aspects; [
-          ssh
-          tailscale
-        ])
-        ++ (with den.aspects.tailscale; [
-          (tags [
-            "server"
-            "services"
+      aspects.${host} = {
+        includes =
+          (with den.aspects.sops; [
+            (from ./secrets-host.yaml)
+            (keyFile "/var/lib/sops-nix/key.txt")
+            (secret rec {
+              includes = [
+                {
+                  services.tailscale.authKeyFile = path;
+                }
+              ];
+              name = "tailscale/auth_key";
+              path = "/run/secrets/tailscale/auth_key";
+              restartUnits = [
+                "tailscaled-logout.service"
+                "tailscaled-autoconnect.service"
+              ];
+            })
+            (secret rec {
+              group = "root";
+              includes = [
+                {
+                  services.openssh.hostKeys = [
+                    {
+                      inherit path;
+                      type = "ed25519";
+                    }
+                  ];
+                }
+              ];
+              name = "ssh/host_key";
+              owner = "root";
+              path = "/etc/ssh/ssh_host_ed25519_key";
+              restartUnits = [ "sshd.service" ];
+            })
           ])
-          (service {
-            comment = "OpenClaw gateway";
-            name = "openclaw";
-            port = 18789;
-            servicePort = 443;
-          })
-        ]);
+          ++ (with den.aspects; [
+            ssh
+            tailscale
+          ])
+          ++ (with den.aspects.tailscale; [
+            (tags [
+              "server"
+              "services"
+            ])
+            (service {
+              comment = "OpenClaw gateway";
+              name = "openclaw";
+              port = 18789;
+              servicePort = 443;
+            })
+          ]);
+
+        nixos = { ... }: {
+          imports = [ ./_hardware-configuration.nix ];
+
+          networking.hostName = host;
+          networking.networkmanager.enable = true;
+          boot.kernelParams = [ "nomodeset" ];
+          boot.loader.efi.canTouchEfiVariables = true;
+          boot.loader.systemd-boot.enable = true;
+
+          fileSystems."/" = {
+            device = "/dev/disk/by-partlabel/disk-main-root";
+            fsType = "ext4";
+            options = [ "x-initrd.mount" ];
+          };
+          fileSystems."/boot" = {
+            device = "/dev/disk/by-partlabel/disk-main-ESP";
+            fsType = "vfat";
+            options = [ "umask=0077" ];
+          };
+
+          users.users.nixos = {
+            extraGroups = [
+              "wheel"
+              "networkmanager"
+            ];
+            group = "users";
+            initialPassword = "nix";
+            isNormalUser = true;
+          };
+        };
+      };
 
       hosts.x86_64-linux.${host} = { };
     };
