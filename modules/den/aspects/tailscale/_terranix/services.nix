@@ -1,6 +1,10 @@
-{ lib, tailscaleServicesByHost, ... }:
+{ flakeConfig, lib, ... }:
 let
-  services = lib.mergeAttrsList (builtins.attrValues tailscaleServicesByHost);
+  services = lib.mergeAttrsList (
+    lib.mapAttrsToList (
+      _host: nixos: nixos.config.services.tailscale.services or { }
+    ) flakeConfig.nixosConfigurations
+  );
 in
 {
   resource.tailscale_service = lib.mapAttrs (

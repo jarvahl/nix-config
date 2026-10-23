@@ -68,14 +68,12 @@ lib.mkMerge [
     };
   }
   {
-    perSystem.terranix.terranixConfigurations.terranix.extraArgs.tailscaleServicesByHost =
-      lib.mapAttrs (_host: nixos: nixos.config.services.tailscale.services or { })
-        config.flake.nixosConfigurations;
-  }
-  {
-    perSystem.terranix.terranixConfigurations.terranix.extraArgs.tailscaleTagsByHost = lib.mapAttrs (
-      _host: nixos:
-      if nixos.config.services.tailscale.enable then nixos.config.services.tailscale.tags or [ ] else [ ]
-    ) config.flake.nixosConfigurations;
+    perSystem.terranix.terranixConfigurations.terranix.modules = [
+      {
+        _module.args.flakeConfig = {
+          inherit (config.flake) nixosConfigurations;
+        };
+      }
+    ];
   }
 ]

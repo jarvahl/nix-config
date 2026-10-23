@@ -1,6 +1,13 @@
-{ lib, tailscaleTagsByHost, ... }:
+{ flakeConfig, lib, ... }:
 let
-  tags = lib.unique (lib.concatLists (builtins.attrValues tailscaleTagsByHost));
+  tags = lib.unique (
+    lib.concatLists (
+      lib.mapAttrsToList (
+        _host: nixos:
+        if nixos.config.services.tailscale.enable then nixos.config.services.tailscale.tags or [ ] else [ ]
+      ) flakeConfig.nixosConfigurations
+    )
+  );
 in
 {
   data.tailscale_acl.current = { };
