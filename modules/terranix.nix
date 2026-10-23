@@ -28,7 +28,7 @@
               exit 1
             fi
 
-            state="$PWD/../state.sops.json"
+            state="$PWD/../terraform.tfstate.sops.json"
             secrets="$PWD/../secrets.yaml"
 
             if [ -f "$state" ] && sops -d "$state" | jq -e 'has("version")' >/dev/null; then
@@ -70,7 +70,7 @@
         key_groups = [
           { age = [ "terranix" ]; }
         ];
-        path_regex = "state\\.sops\\.json$";
+        path_regex = "terraform\\.tfstate\\.sops\\.json$";
       }
     ];
     keys.terranix = "age1jxpxeqkdvp0s8784yntutpxw9k8a6428hq6vc3tvjgl5kqjf856qefv7m4";

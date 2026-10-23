@@ -13,7 +13,7 @@ creation_rules:
   - age:
     - age1jxpxeqkdvp0s8784yntutpxw9k8a6428hq6vc3tvjgl5kqjf856qefv7m4
     - age17dkg84wglz4nq2523fayp528qr82njr2znlwc6fvdhzy8k3pg3gsusgx2q
-  path_regex: state\.sops\.json$
+  path_regex: terraform\.tfstate\.sops\.json$
 - key_groups:
   - age:
     - age17dkg84wglz4nq2523fayp528qr82njr2znlwc6fvdhzy8k3pg3gsusgx2q
