@@ -4,8 +4,18 @@
     default = { };
     type = lib.types.attrsOf (
       lib.types.submodule {
-        options.port = lib.mkOption {
-          type = lib.types.port;
+        options = {
+          comment = lib.mkOption {
+            default = null;
+            type = lib.types.nullOr lib.types.str;
+          };
+          port = lib.mkOption {
+            type = lib.types.port;
+          };
+          servicePort = lib.mkOption {
+            default = 443;
+            type = lib.types.port;
+          };
         };
       }
     );

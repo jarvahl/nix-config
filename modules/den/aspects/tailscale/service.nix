@@ -1,14 +1,17 @@
-{ ... }:
+{ lib, ... }:
 let
   service =
     {
+      comment ? null,
       name,
       port,
+      servicePort ? 443,
     }:
     {
       nixos.services.tailscale.services.${name} = {
-        inherit port;
-      };
+        inherit port servicePort;
+      }
+      // lib.optionalAttrs (comment != null) { inherit comment; };
     };
 in
 {

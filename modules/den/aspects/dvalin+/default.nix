@@ -48,7 +48,15 @@ lib.mkMerge [
         ++ (with den.aspects; [
           ssh
           tailscale
-        ]);
+        ])
+        ++ [
+          (den.aspects.tailscale.service {
+            comment = "OpenClaw gateway";
+            name = "openclaw";
+            port = 18789;
+            servicePort = 443;
+          })
+        ];
 
       hosts.x86_64-linux.${host} = { };
     };
