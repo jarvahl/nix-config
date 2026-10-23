@@ -13,11 +13,11 @@ Use this skill for SOPS maintenance in this repo.
 
 | Task | Read |
 | --- | --- |
-| Creating or rotating the passphrase-encrypted recovery age identity | `references/create-recovery-key.md` |
+| Creating or rotating the passphrase-encrypted SOPS key bundle | `references/create-recovery-key.md` |
 | Unsure | Start with `references/create-recovery-key.md` |
 
 Keep this file light. Detailed runbooks live in `references/`.
 
 
 ## References
-- [Create SOPS recovery key](references/create-recovery-key.md)
+- [Create SOPS key bundle](references/create-recovery-key.md)

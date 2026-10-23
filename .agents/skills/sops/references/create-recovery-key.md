@@ -1,29 +1,21 @@
 <!-- DO-NOT-EDIT. This file was auto-generated using github:jarvahl/agent-files. Use nix run .#write-files to regenerate it. -->
 
-# Create SOPS recovery key
+# Create SOPS key bundle
 
-Generate age identity:
+Store the `recovery` and `terranix` age identities in a YAML bundle:
 
-```shell
-age-keygen -o recovery.key
+```yaml
+recovery: |
+  AGE-SECRET-KEY-...
+terranix: |
+  AGE-SECRET-KEY-...
 ```
 
 Encrypt it with a passphrase:
 
 ```shell
-age -p -a -o recovery.key.age recovery.key
+age -p -a -o sops-keys.age keys.yaml
 ```
 
-Show public recipient if you later want to add it to SOPS rules:
-
-```shell
-age-keygen -y recovery.key
-```
-
-Remove plaintext identity:
-
-```shell
-rm recovery.key
-```
-
-This creates `recovery.key.age`: a passphrase-encrypted age identity safe to keep in the repo.
+Remove the plaintext bundle after encryption. Select an identity with
+`SOPS_KEY_NAME` when entering `nix develop .#sops`.
