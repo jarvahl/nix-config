@@ -6,15 +6,6 @@
 }:
 lib.mkMerge [
   {
-    sopsFile.creation_rules = recovery [
-      {
-        key_groups = [
-          { age = [ "recovery" ]; }
-        ];
-        path_regex = "secrets\\.yaml$";
-      }
-    ];
-
     readme-file.sections = lib.mkOrder 400 [
       {
         title = "SOPS recovery shell";
@@ -25,10 +16,10 @@ lib.mkMerge [
           nix develop .#sops
           ```
 
-          By default it reads `./recovery.key.age`. Override with:
+          By default it reads `./sops-keys.age` and unlocks the `recovery` key. Override with:
 
           ```sh
-          SOPS_RECOVERY_KEY=/path/to/recovery.key.age nix develop .#sops
+          SOPS_KEYS_FILE=/path/to/sops-keys.age SOPS_KEY_NAME=terranix nix develop .#sops
           ```
         '';
       }
@@ -105,19 +96,27 @@ lib.mkMerge [
         packages = [
           pkgs.age
           pkgs.sops
+          pkgs.yq-go
         ];
 
         shellHook = ''
-          encrypted_key="''${SOPS_RECOVERY_KEY:-$PWD/recovery.key.age}"
+          encrypted_keys="''${SOPS_KEYS_FILE:-$PWD/sops-keys.age}"
+          key_name="''${SOPS_KEY_NAME:-recovery}"
 
-          if [ ! -f "$encrypted_key" ]; then
-            echo "missing recovery key: $encrypted_key" >&2
-            echo "set SOPS_RECOVERY_KEY=/path/to/recovery.key.age" >&2
+          if [ ! -f "$encrypted_keys" ]; then
+            echo "missing SOPS key bundle: $encrypted_keys" >&2
+            echo "set SOPS_KEYS_FILE=/path/to/sops-keys.age" >&2
             return 1
           fi
 
           key="$(mktemp)"
-          if ! age -d -o "$key" "$encrypted_key"; then
+          if ! age -d "$encrypted_keys" | yq -r ".''${key_name}" > "$key"; then
+            rm -f "$key"
+            return 1
+          fi
+
+          if ! grep -q '^AGE-SECRET-KEY-' "$key"; then
+            echo "missing age identity: $key_name" >&2
             rm -f "$key"
             return 1
           fi
@@ -130,8 +129,8 @@ lib.mkMerge [
           }
           trap cleanup_sops_recovery EXIT
 
-          echo "sops recovery shell active"
-          echo "using encrypted key: $encrypted_key"
+          echo "sops shell active"
+          echo "using key: $key_name from $encrypted_keys"
         '';
       };
     };

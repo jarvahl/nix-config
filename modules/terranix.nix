@@ -58,12 +58,21 @@
       };
     };
 
-  sopsFile.creation_rules = recovery [
-    {
-      key_groups = [
-        { age = [ "recovery" ]; }
-      ];
-      path_regex = "state\\.sops\\.json$";
-    }
-  ];
+  sopsFile = {
+    creation_rules = recovery [
+      {
+        key_groups = [
+          { age = [ "terranix" ]; }
+        ];
+        path_regex = "secrets\\.yaml$";
+      }
+      {
+        key_groups = [
+          { age = [ "terranix" ]; }
+        ];
+        path_regex = "state\\.sops\\.json$";
+      }
+    ];
+    keys.terranix = "age1jxpxeqkdvp0s8784yntutpxw9k8a6428hq6vc3tvjgl5kqjf856qefv7m4";
+  };
 }

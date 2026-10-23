@@ -38,8 +38,8 @@ Unlock an encrypted recovery age identity for SOPS:
 nix develop .#sops
 ```
 
-By default it reads `./recovery.key.age`. Override with:
+By default it reads `./sops-keys.age` and unlocks the `recovery` key. Override with:
 
 ```sh
-SOPS_RECOVERY_KEY=/path/to/recovery.key.age nix develop .#sops
+SOPS_KEYS_FILE=/path/to/sops-keys.age SOPS_KEY_NAME=terranix nix develop .#sops
 ```
