@@ -34,7 +34,7 @@ lib.mkMerge [
               previous=/var/lib/tailscale/nixos-auth-key
 
               if [[ -e "$previous" ]] && ! cmp -s ${config.services.tailscale.authKeyFile} "$previous"; then
-                if tailscale status --json --peers=false | jq -e '.BackendState == '"'"'Running'"'"' >/dev/null; then
+                if tailscale status --json --peers=false | jq -e '.BackendState == "Running"' >/dev/null; then
                   tailscale logout
                 fi
               fi

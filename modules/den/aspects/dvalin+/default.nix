@@ -51,10 +51,6 @@ lib.mkMerge [
             tailscale
           ])
           ++ (with den.aspects.tailscale; [
-            (tags [
-              "server"
-              "services"
-            ])
             (service {
               comment = "OpenClaw gateway";
               name = "openclaw";

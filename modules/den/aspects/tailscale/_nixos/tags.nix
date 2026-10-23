@@ -4,9 +4,20 @@ let
   flag = "--advertise-tags=" + lib.concatMapStringsSep "," (tag: "tag:${tag}") (lib.unique cfg.tags);
 in
 {
-  config.services.tailscale = lib.mkIf cfg.enable {
-    extraSetFlags = [ flag ];
-    extraUpFlags = [ flag ];
+  config = lib.mkIf cfg.enable {
+    services.tailscale.extraUpFlags = [ flag ];
+
+    systemd.services.tailscaled-tags = {
+      after = [
+        "tailscaled.service"
+        "tailscaled-autoconnect.service"
+      ];
+      wantedBy = [ "tailscaled.service" ];
+      wants = [ "tailscaled-autoconnect.service" ];
+      path = [ cfg.package ];
+      serviceConfig.Type = "oneshot";
+      script = "tailscale up ${lib.escapeShellArg flag}";
+    };
   };
 
   options.services.tailscale.tags = lib.mkOption {
