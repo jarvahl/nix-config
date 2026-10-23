@@ -4,56 +4,78 @@
   lib,
   ...
 }:
-{
-  den.aspects.tailscale = {
-    includes = [
-      (den.batteries.import-tree ./.)
-    ];
+lib.mkMerge [
+  {
+    den.aspects.tailscale = {
+      includes = [
+        (den.batteries.import-tree ./.)
+      ];
 
-    nixos =
-      { config, pkgs, ... }:
-      {
-        networking.firewall.trustedInterfaces = [ "tailscale0" ];
-        services.tailscale = {
-          enable = true;
-          tags = [ "managed" ];
-        };
+      nixos =
+        { config, pkgs, ... }:
+        {
+          networking.firewall.trustedInterfaces = [ "tailscale0" ];
+          services.tailscale = {
+            enable = true;
+            tags = [ "managed" ];
+          };
 
-        systemd.services.tailscaled-logout = lib.mkIf (config.services.tailscale.authKeyFile != null) {
-          after = [ "tailscaled.service" ];
-          before = [ "tailscaled-autoconnect.service" ];
-          description = "Log out Tailscale before autoconnect";
-          path = [
-            config.services.tailscale.package
-            pkgs.coreutils
-            pkgs.jq
-          ];
-          requires = [ "tailscaled.service" ];
-          script = ''
-            previous=/var/lib/tailscale/nixos-auth-key
+          systemd.services.tailscaled-logout = lib.mkIf (config.services.tailscale.authKeyFile != null) {
+            after = [ "tailscaled.service" ];
+            before = [ "tailscaled-autoconnect.service" ];
+            description = "Log out Tailscale before autoconnect";
+            path = [
+              config.services.tailscale.package
+              pkgs.coreutils
+              pkgs.jq
+            ];
+            requires = [ "tailscaled.service" ];
+            script = ''
+              previous=/var/lib/tailscale/nixos-auth-key
 
-            if [[ -e "$previous" ]] && ! cmp -s ${config.services.tailscale.authKeyFile} "$previous"; then
-              if tailscale status --json --peers=false | jq -e '.BackendState == '"'"'Running'"'"' >/dev/null; then
-                tailscale logout
+              if [[ -e "$previous" ]] && ! cmp -s ${config.services.tailscale.authKeyFile} "$previous"; then
+                if tailscale status --json --peers=false | jq -e '.BackendState == '"'"'Running'"'"' >/dev/null; then
+                  tailscale logout
+                fi
               fi
-            fi
 
-            install -D -m 0600 ${config.services.tailscale.authKeyFile} "$previous"
-          '';
-          serviceConfig.Type = "oneshot";
+              install -D -m 0600 ${config.services.tailscale.authKeyFile} "$previous"
+            '';
+            serviceConfig.Type = "oneshot";
+          };
         };
-      };
-  };
-
-  perSystem = {
-    terranix.terranixConfigurations.terranix.extraArgs = {
-      tailscaleServicesByHost = lib.mapAttrs (
-        _host: nixos: nixos.config.services.tailscale.services or { }
-      ) config.flake.nixosConfigurations;
-      tailscaleTagsByHost = lib.mapAttrs (
-        _host: nixos:
-        if nixos.config.services.tailscale.enable then nixos.config.services.tailscale.tags or [ ] else [ ]
-      ) config.flake.nixosConfigurations;
     };
-  };
-}
+  }
+  {
+    den.aspects.tailscale.service.__functor =
+      _self:
+      {
+        comment ? null,
+        name,
+        port,
+        servicePort ? 443,
+      }:
+      {
+        nixos.services.tailscale.services.${name} = {
+          inherit port servicePort;
+        }
+        // lib.optionalAttrs (comment != null) { inherit comment; };
+      };
+  }
+  {
+    den.aspects.tailscale.tags.__functor = _self: tags: {
+      nixos.services.tailscale.tags = tags;
+    };
+  }
+  {
+    perSystem.terranix.terranixConfigurations.terranix.extraArgs.tailscaleServicesByHost =
+      lib.mapAttrs (_host: nixos: nixos.config.services.tailscale.services or { })
+        config.flake.nixosConfigurations;
+  }
+  {
+    perSystem.terranix.terranixConfigurations.terranix.extraArgs.tailscaleTagsByHost = lib.mapAttrs (
+      _host: nixos:
+      if nixos.config.services.tailscale.enable then nixos.config.services.tailscale.tags or [ ] else [ ]
+    ) config.flake.nixosConfigurations;
+  }
+]
