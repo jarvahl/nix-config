@@ -5,17 +5,13 @@
     aspect
     // {
       __functor =
-        self:
-        {
-          includes ? [ ],
-          ...
-        }:
+        self: extraAspect:
         builtins.removeAttrs self [
           "__functor"
           "_module"
         ]
         // {
-          includes = (self.includes or [ ]) ++ includes;
+          includes = (self.includes or [ ]) ++ [ extraAspect ];
         };
     };
 
@@ -54,9 +50,7 @@
           "leaf"
           "parent"
         ];
-        expr = markers (parent {
-          includes = [ leaf ];
-        });
+        expr = markers (parent leaf);
       };
       testNestedIncludes = {
         expected = [
@@ -65,7 +59,7 @@
           "parent"
         ];
         expr = markers (parent {
-          includes = [ (child { includes = [ leaf ]; }) ];
+          includes = [ (child leaf) ];
         });
       };
     };

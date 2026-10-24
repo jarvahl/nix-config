@@ -18,11 +18,7 @@ Host includes should read declaratively:
 includes = with den.aspects; [
   ssh
 
-  (hyperland {
-    includes = with hyperland; [
-      autologin
-    ];
-  })
+  (hyperland hyperland.autologin)
 ];
 ```
 

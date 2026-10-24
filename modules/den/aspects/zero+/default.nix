@@ -62,11 +62,7 @@ lib.mkMerge [
           ])
           ++ (with den.aspects; [
             # hardware
-            (power-management {
-              includes = with power-management; [
-                ignore-lid-on-ac
-              ];
-            })
+            (power-management power-management.ignore-lid-on-ac)
           ]);
 
         nixos =
@@ -154,11 +150,7 @@ lib.mkMerge [
             ++ (with den.aspects; [
               # ui
               foot
-              (hyperland {
-                includes = with hyperland; [
-                  autologin
-                ];
-              })
+              (hyperland hyperland.autologin)
               hypridle
               linger
               quickshell

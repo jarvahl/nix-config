@@ -1,4 +1,4 @@
-{ den, lib, ... }:
+{ lib, ... }:
 let
   homePath =
     path:
@@ -91,7 +91,6 @@ let
     else
       backend.nixos;
 in
-with den.lib;
 {
   den.aspects.sops = rec {
     from =
@@ -102,20 +101,18 @@ with den.lib;
         nixos.nixos.sops.defaultSopsFile = file;
       };
 
-    secret =
-      params: aspect:
-      callable {
-        includes = [
-          (
-            {
-              user ? null,
-              ...
-            }:
-            if user != null then { hjem = userSecret params; } else { nixos = hostSecret params; }
-          )
-          aspect
-        ];
-      };
+    secret = params: aspect: {
+      includes = [
+        (
+          {
+            user ? null,
+            ...
+          }:
+          if user != null then { hjem = userSecret params; } else { nixos = hostSecret params; }
+        )
+        aspect
+      ];
+    };
 
     keyFile =
       path:

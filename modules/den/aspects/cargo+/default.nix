@@ -45,15 +45,11 @@ lib.mkMerge [
         ++ (with den.aspects; [
           # certificates
           (certificates {
-            includes = [
-              {
-                nixos = { pkgs, ... }: {
-                  security.pki.certificateFiles = [
-                    "${pkgs.zscaler-cacert}/etc/ssl/certs/zscaler-ca.crt"
-                  ];
-                };
-              }
-            ];
+            nixos = { pkgs, ... }: {
+              security.pki.certificateFiles = [
+                "${pkgs.zscaler-cacert}/etc/ssl/certs/zscaler-ca.crt"
+              ];
+            };
           })
         ]);
 
