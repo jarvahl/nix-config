@@ -155,9 +155,6 @@ with den.lib;
           sshKeyPaths = lib.mkForce [ ];
         };
       };
-    provision = secret;
-    secretsFile = from;
-
     hashedPassword = {
       nixos =
         {
