@@ -35,8 +35,8 @@ lib.mkMerge [
           Prefer names that say what happens:
 
           ```nix
-          sops.loadSecretsFrom
-          sops.decryptWithSshKey
+          sops.from
+          sops.keyFile
           ssh
           ```
 
@@ -61,20 +61,6 @@ lib.mkMerge [
           The repository's `den.lib.callable` helper instead consumes `includes` at call time;
           it does not forward call arguments as descendant context.
 
-          ## Local convention
-
-          When an argument selects extra child aspects from the parent namespace, call it `includes`:
-
-          ```nix
-          (parent {
-            includes = with parent; [
-              child
-            ];
-          })
-          ```
-
-          So `includes` means: “include these additional child aspects with the parent”.
-
           ## Pattern
 
           ```nix
@@ -91,7 +77,7 @@ lib.mkMerge [
           };
           ```
 
-          Host usage:
+          Use `includes` for the list of additional aspects selected at the call site:
 
           ```nix
           (parent {
@@ -101,11 +87,8 @@ lib.mkMerge [
           })
           ```
 
-          ## Flow
-
-          1. Den calls `parent` with `{ includes = [ child ]; }`.
-          2. The callable functor appends the supplied list to the aspect's base `includes`.
-          3. Den resolves the parent and the selected aspects without inheriting that list as context.
+          The functor appends this list to the parent's base `includes`, preserving both.
+          Den resolves the resulting tree without passing that list as descendant context.
 
           Do not implement this with a parametric include that reads `includes` from context:
           nested callable aspects can inherit the parent's list and recursively include themselves.

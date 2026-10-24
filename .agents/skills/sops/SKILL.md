@@ -13,11 +13,13 @@ Use this skill for SOPS maintenance in this repo.
 
 | Task | Read |
 | --- | --- |
+| Declaring secrets, choosing host/user context, or wiring a consumer | `references/secrets.md` |
 | Creating or rotating the passphrase-encrypted SOPS key bundle | `references/create-recovery-key.md` |
-| Unsure | Start with `references/create-recovery-key.md` |
+| Unsure | Start with `references/secrets.md` |
 
 Keep this file light. Detailed runbooks live in `references/`.
 
 
 ## References
 - [Create SOPS key bundle](references/create-recovery-key.md)
+- [Declare and consume SOPS secrets](references/secrets.md)
