@@ -10,19 +10,9 @@ with den.lib;
 
   den.aspects.openclaw = callable {
     hjem =
+      { config, ... }:
       {
-        config,
-        lib,
-        ...
-      }:
-      {
-        options.programs.git.enable = lib.mkOption {
-          default = false;
-          internal = true;
-          type = lib.types.bool;
-        };
-
-        config.programs.openclaw = {
+        programs.openclaw = {
           config.gateway = {
             auth = {
               mode = "token";

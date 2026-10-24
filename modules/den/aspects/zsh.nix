@@ -68,37 +68,6 @@
   };
 
   den.aspects.zsh-integration = {
-    hjem = { ... }: {
-      imports = [
-        (
-          { config, lib, ... }:
-          let
-            cfg = config.programs.zsh;
-          in
-          {
-            options.programs.zsh = {
-              enable = lib.mkEnableOption "zsh";
-              initContent = lib.mkOption {
-                default = "";
-                type = lib.types.lines;
-              };
-            };
-
-            config = lib.mkIf cfg.enable {
-              rum.programs.zsh = {
-                enable = true;
-                initConfig = lib.concatStringsSep "\n" [
-                  cfg.bundle.initConfig
-                  cfg.initContent
-                ];
-                package = cfg.bundle.package;
-              };
-            };
-          }
-        )
-      ];
-    };
-
     nixos =
       {
         config,
@@ -117,5 +86,24 @@
 
   den.default.nixos.hjem.extraModules = [
     inputs.zsh-nix.homeManagerModules.default
+    (
+      { config, lib, ... }:
+      let
+        cfg = config.programs.zsh;
+      in
+      {
+        imports = [
+          (lib.mkAliasOptionModule [ "programs" "zsh" "enable" ] [ "rum" "programs" "zsh" "enable" ])
+          (lib.mkAliasOptionModule [ "programs" "zsh" "initContent" ] [ "rum" "programs" "zsh" "initConfig" ])
+        ];
+
+        config = lib.mkIf cfg.enable {
+          rum.programs.zsh = {
+            initConfig = lib.mkBefore cfg.bundle.initConfig;
+            package = cfg.bundle.package;
+          };
+        };
+      }
+    )
   ];
 }
