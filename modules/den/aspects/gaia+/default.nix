@@ -15,25 +15,25 @@ lib.mkMerge [
           # secrets
           (from ./secrets-host.yaml)
           (keyFile "/var/lib/sops-nix/key.txt")
-          (secret rec {
-            group = "root";
-            includes = [
-              {
-                nixos = { ... }: {
-                  services.openssh.hostKeys = [
-                    {
-                      inherit path;
-                      type = "ed25519";
-                    }
-                  ];
-                };
-              }
-            ];
-            name = "ssh/host_key";
-            owner = "root";
-            path = "/etc/ssh/ssh_host_ed25519_key";
-            restartUnits = [ "sshd.service" ];
-          })
+          (secret
+            {
+              group = "root";
+              name = "ssh/host_key";
+              owner = "root";
+              path = "/etc/ssh/ssh_host_ed25519_key";
+              restartUnits = [ "sshd.service" ];
+            }
+            {
+              nixos = { config, ... }: {
+                services.openssh.hostKeys = [
+                  {
+                    path = config.sops.secrets."ssh/host_key".path;
+                    type = "ed25519";
+                  }
+                ];
+              };
+            }
+          )
         ])
         ++ (with den.aspects; [
           # certificates

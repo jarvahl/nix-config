@@ -16,40 +16,40 @@ lib.mkMerge [
             # secrets
             (from ./secrets-host.yaml)
             (keyFile "/var/lib/sops-nix/key.txt")
-            (secret rec {
-              group = "root";
-              includes = [
-                {
-                  nixos = { ... }: {
-                    services.openssh.hostKeys = [
-                      {
-                        inherit path;
-                        type = "ed25519";
-                      }
-                    ];
-                  };
-                }
-              ];
-              name = "ssh/host_key";
-              owner = "root";
-              path = "/etc/ssh/ssh_host_ed25519_key";
-              restartUnits = [ "sshd.service" ];
-            })
-            (secret rec {
-              includes = [
-                {
-                  nixos = { ... }: {
-                    services.tailscale.authKeyFile = path;
-                  };
-                }
-              ];
-              name = "tailscale/auth_key";
-              path = "/run/secrets/tailscale/auth_key";
-              restartUnits = [
-                "tailscaled-logout.service"
-                "tailscaled-autoconnect.service"
-              ];
-            })
+            (secret
+              {
+                group = "root";
+                name = "ssh/host_key";
+                owner = "root";
+                path = "/etc/ssh/ssh_host_ed25519_key";
+                restartUnits = [ "sshd.service" ];
+              }
+              {
+                nixos = { config, ... }: {
+                  services.openssh.hostKeys = [
+                    {
+                      path = config.sops.secrets."ssh/host_key".path;
+                      type = "ed25519";
+                    }
+                  ];
+                };
+              }
+            )
+            (secret
+              {
+                name = "tailscale/auth_key";
+                path = "/run/secrets/tailscale/auth_key";
+                restartUnits = [
+                  "tailscaled-logout.service"
+                  "tailscaled-autoconnect.service"
+                ];
+              }
+              {
+                nixos = { config, ... }: {
+                  services.tailscale.authKeyFile = config.sops.secrets."tailscale/auth_key".path;
+                };
+              }
+            )
           ])
           ++ (with den.aspects; [
             # system

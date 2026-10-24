@@ -1,4 +1,4 @@
-{ lib, ... }:
+{ den, lib, ... }:
 let
   homePath =
     path:
@@ -80,6 +80,7 @@ let
     else
       backend.nixos;
 in
+with den.lib;
 {
   den.aspects.sops = rec {
     from =
@@ -91,24 +92,18 @@ in
       };
 
     secret =
-      {
-        includes ? [ ],
-        ...
-      }@args:
-      let
-        secretArgs = builtins.removeAttrs args [ "includes" ];
-      in
-      {
+      params: aspect:
+      callable {
         includes = [
           (
             {
               user ? null,
               ...
             }:
-            if user != null then { hjem = userSecret secretArgs; } else { nixos = hostSecret secretArgs; }
+            if user != null then { hjem = userSecret params; } else { nixos = hostSecret params; }
           )
-        ]
-        ++ includes;
+          aspect
+        ];
       };
 
     keyFile =
