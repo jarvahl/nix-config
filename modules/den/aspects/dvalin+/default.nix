@@ -53,14 +53,6 @@ lib.mkMerge [
           ++ (with den.aspects; [
             ssh
             tailscale
-          ])
-          ++ (with den.aspects.tailscale; [
-            (service {
-              comment = "OpenClaw gateway";
-              name = "openclaw";
-              port = 18789;
-              servicePort = 443;
-            })
           ]);
 
         nixos =
@@ -139,10 +131,27 @@ lib.mkMerge [
     {
       den = {
         aspects."${user}@${host}" = {
-          includes = with den.aspects.sops; [
-            (from ./secrets-user-${user}.yaml)
-            (keyFile ".config/sops/age/key.txt")
-          ];
+          includes =
+            (with den.aspects; [
+              (openclaw {
+                includes = with tailscale; [
+                  (service {
+                    comment = "OpenClaw gateway";
+                    name = "openclaw";
+                    port = 18789;
+                    servicePort = 443;
+                  })
+                ];
+              })
+            ])
+            ++ (with den.aspects.sops; [
+              (from ./secrets-user-${user}.yaml)
+              (keyFile ".config/sops/age/key.txt")
+              (secret {
+                name = "openclaw/gateway_token";
+                path = ".config/openclaw/gateway-token";
+              } { })
+            ]);
         };
 
         hosts.x86_64-linux.${host}.users.${user}.classes = [
