@@ -8,6 +8,29 @@ let
     else
       "${config.home.homeDirectory}/${lib.removePrefix "./" (toString path)}";
 
+  secretDefinition =
+    {
+      config,
+      mode,
+      name,
+      path,
+      restartUnits ? null,
+      ...
+    }:
+    {
+      assertions = [
+        {
+          assertion = config.sops.defaultSopsFile != null;
+          message = "sops.secret ${name}: missing `(from ./secrets.yaml)`";
+        }
+      ];
+
+      sops.secrets.${name} = {
+        inherit mode path;
+      }
+      // lib.optionalAttrs (restartUnits != null) { inherit restartUnits; };
+    };
+
   hostSecret =
     {
       group ? null,
@@ -21,19 +44,19 @@ let
     { config, ... }:
     lib.mkMerge (
       [
+        (secretDefinition {
+          inherit
+            config
+            mode
+            name
+            path
+            restartUnits
+            ;
+        })
         {
-          assertions = [
-            {
-              assertion = config.sops.defaultSopsFile != null;
-              message = "sops.secret ${name}: missing `(from ./secrets.yaml)`";
-            }
-          ];
-
-          sops.secrets.${name} = {
-            inherit mode path restartUnits;
-          }
-          // lib.optionalAttrs (owner != null) { inherit owner; }
-          // lib.optionalAttrs (group != null) { inherit group; };
+          sops.secrets.${name} =
+            lib.optionalAttrs (owner != null) { inherit owner; }
+            // lib.optionalAttrs (group != null) { inherit group; };
         }
       ]
       ++ includes
@@ -48,24 +71,12 @@ let
       ...
     }:
     { config, ... }:
-    let
-      secretPath = homePath path { inherit config; };
-    in
     lib.mkMerge (
       [
-        {
-          assertions = [
-            {
-              assertion = config.sops.defaultSopsFile != null;
-              message = "sops.secret ${name}: missing `(from ./secrets.yaml)`";
-            }
-          ];
-
-          sops.secrets.${name} = {
-            inherit mode;
-            path = secretPath;
-          };
-        }
+        (secretDefinition {
+          inherit config mode name;
+          path = homePath path { inherit config; };
+        })
       ]
       ++ includes
     );
