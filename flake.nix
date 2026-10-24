@@ -97,6 +97,10 @@
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.nix-openclaw-tools.inputs.nixpkgs.follows = "nixpkgs";
     };
+    nix-unit = {
+      url = "github:nix-community/nix-unit";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     nixos-wsl = {
       url = "github:nix-community/nixos-wsl";
       inputs.nixpkgs.follows = "nixpkgs";

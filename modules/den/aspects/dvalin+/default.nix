@@ -134,23 +134,26 @@ lib.mkMerge [
           includes =
             (with den.aspects; [
               (openclaw {
-                includes = with tailscale; [
-                  (service {
-                    comment = "OpenClaw gateway";
-                    name = "openclaw";
-                    port = 18789;
-                    servicePort = 443;
-                  })
-                ];
+                includes =
+                  (with tailscale; [
+                    (service {
+                      comment = "OpenClaw gateway";
+                      name = "openclaw";
+                      port = 18789;
+                      servicePort = 443;
+                    })
+                  ])
+                  ++ (with sops; [
+                    (secret {
+                      name = "openclaw/gateway_token";
+                      path = ".config/openclaw/gateway-token";
+                    } { })
+                  ]);
               })
             ])
             ++ (with den.aspects.sops; [
               (from ./secrets-user-${user}.yaml)
               (keyFile ".config/sops/age/key.txt")
-              (secret {
-                name = "openclaw/gateway_token";
-                path = ".config/openclaw/gateway-token";
-              } { })
             ]);
         };
 
