@@ -25,6 +25,11 @@ Do not edit generated files directly. Regenerate them with `nix run .#write-file
 
 Use references only when the skill needs larger supporting documentation.
 
+For concrete repository paths in generated text, take `checkedPath` as a module argument
+and interpolate it with a Nix path, e.g. `${checkedPath ./home-manager.nix}`.
+It validates the type, existence, and repository boundary during evaluation,
+returning a root-relative string without a Nix store path. Leave glob patterns as text.
+
 ## Review and cleanup
 
 - Check examples, helper names, and paths against the current code.

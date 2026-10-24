@@ -1,4 +1,5 @@
 {
+  checkedPath,
   inputs,
   lib,
   ...
@@ -187,7 +188,7 @@ lib.mkMerge [
         text = ''
           # Declare and consume SOPS secrets
 
-          Use the current helpers in `modules/den/aspects/sops.nix`:
+          Use the current helpers in `${checkedPath ./den/aspects/sops.nix}`:
 
           - `from file` selects the encrypted YAML file.
           - `keyFile path` selects the age identity used for decryption.
@@ -215,8 +216,8 @@ lib.mkMerge [
 
           Related declarations may be nested in an application's callable `includes`.
           Keep `from` and `keyFile` in the enclosing user aspect when shared by applications.
-          See `modules/den/aspects/dvalin+/default.nix` for OpenClaw and
-          `modules/den/aspects/github.nix` for wiring a consumer in the second argument.
+          See `${checkedPath ./den/aspects/dvalin+/default.nix}` for OpenClaw and
+          `${checkedPath ./den/aspects/github.nix}` for wiring a consumer in the second argument.
 
           ## Host secrets
 
@@ -225,7 +226,7 @@ lib.mkMerge [
           when the consuming service requires them. The default mode is `0600`.
           Consume `config.sops.secrets.<name>.path` inside the second argument's `nixos`
           module; user consumers belong in `hjem` modules instead.
-          See the Tailscale secret in `modules/den/aspects/dvalin+/default.nix`.
+          See the Tailscale secret in `${checkedPath ./den/aspects/dvalin+/default.nix}`.
 
           ## Checks and safety
 

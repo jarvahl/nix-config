@@ -1,4 +1,4 @@
-{ lib, ... }:
+{ checkedPath, lib, ... }:
 lib.mkMerge [
   {
     flake-file.inputs.home-manager = {
@@ -20,7 +20,7 @@ lib.mkMerge [
         2. Register its `homeModules.default` in `den.default.nixos.hjem.extraModules`.
         3. Configure its native Home Manager options inside the relevant `hjem` aspect.
 
-        Use `modules/den/aspects/nvim.nix` as the reference; upstream export names may differ.
+        Use `${checkedPath ./den/aspects/nvim.nix}` as the reference; upstream export names may differ.
 
         ## Routing
 
@@ -56,7 +56,7 @@ lib.mkMerge [
           Alias individual options with compatible types, not an entire option namespace.
 
           For adapters that also merge configuration, preserve ordering and package selection.
-          See `modules/den/aspects/zsh.nix`: `lib.mkBefore` places bundle initialization
+          See `${checkedPath ./den/aspects/zsh.nix}`: `lib.mkBefore` places bundle initialization
           before the aliased `initContent`; package wiring remains conditional on enablement.
           Keep host/user side effects, such as selecting a login shell, in explicit aspects.
 

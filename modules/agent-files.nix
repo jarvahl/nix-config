@@ -1,9 +1,25 @@
 { inputs, lib, ... }:
+let
+  root = toString inputs.self.outPath;
+  checkedPath =
+    path:
+    assert lib.assertMsg (builtins.isPath path) "checkedPath: expected a Nix path";
+    let
+      target = toString path;
+    in
+    assert lib.assertMsg (
+      target == root || lib.hasPrefix "${root}/" target
+    ) "checkedPath: path must be inside this repository";
+    assert lib.assertMsg (builtins.pathExists path) "checkedPath: path does not exist: ${target}";
+    if target == root then "." else lib.removePrefix "${root}/" target;
+in
 {
   imports = [ inputs.agent-files.flakeModules.default ];
 }
 // lib.mkMerge [
   {
+    _module.args.checkedPath = checkedPath;
+
     flake-file.inputs.agent-files = {
       url = "github:jarvahl/agent-files";
       inputs = {
@@ -15,6 +31,16 @@
       };
     };
 
+    flake.tests.checkedPath = {
+      testFile = {
+        expected = "modules/agent-files.nix";
+        expr = checkedPath ./agent-files.nix;
+      };
+      testString = {
+        expected = false;
+        expr = (builtins.tryEval (checkedPath "modules/agent-files.nix")).success;
+      };
+    };
   }
   {
     agent-files.instructions = ''
@@ -76,13 +102,18 @@
 
         Use references only when the skill needs larger supporting documentation.
 
+        For concrete repository paths in generated text, take `checkedPath` as a module argument
+        and interpolate it with a Nix path, e.g. `''${checkedPath ./home-manager.nix}`.
+        It validates the type, existence, and repository boundary during evaluation,
+        returning a root-relative string without a Nix store path. Leave glob patterns as text.
+
         ## Review and cleanup
 
         - Check examples, helper names, and paths against the current code.
         - Match each skill's description to its actual scope and contents.
         - Route independent tasks to references; keep the entry point focused on when and what to read.
         - Split only when it avoids loading unrelated instructions, not to meet a length limit.
-        - Remove duplication and obsolete guidance; check `AGENTS.md` rules for contradictions too.
+        - Remove duplication and obsolete guidance; check `${checkedPath ../AGENTS.md}` rules for contradictions too.
         - Keep sources near the functionality they document; do not add a new skill for a one-off cleanup.
         - Edit source declarations, regenerate files, inspect the diff, and run `nix flake check --no-build`.
       '';

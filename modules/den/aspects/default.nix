@@ -1,4 +1,4 @@
-{ lib, ... }:
+{ checkedPath, lib, ... }:
 lib.mkMerge [
   { }
   {
@@ -11,7 +11,7 @@ lib.mkMerge [
           This repo keeps reusable Den behavior under:
 
           ```text
-          modules/den/aspects/
+          ${checkedPath ./.}/
           ```
 
           `import-tree` merges files recursively. Do not manually import sibling aspect files.
@@ -95,8 +95,8 @@ lib.mkMerge [
           Keep normal host/user context resolution in Den's parametric entries.
 
           The supplied list can also group related aspects, such as a service and its SOPS secret.
-          See `modules/den/aspects/dvalin+/default.nix`; the secret stays in the user's context.
-          Regression tests live in `flake.tests.callable` in `modules/den/lib.nix`.
+          See `${checkedPath ./dvalin+/default.nix}`; the secret stays in the user's context.
+          Regression tests live in `flake.tests.callable` in `${checkedPath ../lib.nix}`.
         '';
       };
     };
