@@ -5,6 +5,7 @@
     url = "github:nix-community/nix-unit";
   };
 
+  # Keep system-independent helper tests in flake.tests; this module exposes them through checks.
   imports = [ inputs.nix-unit.modules.flake.default ];
 
   perSystem.nix-unit = {

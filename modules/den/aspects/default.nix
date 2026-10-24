@@ -57,7 +57,9 @@ lib.mkMerge [
           (aspect { arg = value; })
           ```
 
-          That attrset becomes context for parametric entries inside the aspect, especially functions in `includes`.
+          Native Den calls pass that attrset as context for parametric entries.
+          The repository's `den.lib.callable` helper instead consumes `includes` at call time;
+          it does not forward call arguments as descendant context.
 
           ## Local convention
 
@@ -102,10 +104,16 @@ lib.mkMerge [
           ## Flow
 
           1. Den calls `parent` with `{ includes = [ child ]; }`.
-          2. The callable wrapper forwards those child aspects.
-          3. Den includes the parent and the selected child aspects together.
+          2. The callable functor appends the supplied list to the aspect's base `includes`.
+          3. Den resolves the parent and the selected aspects without inheriting that list as context.
 
-          Use this when child aspects only make sense with the parent.
+          Do not implement this with a parametric include that reads `includes` from context:
+          nested callable aspects can inherit the parent's list and recursively include themselves.
+          Keep normal host/user context resolution in Den's parametric entries.
+
+          The supplied list can also group related aspects, such as a service and its SOPS secret.
+          See `modules/den/aspects/dvalin+/default.nix`; the secret stays in the user's context.
+          Regression tests live in `flake.tests.callable` in `modules/den/lib.nix`.
         '';
       };
     };

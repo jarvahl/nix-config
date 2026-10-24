@@ -19,7 +19,7 @@ includes = with den.aspects; [
   ssh
 
   (hyperland {
-    includes = { autologin, ... }: [
+    includes = with hyperland; [
       autologin
     ];
   })

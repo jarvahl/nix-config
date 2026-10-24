@@ -10,7 +10,9 @@ Den aspects can be called with an attrset:
 (aspect { arg = value; })
 ```
 
-That attrset becomes context for parametric entries inside the aspect, especially functions in `includes`.
+Native Den calls pass that attrset as context for parametric entries.
+The repository's `den.lib.callable` helper instead consumes `includes` at call time;
+it does not forward call arguments as descendant context.
 
 ## Local convention
 
@@ -18,24 +20,18 @@ When an argument selects extra child aspects from the parent namespace, call it 
 
 ```nix
 (parent {
-  includes = { child, ... }: [
+  includes = with parent; [
     child
   ];
 })
 ```
 
-So `includes` means: “select additional child aspects from this parent namespace”.
+So `includes` means: “include these additional child aspects with the parent”.
 
 ## Pattern
 
 ```nix
-den.aspects.parent = {
-  includes = [
-    ({ includes ? (_: [ ]), ... }: {
-      includes = includes (builtins.removeAttrs den.aspects.parent [ "__functor" ]);
-    })
-  ];
-
+den.aspects.parent = den.lib.callable {
   # base aspect config...
 };
 ```
@@ -52,7 +48,7 @@ Host usage:
 
 ```nix
 (parent {
-  includes = { child, ... }: [
+  includes = with parent; [
     child
   ];
 })
@@ -60,9 +56,14 @@ Host usage:
 
 ## Flow
 
-1. Den calls `parent` with `{ includes = ...; }`.
-2. `parent` has a parametric include that receives that attrset.
-3. It calls the selector with `den.aspects.parent`.
-4. The selector returns child aspects to include.
+1. Den calls `parent` with `{ includes = [ child ]; }`.
+2. The callable functor appends the supplied list to the aspect's base `includes`.
+3. Den resolves the parent and the selected aspects without inheriting that list as context.
 
-Use this when child aspects only make sense with the parent.
+Do not implement this with a parametric include that reads `includes` from context:
+nested callable aspects can inherit the parent's list and recursively include themselves.
+Keep normal host/user context resolution in Den's parametric entries.
+
+The supplied list can also group related aspects, such as a service and its SOPS secret.
+See `modules/den/aspects/dvalin+/default.nix`; the secret stays in the user's context.
+Regression tests live in `flake.tests.callable` in `modules/den/lib.nix`.
