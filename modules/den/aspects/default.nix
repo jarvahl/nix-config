@@ -25,7 +25,7 @@ lib.mkMerge [
             ssh
 
             (hyperland {
-              includes = { autologin, ... }: [
+              includes = with hyperland; [
                 autologin
               ];
             })
@@ -65,24 +65,18 @@ lib.mkMerge [
 
           ```nix
           (parent {
-            includes = { child, ... }: [
+            includes = with parent; [
               child
             ];
           })
           ```
 
-          So `includes` means: “select additional child aspects from this parent namespace”.
+          So `includes` means: “include these additional child aspects with the parent”.
 
           ## Pattern
 
           ```nix
-          den.aspects.parent = {
-            includes = [
-              ({ includes ? (_: [ ]), ... }: {
-                includes = includes (builtins.removeAttrs den.aspects.parent [ "__functor" ]);
-              })
-            ];
-
+          den.aspects.parent = den.lib.callable {
             # base aspect config...
           };
           ```
@@ -99,7 +93,7 @@ lib.mkMerge [
 
           ```nix
           (parent {
-            includes = { child, ... }: [
+            includes = with parent; [
               child
             ];
           })
@@ -107,10 +101,9 @@ lib.mkMerge [
 
           ## Flow
 
-          1. Den calls `parent` with `{ includes = ...; }`.
-          2. `parent` has a parametric include that receives that attrset.
-          3. It calls the selector with `den.aspects.parent`.
-          4. The selector returns child aspects to include.
+          1. Den calls `parent` with `{ includes = [ child ]; }`.
+          2. The callable wrapper forwards those child aspects.
+          3. Den includes the parent and the selected child aspects together.
 
           Use this when child aspects only make sense with the parent.
         '';

@@ -63,10 +63,9 @@ lib.mkMerge [
           ++ (with den.aspects; [
             # hardware
             (power-management {
-              includes =
-                aspects: with aspects; [
-                  ignore-lid-on-ac
-                ];
+              includes = with power-management; [
+                ignore-lid-on-ac
+              ];
             })
           ]);
 
@@ -156,7 +155,7 @@ lib.mkMerge [
               # ui
               foot
               (hyperland {
-                includes = { autologin, ... }: [
+                includes = with hyperland; [
                   autologin
                 ];
               })

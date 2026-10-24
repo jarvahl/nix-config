@@ -20,20 +20,9 @@ let
     serviceConfig.Environment = lib.mkAfter systemdEnvironment;
   };
 in
+with den.lib;
 {
-  den.aspects.certificates = {
-    includes = [
-      (
-        {
-          includes ? (_: [ ]),
-          ...
-        }:
-        {
-          includes = includes (builtins.removeAttrs den.aspects.certificates [ "__functor" ]);
-        }
-      )
-    ];
-
+  den.aspects.certificates = callable {
     nixos = {
       environment.shellInit = shellExports;
 

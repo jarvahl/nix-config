@@ -38,7 +38,7 @@ lib.mkMerge [
         ++ (with den.aspects; [
           # certificates
           (certificates {
-            includes = { ... }: [
+            includes = [
               {
                 nixos = { pkgs, ... }: {
                   security.pki.certificateFiles = [

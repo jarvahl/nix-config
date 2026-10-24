@@ -1,18 +1,7 @@
 { den, ... }:
+with den.lib;
 {
-  den.aspects.hyperland = {
-    includes = [
-      (
-        {
-          includes ? (_: [ ]),
-          ...
-        }:
-        {
-          includes = includes (builtins.removeAttrs den.aspects.hyperland [ "__functor" ]);
-        }
-      )
-    ];
-
+  den.aspects.hyperland = callable {
     hjem =
       { lib, pkgs, ... }:
       let

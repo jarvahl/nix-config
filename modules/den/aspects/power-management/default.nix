@@ -1,16 +1,5 @@
 { den, ... }:
+with den.lib;
 {
-  den.aspects.power-management = {
-    includes = [
-      (
-        {
-          includes ? (_: [ ]),
-          ...
-        }:
-        {
-          includes = includes (builtins.removeAttrs den.aspects.power-management [ "__functor" ]);
-        }
-      )
-    ];
-  };
+  den.aspects.power-management = callable { };
 }
