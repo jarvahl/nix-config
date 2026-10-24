@@ -75,6 +75,16 @@
         Do not edit generated files directly. Regenerate them with `nix run .#write-files`.
 
         Use references only when the skill needs larger supporting documentation.
+
+        ## Review and cleanup
+
+        - Check examples, helper names, and paths against the current code.
+        - Match each skill's description to its actual scope and contents.
+        - Route independent tasks to references; keep the entry point focused on when and what to read.
+        - Split only when it avoids loading unrelated instructions, not to meet a length limit.
+        - Remove duplication and obsolete guidance; check `AGENTS.md` rules for contradictions too.
+        - Keep sources near the functionality they document; do not add a new skill for a one-off cleanup.
+        - Edit source declarations, regenerate files, inspect the diff, and run `nix flake check --no-build`.
       '';
     };
   }
