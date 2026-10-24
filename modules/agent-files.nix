@@ -1,25 +1,14 @@
-{ inputs, lib, ... }:
-let
-  root = toString inputs.self.outPath;
-  checkedPath =
-    path:
-    assert lib.assertMsg (builtins.isPath path) "checkedPath: expected a Nix path";
-    let
-      target = toString path;
-    in
-    assert lib.assertMsg (
-      target == root || lib.hasPrefix "${root}/" target
-    ) "checkedPath: path must be inside this repository";
-    assert lib.assertMsg (builtins.pathExists path) "checkedPath: path does not exist: ${target}";
-    if target == root then "." else lib.removePrefix "${root}/" target;
-in
+{
+  checkedPath,
+  inputs,
+  lib,
+  ...
+}:
 {
   imports = [ inputs.agent-files.flakeModules.default ];
 }
 // lib.mkMerge [
   {
-    _module.args.checkedPath = checkedPath;
-
     flake-file.inputs.agent-files = {
       url = "github:jarvahl/agent-files";
       inputs = {
@@ -31,16 +20,6 @@ in
       };
     };
 
-    flake.tests.checkedPath = {
-      testFile = {
-        expected = "modules/agent-files.nix";
-        expr = checkedPath ./agent-files.nix;
-      };
-      testString = {
-        expected = false;
-        expr = (builtins.tryEval (checkedPath "modules/agent-files.nix")).success;
-      };
-    };
   }
   {
     agent-files.instructions = ''
