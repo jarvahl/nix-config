@@ -1,17 +1,18 @@
 tailscale:
-    api_key: ENC[AES256_GCM,data:Lb1BwKL+mjhF3E1E0Mts3qqh0GQsPmKgctOvv0rw+R6UJSH7ii+0YAlymQZGXyrV9MEGmOLVLQzn8pQf1NA=,iv:XMDOMyWjmCA8ehC7w8Fs5U/iaUFgmuFyketvtKers6w=,tag:S+LIt2BTiGVwFjee3HJQjw==,type:str]
+    api:
+        key: ENC[AES256_GCM,data:gLVPUiYSzhvDGZY2Z8gq1mvloO1imBQCqf+eF1oDkjJQ4aA62M8rfkJ2Kektqe4heORZ4GnTpA7W/t4eY8o=,iv:L2aNeQBeK9E6w6kXlb1w42X2IcpT/bvzMOyNxnPT0Qc=,tag:A1b+xYodeJ0RDAEaHlIqAA==,type:str]
 sops:
     age:
         - enc: |
             -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBYN3cybzZ1NFYwNks2ZWdz
-            UENvVEg1cmJzVEhHa2hpL0phUnZNTk1UWlhnCmhyRlM0MnE2SVVHWHp4MnY3WDNU
-            RVhkZEs1Vyt0TXRDR1h1c2ZaS3MrencKLS0tIHJWdW13VE0yU1FoYTZaVGxucEZS
-            ajRjcGUwV1Exayt5WnhrQjZkaU1wa1EKv0fvjyOlrZMs0CTDCT69tQc/Fed1TsqI
-            jZLt2KVqyQnDb/rDnoftqiQTb7zvcqBydiOQ1xRB2hvEkOXkR6BXMQ==
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBxUHV3UU9CYWdMQjFNVUQ4
+            TEhrZ2lKWDBJZC8yUWxlM1hoV256STBTdGhRClozbWFmYzUyVkZvTjE1RHRnQlAz
+            VlRtMlg1TEF0c0Nuek9jenp2ZElFWW8KLS0tIFhEUCtSVW4xSzdOSUNMRzNUUW5B
+            S20xcFBHT1lWZDVpUUNFQ3BUR1hWWU0KAZOGiNmO0JmeF5H4Zhkk4j575W4rAwI8
+            rp+4WGLJOKN+iV7RDN8p5Fkjg9CbW+B3qnosAUqAQfyKYr8PMHzSKA==
             -----END AGE ENCRYPTED FILE-----
           recipient: age17dkg84wglz4nq2523fayp528qr82njr2znlwc6fvdhzy8k3pg3gsusgx2q
-    lastmodified: "2026-10-23T08:42:27Z"
-    mac: ENC[AES256_GCM,data:S+WtvKu7guFIM/zvAgqTT8JSHUF9FkRsct9LA2Veqo4F+Nd75qOcttap5DMKBrLy+P8ZZO9NapM82irxI8oG0sO0aWbemRI6KU9VH9B8ZRAoom5IrSGVx6028n7FEA13HempODlkZxs59+Fcc1qsN9sRUhd/H+gJ+oW08k/mTwI=,iv:niggAh3RiyaI8E3kx3HAce7mAybFzcCSRuHHPjnO3K8=,tag:sugqooycr3DGDyKhzmy+RQ==,type:str]
+    lastmodified: "2026-10-25T00:23:38Z"
+    mac: ENC[AES256_GCM,data:avULwzEJRIeL66D01L3kuBSzTr6k5g7QwfWrNPYIC0zgm0KIc/UgCdVuqO3QflZ9asz3x8qpWbHiGG1NTwR25wYgrQuhL4FOsOB2p5Y5UnNtdxgM6LmnQuFzAvoU5KaCaZ2rR7VW4Mr/CYPPzh0igy+KE1bfJAsfIQBsIMVylDc=,iv:006h6UTAMHMM7XNnZHfpQqImd2O/GxR2XG2wNPW6/GI=,tag:rhQy+aepoNHy7nDp01+AbQ==,type:str]
     unencrypted_suffix: _unencrypted
     version: 3.13.3
