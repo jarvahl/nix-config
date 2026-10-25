@@ -38,8 +38,13 @@ Unlock an encrypted recovery age identity for SOPS:
 nix develop .#sops
 ```
 
-By default it reads `./sops-keys.age` and unlocks the `recovery` key. Override with:
+By default it unlocks the recovery identity from `./breakglass.age`. Override with:
 
 ```sh
-SOPS_KEYS_FILE=/path/to/sops-keys.age SOPS_KEY_NAME=terranix nix develop .#sops
+SOPS_KEYS_FILE=/path/to/breakglass.age nix develop .#sops
 ```
+
+`nix develop .#terranix` unlocks the same recovery identity on entry, too.
+Both shells require Linux with a running systemd user manager. Each session
+gets a private runtime directory, removed by systemd when its shell exits,
+including after SIGKILL. Terranix commands reuse the shell's unlocked key.

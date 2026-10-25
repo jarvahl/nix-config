@@ -21,11 +21,16 @@ lib.mkMerge [
           nix develop .#sops
           ```
 
-          By default it reads `./sops-keys.age` and unlocks the `recovery` key. Override with:
+          By default it unlocks the recovery identity from `./breakglass.age`. Override with:
 
           ```sh
-          SOPS_KEYS_FILE=/path/to/sops-keys.age SOPS_KEY_NAME=terranix nix develop .#sops
+          SOPS_KEYS_FILE=/path/to/breakglass.age nix develop .#sops
           ```
+
+          `nix develop .#terranix` unlocks the same recovery identity on entry, too.
+          Both shells require Linux with a running systemd user manager. Each session
+          gets a private runtime directory, removed by systemd when its shell exits,
+          including after SIGKILL. Terranix commands reuse the shell's unlocked key.
         '';
       }
     ];
@@ -41,7 +46,47 @@ lib.mkMerge [
       url = "github:Mic92/sops-nix";
     };
 
-    perSystem = { pkgs, ... }: {
+    perSystem = { pkgs, sopsShellUnlock, ... }: {
+      _module.args.sopsShellUnlock = pkgs.writeText "unlock-sops-shell.sh" ''
+        encrypted_keys="''${SOPS_KEYS_FILE:-$PWD/breakglass.age}"
+
+        if [ ! -f "$encrypted_keys" ]; then
+          echo "missing encrypted SOPS identity: $encrypted_keys" >&2
+          return 1
+        fi
+        if [ -z "''${XDG_RUNTIME_DIR:-}" ] || [ ! -d "$XDG_RUNTIME_DIR" ]; then
+          echo "SOPS shell requires XDG_RUNTIME_DIR and systemd --user" >&2
+          return 1
+        fi
+
+        shell_identity="$(${pkgs.util-linux}/bin/getino --print-pid "$$")" || return 1
+        key_unit="sops-$(< /proc/sys/kernel/random/uuid)"
+
+        if ! ${pkgs.systemd}/bin/systemd-run --user --quiet --collect \
+          --unit="$key_unit" \
+          --service-type=exec \
+          --property="RuntimeDirectory=$key_unit" \
+          --property=RuntimeDirectoryMode=0700 \
+          ${pkgs.util-linux}/bin/waitpid --exited "$shell_identity"
+        then
+          return 1
+        fi
+
+        key="$XDG_RUNTIME_DIR/$key_unit/key"
+        if ! (
+          umask 077
+          ${pkgs.age}/bin/age -d "$encrypted_keys" > "$key"
+        ) || ! ${pkgs.age}/bin/age-keygen -y "$key" >/dev/null; then
+          echo "failed to unlock recovery identity" >&2
+          ${pkgs.systemd}/bin/systemctl --user stop "$key_unit"
+          return 1
+        fi
+
+        export SOPS_AGE_KEY_FILE="$key"
+        export SOPS_SHELL_KEY_NAME=recovery
+        echo "using recovery identity from $encrypted_keys"
+      '';
+
       apps.pair = {
         meta.description = "Pair a host with its age key from keys.yaml";
         type = "app";
@@ -101,42 +146,11 @@ lib.mkMerge [
         packages = [
           pkgs.age
           pkgs.sops
-          pkgs.yq-go
         ];
 
         shellHook = ''
-          encrypted_keys="''${SOPS_KEYS_FILE:-$PWD/sops-keys.age}"
-          key_name="''${SOPS_KEY_NAME:-recovery}"
-
-          if [ ! -f "$encrypted_keys" ]; then
-            echo "missing SOPS key bundle: $encrypted_keys" >&2
-            echo "set SOPS_KEYS_FILE=/path/to/sops-keys.age" >&2
-            return 1
-          fi
-
-          key_dir="$(mktemp -d "''${XDG_RUNTIME_DIR:-/tmp}/sops.XXXXXX")"
-          cleanup_sops_recovery() {
-            rm -rf "$key_dir"
-          }
-          trap cleanup_sops_recovery EXIT
-
-          key="$key_dir/key"
-          if ! age -d "$encrypted_keys" | yq -r ".''${key_name}" > "$key"; then
-            rm -rf "$key_dir"
-            return 1
-          fi
-
-          if ! grep -q '^AGE-SECRET-KEY-' "$key"; then
-            echo "missing age identity: $key_name" >&2
-            rm -rf "$key_dir"
-            return 1
-          fi
-
-          chmod 600 "$key"
-          export SOPS_AGE_KEY_FILE="$key"
-
+          source ${sopsShellUnlock} || exit 1
           echo "sops shell active"
-          echo "using key: $key_name from $encrypted_keys"
         '';
       };
     };
@@ -154,33 +168,34 @@ lib.mkMerge [
         | Task | Read |
         | --- | --- |
         | Declaring secrets, choosing host/user context, or wiring a consumer | `${references.secrets}` |
-        | Creating or rotating the passphrase-encrypted SOPS key bundle | `${references.create-recovery-key}` |
+        | Creating or rotating the passphrase-encrypted recovery identity | `${references.create-recovery-key}` |
         | Unsure | Start with `${references.secrets}` |
 
         Keep this file light. Detailed runbooks live in `references/`.
       '';
       references.create-recovery-key = {
-        description = "Create SOPS key bundle";
+        description = "Create recovery identity";
         text = ''
-          # Create SOPS key bundle
+          # Create recovery identity
 
-          Store the `recovery` and `terranix` age identities in a YAML bundle:
+          `breakglass.age` contains one raw age recovery identity, encrypted with a
+          passphrase. Both the SOPS and Terranix shells use it; there is no separate
+          Terranix identity or YAML key bundle.
 
-          ```yaml
-          recovery: |
-            AGE-SECRET-KEY-...
-          terranix: |
-            AGE-SECRET-KEY-...
-          ```
-
-          Encrypt it with a passphrase:
+          Encrypt an existing recovery identity from a private runtime file:
 
           ```shell
-          age -p -a -o sops-keys.age keys.yaml
+          age -p -a -o breakglass.age "$SOPS_AGE_KEY_FILE"
           ```
 
-          Remove the plaintext bundle after encryption. Select an identity with
-          `SOPS_KEY_NAME` when entering `nix develop .#sops`.
+          Verify the encrypted identity before removing the plaintext copy or an
+          older encrypted copy. Never replace the existing recovery identity without
+          first migrating and verifying every encrypted file that depends on it.
+
+          `nix develop .#sops` and `nix develop .#terranix` unlock it into a private
+          runtime directory. A systemd user service waits for the shell via pidfd
+          and removes the directory when the shell exits, including after SIGKILL.
+          Unlocking it grants access to all recovery-protected secrets.
         '';
       };
       references.secrets = {

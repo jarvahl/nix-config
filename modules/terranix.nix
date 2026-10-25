@@ -1,6 +1,7 @@
 {
   inputs,
   lib,
+  recovery,
   ...
 }:
 {
@@ -14,8 +15,21 @@
   imports = [ inputs.terranix.flakeModule ];
 
   perSystem =
-    { pkgs, ... }:
     {
+      config,
+      pkgs,
+      sopsShellUnlock,
+      ...
+    }:
+    {
+      devShells.terranix = lib.mkForce (
+        config.terranix.terranixConfigurations.terranix.result.devShell.overrideAttrs (old: {
+          shellHook = (old.shellHook or "") + ''
+            source ${sopsShellUnlock} || exit 1
+          '';
+        })
+      );
+
       terranix.terranixConfigurations.terranix = {
         modules = [
           (inputs.import-tree.initFilter (lib.hasInfix "/_terranix/") ./den/aspects)
@@ -23,26 +37,15 @@
 
         terraformWrapper = {
           extraRuntimeInputs = [
-            pkgs.age
             pkgs.jq
             pkgs.sops
-            pkgs.yq-go
           ];
           package = pkgs.opentofu;
           prefixText = ''
-            temporary_key_dir="$(mktemp -d "''${XDG_RUNTIME_DIR:-/tmp}/terranix.XXXXXX")"
-            temporary_key="$temporary_key_dir/key"
-            if ! age -d "$PWD/sops-keys.age" | yq -r '.terranix' > "$temporary_key"; then
-              rm -rf "$temporary_key_dir"
-              exit 1
+            if [ "''${SOPS_SHELL_KEY_NAME:-}" != recovery ] || [ ! -r "''${SOPS_AGE_KEY_FILE:-}" ]; then
+              # shellcheck source=/dev/null
+              source ${sopsShellUnlock} || exit 1
             fi
-            chmod 600 "$temporary_key"
-            export SOPS_AGE_KEY_FILE="$temporary_key"
-
-            cleanup_key() {
-              rm -rf "$temporary_key_dir"
-            }
-            trap cleanup_key EXIT
 
             state="$PWD/terraform.tfstate.sops.json"
             secrets="$PWD/secrets.yaml"
@@ -63,7 +66,6 @@
                 mv "$state.tmp" "$state"
                 rm -f terraform.tfstate
               fi
-              rm -rf "$temporary_key_dir"
               exit "$status"
             }
 
@@ -75,21 +77,18 @@
       };
     };
 
-  sopsFile = {
-    creation_rules = [
-      {
-        key_groups = [
-          { age = [ "terranix" ]; }
-        ];
-        path_regex = "secrets\\.yaml$";
-      }
-      {
-        key_groups = [
-          { age = [ "terranix" ]; }
-        ];
-        path_regex = "terraform\\.tfstate\\.sops\\.json$";
-      }
-    ];
-    keys.terranix = "age1jxpxeqkdvp0s8784yntutpxw9k8a6428hq6vc3tvjgl5kqjf856qefv7m4";
-  };
+  sopsFile.creation_rules = recovery [
+    {
+      key_groups = [
+        { age = [ ]; }
+      ];
+      path_regex = "secrets\\.yaml$";
+    }
+    {
+      key_groups = [
+        { age = [ ]; }
+      ];
+      path_regex = "terraform\\.tfstate\\.sops\\.json$";
+    }
+  ];
 }

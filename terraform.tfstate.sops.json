@@ -37,8 +37,8 @@
 	"sops": {
 		"age": [
 			{
-				"enc": "-----BEGIN AGE ENCRYPTED FILE-----\nYWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBNLzB6NDRwWStQY1NFN3pI\nQitYVWd4K2hGWHllTUphc2JOTEZHdzNRR1dnCkkrRmozeVZuRWM2QUZXM09tQUIw\nWWlQdFJpTFlJamJPdTlNRHFuREhMMGsKLS0tIEt6S2hnY2pPLzFubjFvcDQwUjFN\nVjdLVDd0MnplSGNLcTR1REI2aHVteXMK17FMNpSByYC+561s+ea7BMDgd69yvQRe\nSCrnxKHwGymbqb721o75T4SGYwkEsSO9Toi63NB06JvCt0OUpjUoPQ==\n-----END AGE ENCRYPTED FILE-----\n",
-				"recipient": "age1jxpxeqkdvp0s8784yntutpxw9k8a6428hq6vc3tvjgl5kqjf856qefv7m4"
+				"enc": "-----BEGIN AGE ENCRYPTED FILE-----\nYWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBDNEJYaGVUcVNESi91cEZv\nL0RtbSs2eVVYdkx0K29sNFZHYldGVWY3aURvCkx2Sk9wb2ZTbkpOc2pqQ2k4eVhm\nU2FmL1ZzZk0wVG5VWVQzMmFJc3RCbmsKLS0tIEJqVjhaWmlsNjdQUkt3L3FhenB4\ndUhoU290aHNGWkpQeFhRR0ZYbFdWamMKQS8RjFJjtCuv9pLtA9Lnw7rj4mBB8mwZ\npCAMlp6rn5XBgShxwpREjb4gF9jh4bq9azlNXW5Cwl7aSwS1gySt3w==\n-----END AGE ENCRYPTED FILE-----\n",
+				"recipient": "age17dkg84wglz4nq2523fayp528qr82njr2znlwc6fvdhzy8k3pg3gsusgx2q"
 			}
 		],
 		"lastmodified": "2026-10-23T10:29:19Z",
