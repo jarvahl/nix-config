@@ -13,8 +13,6 @@ lib.mkMerge [
       aspects.${host} = {
         includes =
           (with den.aspects.sops; [
-            (from ./host.sops.yaml)
-            (keyFile "/var/lib/sops-nix/key.txt")
             (secret
               {
                 name = "tailscale/auth_key";
@@ -108,7 +106,7 @@ lib.mkMerge [
           };
       };
 
-      hosts.x86_64-linux.${host} = { };
+      hosts.x86_64-linux.${host}.secrets.file = ./host.sops.yaml;
     };
 
     sopsFile = {
@@ -131,35 +129,31 @@ lib.mkMerge [
     {
       den = {
         aspects."${user}@${host}" = {
-          includes =
-            (with den.aspects; [
-              (openclaw {
-                includes =
-                  (with tailscale; [
-                    (service {
-                      comment = "OpenClaw gateway";
-                      name = "openclaw";
-                      port = 18789;
-                      servicePort = 443;
-                    })
-                  ])
-                  ++ (with sops; [
-                    (secret {
-                      name = "openclaw/gateway_token";
-                      path = ".config/openclaw/gateway-token";
-                    } { })
-                  ]);
-              })
-            ])
-            ++ (with den.aspects.sops; [
-              (from ./user-${user}.sops.yaml)
-              (keyFile ".config/sops/age/key.txt")
-            ]);
+          includes = with den.aspects; [
+            (openclaw {
+              includes =
+                (with tailscale; [
+                  (service {
+                    comment = "OpenClaw gateway";
+                    name = "openclaw";
+                    port = 18789;
+                    servicePort = 443;
+                  })
+                ])
+                ++ (with sops; [
+                  (secret {
+                    name = "openclaw/gateway_token";
+                    path = ".config/openclaw/gateway-token";
+                  } { })
+                ]);
+            })
+          ];
         };
 
-        hosts.x86_64-linux.${host}.users.${user}.classes = [
-          "hjem"
-        ];
+        hosts.x86_64-linux.${host}.users.${user} = {
+          classes = [ "hjem" ];
+          secrets.file = ./user-${user}.sops.yaml;
+        };
       };
 
       sopsFile = {

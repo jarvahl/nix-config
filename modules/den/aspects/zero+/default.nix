@@ -14,8 +14,6 @@ lib.mkMerge [
         includes =
           (with den.aspects.sops; [
             # secrets
-            (from ./host.sops.yaml)
-            (keyFile "/var/lib/sops-nix/key.txt")
             (secret
               {
                 group = "root";
@@ -117,7 +115,7 @@ lib.mkMerge [
           };
       };
 
-      hosts.x86_64-linux.${host} = { };
+      hosts.x86_64-linux.${host}.secrets.file = ./host.sops.yaml;
     };
 
     sopsFile = {
@@ -142,12 +140,7 @@ lib.mkMerge [
       den = {
         aspects."${user}@${host}" = {
           includes =
-            (with den.aspects.sops; [
-              # secrets
-              (from ./user-${user}.sops.yaml)
-              (keyFile ".config/sops/age/key.txt")
-            ])
-            ++ (with den.aspects; [
+            (with den.aspects; [
               # ui
               foot
               (hyperland hyperland.autologin)
@@ -178,9 +171,10 @@ lib.mkMerge [
 
         };
 
-        hosts.x86_64-linux.${host}.users.${user}.classes = [
-          "hjem"
-        ];
+        hosts.x86_64-linux.${host}.users.${user} = {
+          classes = [ "hjem" ];
+          secrets.file = ./user-${user}.sops.yaml;
+        };
       };
 
       sopsFile = {

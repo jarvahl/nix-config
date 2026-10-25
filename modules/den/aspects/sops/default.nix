@@ -21,7 +21,7 @@ let
       assertions = [
         {
           assertion = config.sops.defaultSopsFile != null;
-          message = "sops.secret ${name}: missing `(from ./host.sops.yaml)`";
+          message = "sops.secret ${name}: missing secrets.file on the host or user entity";
         }
       ];
 
@@ -168,7 +168,7 @@ in
           assertions = [
             {
               assertion = config.sops.defaultSopsFile != null;
-              message = "sops.hashedPassword ${userName}: missing `(from ./host.sops.yaml)`";
+              message = "sops.hashedPassword ${userName}: missing secrets.file on the host entity";
             }
           ];
 
