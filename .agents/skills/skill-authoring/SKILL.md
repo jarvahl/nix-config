@@ -22,6 +22,9 @@ Prefer one sentence of roughly 15–25 words.
 
 Generated skills are written to `.agents/skills/<name>/SKILL.md`.
 Do not edit generated files directly. Regenerate them with `nix run .#write-files`.
+This also regenerates the flake and updates its lock before writing files.
+After input changes, run it again so generators use the updated inputs.
+Stage new generated files before running flake checks.
 
 Use references only when the skill needs larger supporting documentation.
 

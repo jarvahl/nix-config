@@ -4,6 +4,14 @@
   outputs = inputs: import ./outputs.nix inputs;
 
   inputs = {
+    actions-nix = {
+      url = "github:nialov/actions.nix";
+      inputs = {
+        flake-parts.follows = "flake-parts";
+        git-hooks.follows = "git-hooks-nix";
+        nixpkgs.follows = "nixpkgs";
+      };
+    };
     agent-files = {
       url = "github:jarvahl/agent-files";
       inputs = {
@@ -57,6 +65,7 @@
         flake-file.follows = "flake-file";
         flake-parts.follows = "flake-parts";
         hjem.follows = "hjem";
+        home-manager.follows = "home-manager";
         import-tree.follows = "import-tree";
         nixpkgs.follows = "nixpkgs";
       };
@@ -93,13 +102,18 @@
     };
     nix-openclaw = {
       url = "github:openclaw/nix-openclaw";
-      inputs.home-manager.follows = "home-manager";
-      inputs.nixpkgs.follows = "nixpkgs";
-      inputs.nix-openclaw-tools.inputs.nixpkgs.follows = "nixpkgs";
+      inputs = {
+        home-manager.follows = "home-manager";
+        nix-openclaw-tools.inputs.nixpkgs.follows = "nixpkgs";
+        nixpkgs.follows = "nixpkgs";
+      };
     };
     nix-unit = {
       url = "github:nix-community/nix-unit";
-      inputs.nixpkgs.follows = "nixpkgs";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        treefmt-nix.follows = "treefmt-nix";
+      };
     };
     nixos-wsl = {
       url = "github:nix-community/nixos-wsl";
@@ -113,13 +127,16 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     pi = {
-      url = "github:jarvahl/pi.nix";
-      inputs.flake-file.follows = "flake-file";
-      inputs.flake-parts.follows = "flake-parts";
-      inputs.git-hooks-nix.follows = "git-hooks-nix";
-      inputs.import-tree.follows = "import-tree";
-      inputs.nixpkgs.follows = "nixpkgs";
-      inputs.treefmt-nix.follows = "treefmt-nix";
+      url = "github:lukasl-dev/pi.nix";
+      inputs = {
+        bun2nix.inputs.treefmt-nix.follows = "treefmt-nix";
+        bun2nix-x86_64-darwin.inputs = {
+          nixpkgs.follows = "nixpkgs";
+          treefmt-nix.follows = "treefmt-nix";
+        };
+        flake-parts.follows = "flake-parts";
+        nixpkgs.follows = "nixpkgs";
+      };
     };
     readme-file = {
       url = "github:jarvahl/readme-file";
@@ -149,6 +166,11 @@
     };
     terranix = {
       url = "github:terranix/terranix";
+      inputs = {
+        flake-parts.follows = "flake-parts";
+        import-tree.follows = "import-tree";
+        nixpkgs.follows = "nixpkgs";
+      };
     };
     treefmt-nix = {
       url = "github:numtide/treefmt-nix";
