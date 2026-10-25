@@ -7,10 +7,11 @@ boot host=`hostname`:
     #!/usr/bin/env bash
     set -euo pipefail
 
+
     nixos-rebuild boot \
         --flake ".#{{host}}" \
-        --elevate=sudo \
         -L \
+        --elevate=sudo \
         --accept-flake-config
 
 # Build configuration for host
@@ -18,6 +19,7 @@ boot host=`hostname`:
 build host=`hostname`:
     #!/usr/bin/env bash
     set -euo pipefail
+
 
     nixos-rebuild build \
         --flake ".#{{host}}" \
@@ -40,9 +42,8 @@ switch host=`hostname`:
 
     nixos-rebuild switch \
         --flake ".#{{host}}" \
-        --elevate=sudo \
         -L \
-        --show-trace \
+        --elevate=sudo --show-trace \
         --accept-flake-config
 
     printf '\n'

@@ -5,72 +5,68 @@
   ...
 }:
 let
-  hostArg = [
-    {
-      name = "host";
-      default = "`hostname`";
-    }
-  ];
+  rebuildActions = {
+    boot = {
+      description = "Schedule configuration for next boot";
+      flags = [ "--elevate=sudo" ];
+    };
+    build = {
+      description = "Build configuration for host";
+      flags = [ "--show-trace" ];
+    };
+    switch = {
+      after = ''
+        printf '\n'
+      '';
+      before = ''
+        printf '\033[0;32m------------------------\033[0m\n'
+        printf '\033[1;32m\uf444 switch \033[0;32m%s\033[0m\n' "{{host}}"
+        printf '\033[0;32m------------------------\033[0m\n'
+      '';
+      description = "Apply configuration to host";
+      flags = [
+        "--elevate=sudo"
+        "--show-trace"
+      ];
+    };
+    vm = {
+      action = "build-vm";
+      after = ''
+        "./result/bin/run-{{host}}-vm"
+      '';
+      before = ''
+        tmp="$(mktemp -d)"
+        trap 'rm -rf "$tmp"' EXIT
+        export NIX_DISK_IMAGE="$tmp/disk.qcow2"
+      '';
+      description = "Build and run host in an ephemeral VM";
+      flags = [ "--show-trace" ];
+    };
+  };
 
-  rebuildRecipes =
-    lib.genAttrs
-      [
-        "boot"
-        "build"
-        "switch"
-      ]
-      (action: {
-        description =
-          {
-            boot = "Schedule configuration for next boot";
-            build = "Build configuration for host";
-            switch = "Apply configuration to host";
-          }
-          .${action};
-        attributes.no-exit-message = true;
-        args = hostArg;
-        text =
-          {
-            boot = ''
-              #!/usr/bin/env bash
-              set -euo pipefail
+  rebuildRecipes = lib.mapAttrs (name: recipe: {
+    args = [
+      {
+        default = "`hostname`";
+        name = "host";
+      }
+    ];
+    attributes.no-exit-message = true;
+    description = recipe.description;
+    text = ''
+      #!/usr/bin/env bash
+      set -euo pipefail
 
-              nixos-rebuild boot \
-                  --flake ".#{{host}}" \
-                  --elevate=sudo \
-                  -L \
-                  --accept-flake-config
-            '';
-            build = ''
-              #!/usr/bin/env bash
-              set -euo pipefail
+      ${recipe.before or ""}
+      nixos-rebuild ${recipe.action or name} \
+          --flake ".#{{host}}" \
+          -L \
+          ${lib.concatStringsSep " " recipe.flags} \
+          --accept-flake-config
 
-              nixos-rebuild build \
-                  --flake ".#{{host}}" \
-                  -L \
-                  --show-trace \
-                  --accept-flake-config
-            '';
-            switch = ''
-              #!/usr/bin/env bash
-              set -euo pipefail
-
-              printf '\033[0;32m------------------------\033[0m\n'
-              printf '\033[1;32m\uf444 switch \033[0;32m%s\033[0m\n' "{{host}}"
-              printf '\033[0;32m------------------------\033[0m\n'
-
-              nixos-rebuild switch \
-                  --flake ".#{{host}}" \
-                  --elevate=sudo \
-                  -L \
-                  --show-trace \
-                  --accept-flake-config
-
-              printf '\n'
-            '';
-          }
-          .${action};
-      });
+      ${recipe.after or ""}
+    '';
+  }) rebuildActions;
 
   recipeDescription =
     recipe:
@@ -117,27 +113,5 @@ in
 
   just-file.recipes = rebuildRecipes // {
     default = "just --list";
-
-    vm = {
-      description = "Build and run host in an ephemeral VM";
-      attributes.no-exit-message = true;
-      args = hostArg;
-      text = ''
-        #!/usr/bin/env bash
-        set -euo pipefail
-
-        tmp="$(mktemp -d)"
-        trap 'rm -rf "$tmp"' EXIT
-        export NIX_DISK_IMAGE="$tmp/disk.qcow2"
-
-        nixos-rebuild build-vm \
-            --flake ".#{{host}}" \
-            -L \
-            --show-trace \
-            --accept-flake-config
-
-        "./result/bin/run-{{host}}-vm"
-      '';
-    };
   };
 }
