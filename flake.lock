@@ -52,11 +52,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1792049086,
-        "narHash": "sha256-bpmlYsypFmvsmA3bPikRwGd2w2fu/NU83LFa78AcnhA=",
+        "lastModified": 1792940717,
+        "narHash": "sha256-P3YreIkJ0jU/YUfRfGBphmB1lwtgnuoFVqL4qrjTREo=",
         "owner": "jarvahl",
         "repo": "agent-files",
-        "rev": "dff30cf9e80d064f9768f8a823c8a67b911de0e5",
+        "rev": "133416ff420d3f63620b82585548e29ccb051f5f",
         "type": "github"
       },
       "original": {
@@ -522,11 +522,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1792049099,
-        "narHash": "sha256-4w61DSwkHs3MGgrTafQwcr9mlU0zpCXP5ak/CSHvsjw=",
+        "lastModified": 1792940717,
+        "narHash": "sha256-t4YaqOhoDPOMRYQi+Cu7/v/g73MIrH9hmOpOcQtXDdE=",
         "owner": "jarvahl",
         "repo": "just-file",
-        "rev": "694fcad87cbd7768ae23286be0bc278e4ff32f4c",
+        "rev": "41c532e421973d4b6937857f3c20cd4b0434e671",
         "type": "github"
       },
       "original": {

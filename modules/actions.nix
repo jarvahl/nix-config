@@ -10,7 +10,10 @@
       runs-on = "ubuntu-latest";
       steps = [
         { uses = "actions/checkout@v6"; }
-        { uses = "cachix/install-nix-action@v31"; }
+        {
+          uses = "cachix/install-nix-action@v31";
+          "with".extra_nix_config = "extra-experimental-features = pipe-operators";
+        }
         {
           name = "Check flake";
           run = "nix flake check --print-build-logs";
