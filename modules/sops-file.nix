@@ -37,7 +37,7 @@
         key_groups = [
           { age = [ "recovery" ]; }
         ];
-        path_regex = "keys\\.yaml$";
+        path_regex = "pairing\\.sops\\.yaml$";
       }
     ];
 

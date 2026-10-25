@@ -15,7 +15,7 @@ Declare these in the user's aspect, such as `jarvahl@dvalin`, not the host aspec
 
 ```nix
 includes = with den.aspects.sops; [
-  (from ./secrets-user-jarvahl.yaml)
+  (from ./user-jarvahl.sops.yaml)
   (keyFile ".config/sops/age/key.txt")
   (secret {
     name = "openclaw/gateway_token";

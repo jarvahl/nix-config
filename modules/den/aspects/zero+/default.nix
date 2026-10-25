@@ -14,7 +14,7 @@ lib.mkMerge [
         includes =
           (with den.aspects.sops; [
             # secrets
-            (from ./secrets-host.yaml)
+            (from ./host.sops.yaml)
             (keyFile "/var/lib/sops-nix/key.txt")
             (secret
               {
@@ -126,7 +126,7 @@ lib.mkMerge [
           key_groups = [
             { age = [ host ]; }
           ];
-          path_regex = ./secrets-host.yaml;
+          path_regex = ./host.sops.yaml;
         }
       ];
 
@@ -144,7 +144,7 @@ lib.mkMerge [
           includes =
             (with den.aspects.sops; [
               # secrets
-              (from ./secrets-user-${user}.yaml)
+              (from ./user-${user}.sops.yaml)
               (keyFile ".config/sops/age/key.txt")
             ])
             ++ (with den.aspects; [
@@ -189,7 +189,7 @@ lib.mkMerge [
             key_groups = [
               { age = [ "${user}@${host}" ]; }
             ];
-            path_regex = ./secrets-user-${user}.yaml;
+            path_regex = ./user-${user}.sops.yaml;
           }
         ];
 

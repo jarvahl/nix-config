@@ -88,7 +88,7 @@ lib.mkMerge [
       '';
 
       apps.pair = {
-        meta.description = "Pair a host with its age key from keys.yaml";
+        meta.description = "Pair a host with its age key from pairing.sops.yaml";
         type = "app";
         program = lib.getExe (
           pkgs.writeShellApplication {
@@ -99,14 +99,14 @@ lib.mkMerge [
 
               if [ "''${1:-}" = "--help" ] || [ "''${1:-}" = "-h" ]; then
                 echo "usage: nix run .#pair [-- hostname]"
-                echo "installs host age key from keys.yaml to /var/lib/sops-nix/key.txt"
+                echo "installs host age key from pairing.sops.yaml to /var/lib/sops-nix/key.txt"
                 echo
                 echo "without an explicit hostname, uses: $(hostname)"
                 exit 0
               fi
 
               host="''${1:-$(hostname)}"
-              secrets_file="''${PAIR_KEYS_FILE:-keys.yaml}"
+              secrets_file="''${PAIR_KEYS_FILE:-pairing.sops.yaml}"
               target="/var/lib/sops-nix/key.txt"
 
               if [ ! -f "''${secrets_file}" ]; then
@@ -216,7 +216,7 @@ lib.mkMerge [
 
           ```nix
           includes = with den.aspects.sops; [
-            (from ./secrets-user-jarvahl.yaml)
+            (from ./user-jarvahl.sops.yaml)
             (keyFile ".config/sops/age/key.txt")
             (secret {
               name = "openclaw/gateway_token";
