@@ -1,11 +1,16 @@
 { ... }:
+let
+  nixExperimentalFeatures = [
+    "nix-command"
+    "flakes"
+    "pipe-operators"
+  ];
+in
 {
+  _module.args.nixExperimentalFeatures = nixExperimentalFeatures;
+
   den.aspects.nix.nixos = {
-    nix.settings.experimental-features = [
-      "nix-command"
-      "flakes"
-      "pipe-operators"
-    ];
+    nix.settings.experimental-features = nixExperimentalFeatures;
 
     nix.settings.trusted-users = [
       "root"

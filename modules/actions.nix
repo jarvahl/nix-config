@@ -2,6 +2,7 @@
   config,
   inputs,
   lib,
+  nixExperimentalFeatures,
   ...
 }:
 {
@@ -12,7 +13,8 @@
         { uses = "actions/checkout@v6"; }
         {
           uses = "cachix/install-nix-action@v31";
-          "with".extra_nix_config = "extra-experimental-features = pipe-operators";
+          "with".extra_nix_config =
+            "experimental-features = ${lib.concatStringsSep " " nixExperimentalFeatures}";
         }
         {
           name = "Check flake";
