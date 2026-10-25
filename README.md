@@ -44,7 +44,13 @@ By default it unlocks the recovery identity from `./breakglass.age`. Override wi
 SOPS_KEYS_FILE=/path/to/breakglass.age nix develop .#sops
 ```
 
-`nix develop .#terranix` unlocks the same recovery identity on entry, too.
-Both shells require Linux with a running systemd user manager. Each session
+The shell requires Linux with a running systemd user manager. Each session
 gets a private runtime directory, removed by systemd when its shell exits,
-including after SIGKILL. Terranix commands reuse the shell's unlocked key.
+including after SIGKILL. Run Terranix commands inside this shell:
+
+```sh
+nix run .#terranix.plan
+```
+
+Terranix reuses the unlocked key and exports secrets from `terranix.sops.yaml`
+to its command environment, with uppercase path segments joined by underscores.

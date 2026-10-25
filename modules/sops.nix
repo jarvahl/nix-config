@@ -27,10 +27,16 @@ lib.mkMerge [
           SOPS_KEYS_FILE=/path/to/breakglass.age nix develop .#sops
           ```
 
-          `nix develop .#terranix` unlocks the same recovery identity on entry, too.
-          Both shells require Linux with a running systemd user manager. Each session
+          The shell requires Linux with a running systemd user manager. Each session
           gets a private runtime directory, removed by systemd when its shell exits,
-          including after SIGKILL. Terranix commands reuse the shell's unlocked key.
+          including after SIGKILL. Run Terranix commands inside this shell:
+
+          ```sh
+          nix run .#terranix.plan
+          ```
+
+          Terranix reuses the unlocked key and exports secrets from `terranix.sops.yaml`
+          to its command environment, with uppercase path segments joined by underscores.
         '';
       }
     ];
@@ -179,8 +185,8 @@ lib.mkMerge [
           # Create recovery identity
 
           `breakglass.age` contains one raw age recovery identity, encrypted with a
-          passphrase. Both the SOPS and Terranix shells use it; there is no separate
-          Terranix identity or YAML key bundle.
+          passphrase. Terranix reuses the SOPS shell's unlocked identity; there is no
+          separate Terranix identity or YAML key bundle.
 
           Encrypt an existing recovery identity from a private runtime file:
 
@@ -192,8 +198,7 @@ lib.mkMerge [
           older encrypted copy. Never replace the existing recovery identity without
           first migrating and verifying every encrypted file that depends on it.
 
-          `nix develop .#sops` and `nix develop .#terranix` unlock it into a private
-          runtime directory. A systemd user service waits for the shell via pidfd
+          `nix develop .#sops` unlocks it into a private runtime directory. A systemd user service waits for the shell via pidfd
           and removes the directory when the shell exits, including after SIGKILL.
           Unlocking it grants access to all recovery-protected secrets.
         '';
