@@ -1104,11 +1104,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1792351753,
-        "narHash": "sha256-f5hdiuv8X+gASRUgSSZuCuAa0ihNSvyZ+sZciGWbgHo=",
+        "lastModified": 1793050124,
+        "narHash": "sha256-JWac+1OikBSxJjogRWau9g7WdlX7nfteDXV8nTT2NXo=",
         "owner": "jarvahl",
         "repo": "zsh.nix",
-        "rev": "8e3ecc29f62ad5c7fb039f1d32269ad18c506e5c",
+        "rev": "46985ba1a06a5bde22301e3c6fae8687ecfb9862",
         "type": "github"
       },
       "original": {

@@ -1,7 +1,8 @@
 { ... }:
 {
-  den.aspects.git.hjem = {
+  den.aspects.git.hjem = { config, lib, ... }: {
     programs.git.enable = true;
+    programs.zsh.bundle.git.enable = lib.mkDefault config.programs.git.enable;
     rum.programs.git.settings = {
       format.pretty = "oneline";
       log.decorate = "short";
