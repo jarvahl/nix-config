@@ -51,6 +51,7 @@ lib.mkMerge [
           ++ (with den.aspects; [
             ssh
             tailscale
+            (tailscale.tags [ "services" ])
           ]);
 
         nixos =

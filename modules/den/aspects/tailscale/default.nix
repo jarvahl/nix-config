@@ -7,17 +7,16 @@
 lib.mkMerge [
   {
     den.aspects.tailscale = {
-      includes = [
-        (den.batteries.import-tree ./.)
-      ];
+      includes =
+        (with den.aspects; [ (tailscale.tags [ "host" ]) ]) ++ (with den.batteries; [ (import-tree ./.) ]);
 
       nixos =
         { config, pkgs, ... }:
         {
           networking.firewall.trustedInterfaces = [ "tailscale0" ];
           services.tailscale = {
+            authKeyParameters.ephemeral = false;
             enable = true;
-            tags = [ "managed" ];
           };
 
           systemd.services.tailscaled-logout = lib.mkIf (config.services.tailscale.authKeyFile != null) {
