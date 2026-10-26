@@ -1,4 +1,5 @@
 {
+  checkedPath,
   config,
   den,
   lib,
@@ -70,6 +71,11 @@ lib.mkMerge [
     perSystem.terranix.terranixConfigurations.terranix.modules = [
       {
         _module.args.flakeConfig = {
+          hostSecretFiles = lib.mergeAttrsList (
+            lib.mapAttrsToList (
+              _system: hosts: lib.mapAttrs (_host: host: checkedPath host.secrets.file) hosts
+            ) config.den.hosts
+          );
           inherit (config.flake) nixosConfigurations;
         };
       }
