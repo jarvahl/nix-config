@@ -152,6 +152,7 @@ lib.mkMerge [
             ++ (with den.aspects; [
               # console
               bat
+              direnv
               eza
               fzf
               git
