@@ -141,6 +141,36 @@ lib.mkMerge [
                   })
                 ])
                 ++ (with sops; [
+                  (secret
+                    {
+                      name = "composio/api_key";
+                      path = ".config/composio/api-key";
+                    }
+                    {
+                      hjem = { config, ... }: {
+                        programs.openclaw.environment.COMPOSIO_API_KEY = config.sops.secrets."composio/api_key".path;
+                      };
+                    }
+                  )
+                  (secret
+                    {
+                      name = "composio/mcp_url";
+                      path = ".config/composio/mcp-url";
+                    }
+                    {
+                      hjem = { config, ... }: {
+                        programs.openclaw = {
+                          config.mcp.servers.composio = {
+                            enabled = true;
+                            headers.x-api-key = "\${COMPOSIO_API_KEY}";
+                            transport = "streamable-http";
+                            url = "\${COMPOSIO_MCP_URL}";
+                          };
+                          environment.COMPOSIO_MCP_URL = config.sops.secrets."composio/mcp_url".path;
+                        };
+                      };
+                    }
+                  )
                   (secret {
                     name = "openclaw/gateway_token";
                     path = ".config/openclaw/gateway-token";
