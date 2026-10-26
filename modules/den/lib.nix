@@ -4,10 +4,16 @@
     aspect:
     aspect
     // {
+      # Keep Den's mixed-definition merge from coercing this aspect into a parametric include.
+      __functionArgs = {
+        config = true;
+      };
       __functor =
         self: extraAspect:
         builtins.removeAttrs self [
+          "__functionArgs"
           "__functor"
+          "_" # Synthetic alias of provides; re-merging both duplicates its definitions.
           "_module"
         ]
         // {
@@ -25,6 +31,22 @@
             {
               file = __curPos.file;
               value = den.lib.callable { includes = [ { nixos.markers = [ name ]; } ]; };
+            }
+          ];
+      splitParent =
+        den.lib.aspects.types.providerType.merge
+          [ "split-parent" ]
+          [
+            {
+              file = "parent.nix";
+              value = den.lib.callable { nixos.markers = [ "parent" ]; };
+            }
+            {
+              file = "child.nix";
+              value = {
+                child.nixos.markers = [ "child" ];
+                nixos.markers = [ "extension" ];
+              };
             }
           ];
       parent = aspect "parent";
@@ -61,6 +83,14 @@
         expr = markers (parent {
           includes = [ (child leaf) ];
         });
+      };
+      testSplitDefinitions = {
+        expected = [
+          "child"
+          "extension"
+          "parent"
+        ];
+        expr = markers (splitParent splitParent.child);
       };
     };
 }

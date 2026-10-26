@@ -53,7 +53,6 @@ lib.mkMerge [
             # system
             comma
             fonts
-            herdr
             podman
             ssh
             tailscale
@@ -156,6 +155,7 @@ lib.mkMerge [
               eza
               fzf
               git
+              herdr
               nvim
               pi
               worktrunk
