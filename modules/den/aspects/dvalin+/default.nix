@@ -132,6 +132,14 @@ lib.mkMerge [
         aspects."${user}@${host}" = {
           includes = with den.aspects; [
             (openclaw {
+              hjem = { pkgs, ... }: {
+                programs.openclaw.config.browser = {
+                  defaultProfile = "openclaw";
+                  enabled = true;
+                  executablePath = "${pkgs.chromium}/bin/chromium";
+                  headless = true;
+                };
+              };
               includes =
                 (with tailscale; [
                   (service {
