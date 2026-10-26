@@ -10,6 +10,7 @@
     programs.nvf = {
       enable = true;
       settings.vim = {
+        fzf-lua.enable = true;
         theme.enable = true;
         vimAlias = true;
       };
