@@ -10,9 +10,14 @@
     programs.nvf = {
       enable = true;
       settings.vim = {
+        filetree.nvimTree = {
+          enable = true;
+          mappings.toggle = "<leader>e";
+        };
         fzf-lua.enable = true;
         theme.enable = true;
         vimAlias = true;
+        visuals.nvim-web-devicons.enable = true;
       };
     };
   };
