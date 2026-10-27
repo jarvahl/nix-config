@@ -13,18 +13,23 @@
         autocmds = [
           {
             callback = lib.generators.mkLuaInline ''
-              function(args)
+              function()
                 -- Apply after nvim-tree finishes configuring its window.
                 vim.schedule(function()
-                  for _, win in ipairs(vim.fn.win_findbuf(args.buf)) do
-                    vim.wo[win].winbar = "%#NvimTreeNormal# "
+                  for _, win in ipairs(vim.api.nvim_list_wins()) do
+                    if vim.bo[vim.api.nvim_win_get_buf(win)].filetype == "NvimTree" then
+                      vim.wo[win].winbar = "%#NvimTreeNormal# "
+                    end
                   end
                 end)
               end
             '';
             desc = "Non-selectable top padding for the file tree";
-            event = [ "BufWinEnter" ];
-            pattern = [ "NvimTree_*" ];
+            event = [
+              "BufWinEnter"
+              "VimEnter"
+            ];
+            pattern = [ "*" ];
           }
         ];
         filetree.nvimTree = {
