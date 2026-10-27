@@ -5,7 +5,10 @@ let
 in
 {
   config = lib.mkIf cfg.enable {
-    services.tailscale.extraUpFlags = [ flag ];
+    services.tailscale.extraUpFlags = [
+      flag
+      "--hostname=${config.networking.hostName}"
+    ];
 
     systemd.services.tailscaled-tags = {
       after = [
@@ -16,7 +19,7 @@ in
       wants = [ "tailscaled-autoconnect.service" ];
       path = [ cfg.package ];
       serviceConfig.Type = "oneshot";
-      script = "tailscale up ${lib.escapeShellArg flag}";
+      script = "tailscale up ${lib.escapeShellArgs cfg.extraUpFlags}";
     };
   };
 
