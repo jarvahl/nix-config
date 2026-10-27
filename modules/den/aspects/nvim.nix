@@ -10,6 +10,14 @@
     programs.nvf = {
       enable = true;
       settings.vim = {
+        autocmds = [
+          {
+            command = "let &l:winbar = ' '";
+            desc = "Non-selectable top padding for the file tree";
+            event = [ "BufWinEnter" ];
+            pattern = [ "NvimTree_*" ];
+          }
+        ];
         filetree.nvimTree = {
           enable = true;
           mappings.toggle = "<leader>e";
