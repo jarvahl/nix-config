@@ -1,4 +1,4 @@
-{ inputs, lib, ... }:
+{ inputs, ... }:
 
 {
   flake-file.inputs.nvf = {
@@ -6,35 +6,40 @@
     url = "github:notashelf/nvf";
   };
 
-  den.aspects.nvim.hjem = {
+  den.aspects.nvim.hjem = { pkgs, ... }: {
     programs.nvf = {
       enable = true;
       settings.vim = {
-        autocmds = [
-          {
-            callback = lib.generators.mkLuaInline ''
-              function()
-                -- Apply after nvim-tree finishes configuring its window.
-                vim.schedule(function()
-                  for _, win in ipairs(vim.api.nvim_list_wins()) do
-                    if vim.bo[vim.api.nvim_win_get_buf(win)].filetype == "NvimTree" then
-                      vim.wo[win].winbar = "%#NvimTreeNormal# "
+        extraPlugins.fyler = {
+          package = pkgs.vimPlugins.fyler-nvim;
+          setup = ''
+            local fyler = require("fyler")
+            -- Fyler's replace mode leaves the code window's dimensions fixed.
+            vim.api.nvim_create_autocmd("BufWinEnter", {
+              callback = function(event)
+                if not vim.api.nvim_buf_get_name(event.buf):match("^fyler%-") then return end
+                local win = vim.api.nvim_get_current_win()
+                local height, width = vim.wo[win].winfixheight, vim.wo[win].winfixwidth
+                vim.api.nvim_create_autocmd("BufWinLeave", {
+                  buffer = event.buf,
+                  once = true,
+                  callback = function()
+                    if vim.api.nvim_win_is_valid(win) then
+                      vim.wo[win].winfixheight = height
+                      vim.wo[win].winfixwidth = width
                     end
-                  end
-                end)
-              end
-            '';
-            desc = "Non-selectable top padding for the file tree";
-            event = [
-              "BufWinEnter"
-              "VimEnter"
-            ];
-            pattern = [ "*" ];
-          }
-        ];
-        filetree.nvimTree = {
-          enable = true;
-          mappings.toggle = "<leader>e";
+                  end,
+                })
+              end,
+            })
+            fyler.setup({
+              auto_confirm_simple_mutation = true,
+              integrations = { icon = "nvim_web_devicons" },
+              kind = "replace",
+              win_opts = { winbar = "%#Normal# " },
+            })
+            vim.keymap.set("n", "<leader>e", fyler.open, { desc = "Open Fyler" })
+          '';
         };
         fzf-lua.enable = true;
         theme.enable = true;
