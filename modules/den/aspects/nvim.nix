@@ -1,4 +1,4 @@
-{ inputs, ... }:
+{ inputs, lib, ... }:
 
 {
   flake-file.inputs.nvf = {
@@ -12,7 +12,16 @@
       settings.vim = {
         autocmds = [
           {
-            command = "let &l:winbar = ' '";
+            callback = lib.generators.mkLuaInline ''
+              function(args)
+                -- Apply after nvim-tree finishes configuring its window.
+                vim.schedule(function()
+                  for _, win in ipairs(vim.fn.win_findbuf(args.buf)) do
+                    vim.wo[win].winbar = "%#NvimTreeNormal# "
+                  end
+                end)
+              end
+            '';
             desc = "Non-selectable top padding for the file tree";
             event = [ "BufWinEnter" ];
             pattern = [ "NvimTree_*" ];
