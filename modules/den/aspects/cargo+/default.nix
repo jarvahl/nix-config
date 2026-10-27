@@ -87,6 +87,7 @@ lib.mkMerge [
               git
               nvim
               worktrunk
+              zoxide
               zsh
 
               # accounts

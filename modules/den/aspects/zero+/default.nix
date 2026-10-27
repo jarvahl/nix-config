@@ -159,6 +159,7 @@ lib.mkMerge [
               nvim
               pi
               worktrunk
+              zoxide
               zsh
             ])
             ++ (with den.aspects; [
