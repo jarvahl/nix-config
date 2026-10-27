@@ -79,17 +79,10 @@ lib.mkMerge [
         aspects."${user}@${host}" = {
           includes =
             (with den.aspects; [
-              # console
-              bat
+              # tools
               clipboard
-              direnv
-              eza
-              fzf
-              git
-              nvim
-              worktrunk
-              zoxide
-              zsh
+              console
+              development
 
               # accounts
               github

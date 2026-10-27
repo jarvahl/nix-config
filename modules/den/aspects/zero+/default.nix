@@ -149,19 +149,12 @@ lib.mkMerge [
               swaybg
             ])
             ++ (with den.aspects; [
-              # console
-              bat
+              # tools
               clipboard
-              direnv
-              eza
-              fzf
-              git
+              console
+              development
               herdr
-              nvim
               pi
-              worktrunk
-              zoxide
-              zsh
             ])
             ++ (with den.aspects; [
               # accounts
