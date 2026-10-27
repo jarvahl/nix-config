@@ -131,60 +131,70 @@ lib.mkMerge [
       den = {
         aspects."${user}@${host}" = {
           includes = with den.aspects; [
+            linger
             (openclaw {
-              hjem = { pkgs, ... }: {
-                programs.openclaw.config.browser = {
-                  defaultProfile = "openclaw";
-                  enabled = true;
-                  executablePath = "${pkgs.chromium}/bin/chromium";
-                  headless = true;
+              hjem = { config, ... }: {
+                programs.openclaw.config.gateway.trustedProxies = [ "127.0.0.1" ];
+                sops.templates."openclaw.env" = {
+                  content = ''
+                    COMPOSIO_API_KEY="${config.sops.placeholder."composio/api_key"}"
+                    COMPOSIO_MCP_URL="${config.sops.placeholder."composio/mcp_url"}"
+                    OPENCLAW_GATEWAY_TOKEN="${config.sops.placeholder."openclaw/gateway_token"}"
+                  '';
+                  path = "${config.home.homeDirectory}/.openclaw/.env";
+                };
+                systemd.services.openclaw-gateway = {
+                  after = [ "sops-nix.service" ];
+                  requires = [ "sops-nix.service" ];
                 };
               };
-              includes =
-                (with tailscale; [
-                  (service {
-                    comment = "OpenClaw gateway";
-                    name = "openclaw";
-                    port = 18789;
-                    servicePort = 443;
-                  })
-                ])
-                ++ (with sops; [
-                  (secret
-                    {
-                      name = "composio/api_key";
-                      path = ".config/composio/api-key";
-                    }
-                    {
-                      hjem = { config, ... }: {
-                        programs.openclaw.environment.COMPOSIO_API_KEY = config.sops.secrets."composio/api_key".path;
-                      };
-                    }
-                  )
-                  (secret
-                    {
-                      name = "composio/mcp_url";
-                      path = ".config/composio/mcp-url";
-                    }
-                    {
-                      hjem = { config, ... }: {
-                        programs.openclaw = {
-                          config.mcp.servers.composio = {
-                            enabled = true;
-                            headers.x-api-key = "\${COMPOSIO_API_KEY}";
-                            transport = "streamable-http";
-                            url = "\${COMPOSIO_MCP_URL}";
-                          };
-                          environment.COMPOSIO_MCP_URL = config.sops.secrets."composio/mcp_url".path;
-                        };
-                      };
-                    }
-                  )
-                  (secret {
+              includes = [
+                openclaw.composio
+              ]
+              ++ (with tailscale; [
+                (service {
+                  comment = "OpenClaw gateway";
+                  name = "openclaw";
+                  port = 18789;
+                  servicePort = 443;
+                })
+              ])
+              ++ (with sops; [
+                (secret
+                  {
+                    name = "composio/api_key";
+                    path = ".config/composio/api-key";
+                  }
+                  {
+                    hjem = { config, ... }: {
+                      programs.openclaw.environment.COMPOSIO_API_KEY = config.sops.secrets."composio/api_key".path;
+                    };
+                  }
+                )
+                (secret
+                  {
+                    name = "composio/mcp_url";
+                    path = ".config/composio/mcp-url";
+                  }
+                  {
+                    hjem = { config, ... }: {
+                      programs.openclaw.environment.COMPOSIO_MCP_URL = config.sops.secrets."composio/mcp_url".path;
+                    };
+                  }
+                )
+                (secret
+                  {
                     name = "openclaw/gateway_token";
                     path = ".config/openclaw/gateway-token";
-                  } { })
-                ]);
+                  }
+                  {
+                    hjem = { config, ... }: {
+                      programs.openclaw.environment.OPENCLAW_GATEWAY_TOKEN =
+                        config.sops.secrets."openclaw/gateway_token".path;
+                    };
+                  }
+                )
+              ]);
             })
           ];
         };
