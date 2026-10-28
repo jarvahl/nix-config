@@ -71,30 +71,50 @@
         ];
         luaConfigRC.ui-theme = ''
           local function apply_ui_theme()
-            -- Keep OneDark's foregrounds and syntax; borrow only Nord's UI backgrounds.
+            -- Match the reference screenshot's black UI, not its current Nord palette.
             local backgrounds = {
-              CursorLine = "#343A46",
-              FloatBorder = "#282C34",
-              Normal = "#282C34",
-              NormalFloat = "#282C34",
-              NormalNC = "#282C34",
-              Pmenu = "#2E3440",
-              PmenuSel = "#434C5E",
-              SignColumn = "#282C34",
-              StatusLine = "#3B4252",
-              StatusLineNC = "#3B4252",
-              TabLineFill = "#282C34",
-              WinSeparator = "#282C34",
+              CursorLine = "#15161E",
+              CursorLineNr = "#000000",
+              EndOfBuffer = "#000000",
+              FloatBorder = "#000000",
+              FloatTitle = "#000000",
+              FoldColumn = "#000000",
+              FylerFloat = "#000000",
+              FylerFloatBorder = "#000000",
+              FylerFloatTitle = "#000000",
+              FzfLuaBorder = "#000000",
+              FzfLuaNormal = "#000000",
+              FzfLuaPreviewBorder = "#000000",
+              FzfLuaPreviewNormal = "#000000",
+              FzfLuaTitle = "#000000",
+              LineNr = "#000000",
+              Normal = "#000000",
+              NormalFloat = "#000000",
+              NormalNC = "#000000",
+              Pmenu = "#000000",
+              PmenuSbar = "#000000",
+              PmenuSel = "#292E42",
+              SignColumn = "#000000",
+              StatusLine = "#000000",
+              StatusLineNC = "#000000",
+              StatusLineTerm = "#000000",
+              StatusLineTermNC = "#000000",
+              TabLineFill = "#000000",
+              Terminal = "#000000",
+              WinBar = "#000000",
+              WinBarNC = "#000000",
+              WinSeparator = "#000000",
             }
             for group, background in pairs(backgrounds) do
               local highlight = vim.api.nvim_get_hl(0, { name = group, link = false })
               highlight.bg = background
+              highlight.default = nil -- Otherwise plugin defaults can make this update a no-op.
               vim.api.nvim_set_hl(0, group, highlight)
             end
           end
           vim.api.nvim_create_autocmd("ColorScheme", {
             callback = apply_ui_theme,
-            group = vim.api.nvim_create_augroup("nord-ui", { clear = true }),
+            group = vim.api.nvim_create_augroup("black-ui", { clear = true }),
           })
           apply_ui_theme()
         '';
@@ -107,8 +127,8 @@
               theme = lib.generators.mkLuaInline ''
                 (function()
                   local theme = require("lualine.themes.onedark")
-                  theme.normal.c.bg = "#3B4252"
-                  theme.inactive.c.bg = "#3B4252"
+                  theme.normal.c.bg = "#000000"
+                  theme.inactive.c.bg = "#000000"
                   return theme
                 end)()
               '';
