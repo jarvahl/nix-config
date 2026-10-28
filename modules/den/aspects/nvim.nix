@@ -69,13 +69,49 @@
             mode = "n";
           }
         ];
+        luaConfigRC.ui-theme = ''
+          local function apply_ui_theme()
+            -- Keep OneDark's foregrounds and syntax; borrow only Nord's UI backgrounds.
+            local backgrounds = {
+              CursorLine = "#343A46",
+              FloatBorder = "#282C34",
+              Normal = "#282C34",
+              NormalFloat = "#282C34",
+              NormalNC = "#282C34",
+              Pmenu = "#2E3440",
+              PmenuSel = "#434C5E",
+              SignColumn = "#282C34",
+              StatusLine = "#3B4252",
+              StatusLineNC = "#3B4252",
+              TabLineFill = "#282C34",
+              WinSeparator = "#282C34",
+            }
+            for group, background in pairs(backgrounds) do
+              local highlight = vim.api.nvim_get_hl(0, { name = group, link = false })
+              highlight.bg = background
+              vim.api.nvim_set_hl(0, group, highlight)
+            end
+          end
+          vim.api.nvim_create_autocmd("ColorScheme", {
+            callback = apply_ui_theme,
+            group = vim.api.nvim_create_augroup("nord-ui", { clear = true }),
+          })
+          apply_ui_theme()
+        '';
         statusline.lualine = {
           enable = true;
           setupOpts = {
             options = {
               component_separators = "";
               section_separators = "";
-              theme = "auto";
+              theme = lib.generators.mkLuaInline ''
+                (function()
+                  local theme = require("lualine.themes.onedark")
+                  theme.normal.c.bg = "#3B4252"
+                  theme.inactive.c.bg = "#3B4252"
+                  return theme
+                end)()
+              '';
             };
             sections = {
               lualine_a = [ ];
@@ -140,7 +176,10 @@
             };
           };
         };
-        theme.enable = true;
+        theme = {
+          enable = true;
+          name = "onedark";
+        };
         vimAlias = true;
         visuals.nvim-web-devicons.enable = true;
       };
