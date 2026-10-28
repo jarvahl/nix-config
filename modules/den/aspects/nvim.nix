@@ -6,7 +6,7 @@
     url = "github:notashelf/nvf";
   };
 
-  den.aspects.nvim.hjem = { pkgs, ... }: {
+  den.aspects.nvim.hjem = { lib, pkgs, ... }: {
     programs.nvf = {
       enable = true;
       settings.vim = {
@@ -69,6 +69,77 @@
             mode = "n";
           }
         ];
+        statusline.lualine = {
+          enable = true;
+          setupOpts = {
+            options = {
+              component_separators = "";
+              section_separators = "";
+              theme = "auto";
+            };
+            sections = {
+              lualine_a = [ ];
+              lualine_b = [ ];
+              lualine_c = [
+                {
+                  "@1" = "filetype";
+                  icon_only = true;
+                  padding = {
+                    left = 1;
+                    right = 0;
+                  };
+                }
+                {
+                  "@1" = "filename";
+                  color = {
+                    gui = "bold";
+                  };
+                  path = 1;
+                  symbols = {
+                    modified = "•";
+                    readonly = "";
+                    unnamed = "Empty";
+                  };
+                }
+              ];
+              lualine_x = [
+                {
+                  "@1" = "branch";
+                  icon = "";
+                }
+                "searchcount"
+                "%L lines"
+                "location"
+                {
+                  "@1" = "filetype";
+                  fmt = lib.generators.mkLuaInline "string.upper";
+                  icons_enabled = false;
+                }
+                "progress"
+                {
+                  "@1" = "diagnostics";
+                  sources = [ "nvim_diagnostic" ];
+                  symbols = {
+                    error = "▫";
+                    hint = "▫";
+                    info = "▫";
+                    warn = "▫";
+                  };
+                }
+                {
+                  "@1" = "diff";
+                  symbols = {
+                    added = "▪";
+                    modified = "▪";
+                    removed = "▪";
+                  };
+                }
+              ];
+              lualine_y = [ ];
+              lualine_z = [ ];
+            };
+          };
+        };
         theme.enable = true;
         vimAlias = true;
         visuals.nvim-web-devicons.enable = true;
