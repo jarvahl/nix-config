@@ -10,6 +10,7 @@
     programs.nvf = {
       enable = true;
       settings.vim = {
+        extraPackages = [ pkgs.ripgrep ];
         extraPlugins.fyler = {
           package = pkgs.vimPlugins.fyler-nvim;
           setup = ''
@@ -42,6 +43,32 @@
           '';
         };
         fzf-lua.enable = true;
+        keymaps = [
+          {
+            action = "<cmd>FzfLua files<CR>";
+            desc = "Find files";
+            key = "<leader>ff";
+            mode = "n";
+          }
+          {
+            action = "<cmd>FzfLua live_grep<CR>";
+            desc = "Search text";
+            key = "<leader>fg";
+            mode = "n";
+          }
+          {
+            action = "<cmd>FzfLua buffers<CR>";
+            desc = "Find buffers";
+            key = "<leader>fb";
+            mode = "n";
+          }
+          {
+            action = "<cmd>FzfLua oldfiles<CR>";
+            desc = "Find recent files";
+            key = "<leader>fr";
+            mode = "n";
+          }
+        ];
         theme.enable = true;
         vimAlias = true;
         visuals.nvim-web-devicons.enable = true;
