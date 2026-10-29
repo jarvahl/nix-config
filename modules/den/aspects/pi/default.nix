@@ -13,12 +13,12 @@ lib.mkMerge [
             PI_SKIP_VERSION_CHECK.value = "1";
             PI_TELEMETRY.value = "0";
           };
-          extensions = with pkgs.pi; [
+          extensions = with pkgs; [
             "${pi-core-skill-tool}/pi-core-skill-tool/index.ts"
             "${pi-diff-review}/pi-diff-review/index.ts"
             "${pi-prompt-timer}/pi-prompt-timer/index.ts"
             "${pi-self-compact}/pi-self-compact/index.ts"
-            "${ponytail}/pi-ponytail/index.js"
+            "${pi-ponytail}/pi-ponytail/index.js"
           ];
         };
       };
@@ -58,8 +58,8 @@ lib.mkMerge [
           5. Add the resulting extension path to `programs.pi.coding-agent.extensions`.
           6. Run `nix flake check --no-build` and build the affected derivation when possible.
 
-          Keep one shared packaging helper for multiple source-only extensions when their
-          derivations have the same shape, while keeping source paths explicit.
+          Keep extension recipes self-contained under `_pkgs/<package>/package.nix`;
+          use plain `stdenvNoCC.mkDerivation` for source-only extensions.
 
           Use `fetchFromGitHub` for source-only extensions. Use `buildNpmPackage` only when
           runtime dependencies are required, and first verify that the lockfile contains

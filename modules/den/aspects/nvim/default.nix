@@ -12,7 +12,7 @@
       settings.vim = {
         extraPackages = [ pkgs.ripgrep ];
         extraPlugins.fyler = {
-          package = pkgs.vimPlugins.fyler-nvim;
+          package = pkgs.fyler-nvim;
           setup = ''
             local fyler = require("fyler")
             -- Fyler's replace mode leaves the code window's dimensions fixed.

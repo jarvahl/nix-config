@@ -38,14 +38,14 @@ let
       if builtins.isAttrs value && !lib.isDerivation value then (prev.${name} or { }) // value else value
     ) packages;
   overlay =
-    modules: _final: prev:
+    modules: final: prev:
     extend prev (
       lib.foldl' (
         acc: directory:
         acc
         // extend acc (
           prev.lib.packagesFromDirectoryRecursive {
-            callPackage = prev.lib.callPackageWith (prev // { pkgs = prev; });
+            callPackage = final.callPackage;
             inherit directory;
           }
         )
