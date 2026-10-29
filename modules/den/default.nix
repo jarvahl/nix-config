@@ -25,8 +25,10 @@
         includes = with den.aspects; [
           nix
           sudo
-          sops.hashedPassword
         ];
+      }
+      {
+        nixos.users.mutableUsers = false;
       }
       {
         # core

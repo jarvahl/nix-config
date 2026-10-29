@@ -196,6 +196,22 @@ lib.mkMerge [
               ]);
             })
           ];
+          provides.to-hosts =
+            with den.aspects.sops;
+            secret
+              {
+                mode = "0400";
+                name = "users/${user}/hashed_password";
+              }
+              {
+                nixos = { lib, path, ... }: {
+                  sops.secrets."users/${user}/hashed_password".neededForUsers = true;
+                  users.users.${user} = {
+                    hashedPasswordFile = path;
+                    initialPassword = lib.mkForce null;
+                  };
+                };
+              };
         };
 
         hosts.x86_64-linux.${host}.users.${user} = {

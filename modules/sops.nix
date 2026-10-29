@@ -274,6 +274,13 @@ lib.mkMerge [
           user consumers belong in `hjem` modules instead.
           See the Tailscale secret in `${checkedPath ./den/aspects/dvalin+/default.nix}`.
 
+          Declare login password hashes in each user's aspect through `provides.to-hosts`,
+          using `secret` with `mode = "0400"`. They are decrypted from the host's SOPS file.
+          In the consuming NixOS module, set `sops.secrets.<name>.neededForUsers = true`,
+          use the injected `path` as `users.users.<user>.hashedPasswordFile`, and clear
+          `initialPassword` with `lib.mkForce null`. `users.mutableUsers = false` is set
+          once in the anonymous `den.default` configuration.
+
           ## Templates and references
 
           Declare secrets separately; templates do not declare their dependencies automatically.
