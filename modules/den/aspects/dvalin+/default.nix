@@ -23,8 +23,8 @@ lib.mkMerge [
                 ];
               }
               {
-                nixos = { config, ... }: {
-                  services.tailscale.authKeyFile = config.sops.secrets."tailscale/auth_key".path;
+                nixos = { path, ... }: {
+                  services.tailscale.authKeyFile = path;
                 };
               }
             )
@@ -37,10 +37,10 @@ lib.mkMerge [
                 restartUnits = [ "sshd.service" ];
               }
               {
-                nixos = { config, ... }: {
+                nixos = { path, ... }: {
                   services.openssh.hostKeys = [
                     {
-                      path = config.sops.secrets."ssh/host_key".path;
+                      inherit path;
                       type = "ed25519";
                     }
                   ];
@@ -166,8 +166,8 @@ lib.mkMerge [
                     path = ".config/composio/api-key";
                   }
                   {
-                    hjem = { config, ... }: {
-                      programs.openclaw.environment.COMPOSIO_API_KEY = config.sops.secrets."composio/api_key".path;
+                    hjem = { path, ... }: {
+                      programs.openclaw.environment.COMPOSIO_API_KEY = path;
                     };
                   }
                 )
@@ -177,8 +177,8 @@ lib.mkMerge [
                     path = ".config/composio/mcp-url";
                   }
                   {
-                    hjem = { config, ... }: {
-                      programs.openclaw.environment.COMPOSIO_MCP_URL = config.sops.secrets."composio/mcp_url".path;
+                    hjem = { path, ... }: {
+                      programs.openclaw.environment.COMPOSIO_MCP_URL = path;
                     };
                   }
                 )
@@ -188,9 +188,8 @@ lib.mkMerge [
                     path = ".config/openclaw/gateway-token";
                   }
                   {
-                    hjem = { config, ... }: {
-                      programs.openclaw.environment.OPENCLAW_GATEWAY_TOKEN =
-                        config.sops.secrets."openclaw/gateway_token".path;
+                    hjem = { path, ... }: {
+                      programs.openclaw.environment.OPENCLAW_GATEWAY_TOKEN = path;
                     };
                   }
                 )

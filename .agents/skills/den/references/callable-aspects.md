@@ -55,7 +55,10 @@ nested callable aspects can inherit the parent's list and recursively include th
 Keep normal host/user context resolution in Den's parametric entries.
 
 An anonymous aspect can group related aspects, such as a service and its SOPS secret.
-`sops.secret params aspect` already accepts a consuming aspect; it returns a plain
-aspect and needs no additional callable wrapper.
+`sops.secret params modules` takes explicit class modules (`nixos`, `hjem`, or
+`homeManager`); module functions receive `path` and `placeholder` alongside normal
+arguments. `sops.template params modules` passes `path` to its module functions.
+Both return plain aspects. Consumers are modules, not aspects: keep aspect-level
+`includes` outside them. No additional callable wrapper is needed.
 See `modules/den/aspects/dvalin+/default.nix`; the secret stays in the user's context.
 Regression tests live in `flake.tests.callable` in `modules/den/lib.nix`.

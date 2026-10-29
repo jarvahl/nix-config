@@ -25,8 +25,8 @@ includes = with den.aspects; [
 Prefer names that say what happens:
 
 ```nix
-sops.from
-sops.keyFile
+sops.secret
+sops.template
 ssh
 ```
 

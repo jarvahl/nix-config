@@ -22,10 +22,10 @@ lib.mkMerge [
               restartUnits = [ "sshd.service" ];
             }
             {
-              nixos = { config, ... }: {
+              nixos = { path, ... }: {
                 services.openssh.hostKeys = [
                   {
-                    path = config.sops.secrets."ssh/host_key".path;
+                    inherit path;
                     type = "ed25519";
                   }
                 ];

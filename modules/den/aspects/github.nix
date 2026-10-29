@@ -9,12 +9,12 @@
           path = ".ssh/keys.d/github";
         }
         {
-          hjem = { config, ... }: {
+          hjem = { path, ... }: {
             files.".ssh/config.d/github".text = ''
               Host github.com
                 HostName github.com
                 User git
-                IdentityFile ${config.sops.secrets."github/ssh-key".path}
+                IdentityFile ${path}
                 IdentitiesOnly yes
             '';
           };

@@ -1,29 +1,34 @@
-{ ... }:
+{ den, ... }:
 {
-  den.aspects.gitlab.hjem =
-    { config, pkgs, ... }:
-    let
-      glab = pkgs.writeShellApplication {
-        name = "glab";
-        text = ''
-          set -a
-          . "${config.sops.templates.glab-environment.path}"
-          set +a
+  den.aspects.gitlab = {
+    hjem.sops.secrets."gitlab/host" = { };
 
-          exec ${pkgs.glab}/bin/glab "$@"
-        '';
-      };
-    in
-    {
-      packages = [ glab ];
+    includes = with den.aspects.sops; [
+      (template
+        {
+          content = secrets: ''
+            GITLAB_HOST="https://${secrets."gitlab/host"}"
+          '';
+          mode = "0400";
+          name = "glab-environment";
+        }
+        {
+          hjem = { path, pkgs, ... }: {
+            packages = [
+              (pkgs.writeShellApplication {
+                name = "glab";
+                text = ''
+                  set -a
+                  . "${path}"
+                  set +a
 
-      sops.secrets."gitlab/host" = { };
-
-      sops.templates.glab-environment = {
-        mode = "0400";
-        content = ''
-          GITLAB_HOST="https://${config.sops.placeholder."gitlab/host"}"
-        '';
-      };
-    };
+                  exec ${pkgs.glab}/bin/glab "$@"
+                '';
+              })
+            ];
+          };
+        }
+      )
+    ];
+  };
 }

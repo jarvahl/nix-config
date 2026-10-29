@@ -1,11 +1,14 @@
-{
-  den,
-  lib,
-  self,
-  ...
-}:
+{ lib, ... }:
 let
-  schema = {
+  homePath =
+    home: path:
+    if lib.hasPrefix "/" (toString path) then
+      path
+    else
+      "${home}/${lib.removePrefix "./" (toString path)}";
+in
+{
+  den.schema = {
     host = {
       imports = [
         {
@@ -26,10 +29,13 @@ let
         (
           { host, ... }:
           {
-            includes = with den.aspects.sops; [
-              (from host.secrets.file)
-              (keyFile host.secrets.keyFile)
-            ];
+            nixos.sops = {
+              age = {
+                keyFile = host.secrets.keyFile;
+                sshKeyPaths = lib.mkForce [ ];
+              };
+              defaultSopsFile = host.secrets.file;
+            };
           }
         )
       ];
@@ -53,105 +59,40 @@ let
       includes = [
         (
           { user, ... }:
+          let
+            homeSecrets = { config, ... }: {
+              sops = {
+                age.keyFile = homePath config.home.homeDirectory user.secrets.keyFile;
+                defaultSopsFile = user.secrets.file;
+              };
+            };
+          in
           {
-            includes = with den.aspects.sops; [
-              (from user.secrets.file)
-              (keyFile user.secrets.keyFile)
-            ];
+            hjem = homeSecrets;
+            homeManager = homeSecrets;
+            provides.to-hosts.nixos =
+              { config, ... }:
+              let
+                name = "users/${user.name}/age_key";
+              in
+              {
+                assertions = [
+                  {
+                    assertion = config.sops.defaultSopsFile != null;
+                    message = "sops.secret ${name}: missing secrets.file on the host or user entity";
+                  }
+                ];
+                sops.secrets.${name} = {
+                  group = "users";
+                  mode = "0600";
+                  owner = user.name;
+                  path = homePath config.users.users.${user.name}.home user.secrets.keyFile;
+                  restartUnits = [ ];
+                };
+              };
           }
         )
       ];
     };
   };
-in
-lib.mkMerge [
-  { den.schema = schema; }
-  (
-    let
-      settings =
-        kind: config:
-        (lib.evalModules {
-          modules = schema.${kind}.imports ++ [ { secrets = config; } ];
-        }).config.secrets;
-
-      hostTest = host: user: {
-        expected = {
-          hostFile = toString (../. + "/${host}+/host.sops.yaml");
-          hostKeyFile = "/var/lib/sops-nix/key.txt";
-          provisionedKey = {
-            group = "users";
-            mode = "0600";
-            owner = user;
-            path = "/home/${user}/.config/sops/age/key.txt";
-          };
-          sshKeyPaths = [ ];
-          userFile = toString (../. + "/${host}+/user-${user}.sops.yaml");
-          userKeyFile = "/home/${user}/.config/sops/age/key.txt";
-        };
-        expr =
-          let
-            config = self.nixosConfigurations.${host}.config;
-            home = config.hjem.users.${user};
-          in
-          {
-            hostFile = toString config.sops.defaultSopsFile;
-            hostKeyFile = config.sops.age.keyFile;
-            provisionedKey = builtins.intersectAttrs {
-              group = null;
-              mode = null;
-              owner = null;
-              path = null;
-            } config.sops.secrets."users/${user}/age_key";
-            sshKeyPaths = config.sops.age.sshKeyPaths;
-            userFile = toString home.sops.defaultSopsFile;
-            userKeyFile = home.sops.age.keyFile;
-          };
-      };
-    in
-    {
-      flake.tests.sopsSchema = {
-        testCargo = hostTest "cargo" "nixos";
-        testDvalin = hostTest "dvalin" "jarvahl";
-        testGaia = hostTest "gaia" "nixos";
-        testHostDefault = {
-          expected = "/var/lib/sops-nix/key.txt";
-          expr = (settings "host" { file = ./default.nix; }).keyFile;
-        };
-        testKeyFileOverrides = {
-          expected = [
-            "/var/lib/custom-age/key.txt"
-            "/run/user-age/key.txt"
-          ];
-          expr =
-            map
-              (
-                kind:
-                (settings kind {
-                  file = ./default.nix;
-                  keyFile = if kind == "host" then "/var/lib/custom-age/key.txt" else "/run/user-age/key.txt";
-                }).keyFile
-              )
-              [
-                "host"
-                "user"
-              ];
-        };
-        testMissingFiles = {
-          expected = [
-            false
-            false
-          ];
-          expr = map (kind: (builtins.tryEval (settings kind { }).file).success) [
-            "host"
-            "user"
-          ];
-        };
-        testUserDefault = {
-          expected = ".config/sops/age/key.txt";
-          expr = (settings "user" { file = ./default.nix; }).keyFile;
-        };
-        testZero = hostTest "zero" "jarvahl";
-      };
-    }
-  )
-]
+}

@@ -44,7 +44,6 @@ lib.mkMerge [
     den.default.nixos = {
       hjem.extraModules = [ inputs.sops-nix.homeManagerModules.sops ];
       imports = [ inputs.sops-nix.nixosModules.sops ];
-      sops.age.keyFile = "/var/lib/sops-nix/key.txt";
     };
 
     flake-file.inputs.sops-nix = {
@@ -213,12 +212,23 @@ lib.mkMerge [
           `secrets.file`; `secrets.keyFile` defaults to `/var/lib/sops-nix/key.txt` for hosts
           and `.config/sops/age/key.txt` for users.
 
-          The schema uses helpers in `${checkedPath ./den/aspects/sops/default.nix}`:
+          The schema configures the source, age identity, and user-key provisioning directly.
+          Select them through entity settings, not application aspects.
+          Consumer helpers live in `${checkedPath ./den/aspects/sops/secret.nix}` and
+          `${checkedPath ./den/aspects/sops/template.nix}`:
 
-          - `from file` selects the encrypted YAML file.
-          - `keyFile path` selects the age identity used for decryption.
-          - `secret params aspect` declares a secret and includes its consuming aspect.
-            The second argument is required; use `{ }` when consumption is configured elsewhere.
+          - `secret params modules` declares a secret for each explicit `nixos`, `hjem`, or
+            `homeManager` key. Module functions receive `path` and `placeholder` alongside
+            normal module arguments. Plain module attribute sets are also accepted.
+            Omit `path` to use SOPS's runtime path.
+          - `template params modules` declares a native `sops.templates` entry for each class
+            and passes `path` to its module function. `content` accepts a string or a function
+            receiving `config.sops.placeholder`. Other parameters are native template options.
+
+          Consumers are ordinary class modules, not callbacks returning aspects. Include `...`
+          in module function arguments, as with other Nix modules. Den handles context injection;
+          helper references are resolved inside the module system. Compose aspects with the
+          enclosing aspect's `includes`, not inside a consumer. No decrypted value is exposed to Nix.
 
           ## User secrets
 
@@ -239,12 +249,13 @@ lib.mkMerge [
             (secret {
               name = "openclaw/gateway_token";
               path = ".config/openclaw/gateway-token";
-            } { })
+            } { hjem = { }; })
           ];
           ```
 
-          Relative paths resolve against the user's home directory. `keyFile` also declares
-          the host-side `users/<user>/age_key` secret that provisions this identity;
+          An empty module declares the secret without configuring a consumer; the class key is required.
+          Relative secret paths and `secrets.keyFile` resolve against the user's home directory.
+          The user schema also declares the host-side `users/<user>/age_key` secret that provisions this identity;
           ensure the host's encrypted file contains it.
 
           Related declarations may be nested in an application's callable `includes`.
@@ -259,9 +270,38 @@ lib.mkMerge [
           Declare individual secrets in the host aspect.
           Use an absolute secret destination; set `owner`, `group`, and `restartUnits`
           when the consuming service requires them. The default mode is `0600`.
-          Consume `config.sops.secrets.<name>.path` inside the second argument's `nixos`
-          module; user consumers belong in `hjem` modules instead.
+          Consume the injected `path` inside the second argument's `nixos` module;
+          user consumers belong in `hjem` modules instead.
           See the Tailscale secret in `${checkedPath ./den/aspects/dvalin+/default.nix}`.
+
+          ## Templates and references
+
+          Declare secrets separately; templates do not declare their dependencies automatically.
+          A secret's `placeholder` is for runtime substitution in templates, while `path` is
+          for applications that read a file:
+
+          ```nix
+          includes = with den.aspects.sops; [
+            (secret { name = "composio/api_key"; } {
+              hjem = { path, ... }: {
+                programs.openclaw.environment.COMPOSIO_API_KEY = path;
+              };
+            })
+            (template {
+              content = secrets: "COMPOSIO_API_KEY=\"''${secrets."composio/api_key"}\"\n";
+              mode = "0400";
+              name = "composio-environment";
+            } {
+              hjem = { path, ... }: {
+                systemd.services.example.serviceConfig.EnvironmentFile = path;
+              };
+            })
+          ];
+          ```
+
+          The template example is an alternative consumer, not required for OpenClaw.
+          Templates retain native SOPS path semantics; use an absolute custom `path`.
+          See `${checkedPath ./den/aspects/gitlab.nix}` for a template consumer.
 
           ## Checks and safety
 
@@ -270,6 +310,8 @@ lib.mkMerge [
           declarations; changing a rule alone does not re-encrypt an existing file.
           Never put decrypted values in Nix expressions, logs, or the Nix store.
           Pass secret paths through the consumer's supported runtime file mechanism.
+          Placeholder substitution does not escape shell, JSON, or environment-file syntax;
+          validate the credential's format or encode it for the consumer's parser.
 
           Run `nix flake check --no-build` and evaluate the affected secret path and consumer.
           Evaluation cannot verify deployed age keys, decryption, or service startup.
