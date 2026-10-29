@@ -30,9 +30,19 @@
           launcherToggle
         ];
 
-        rum.desktops.hyprland.settings.bind = lib.mkIf config.rum.desktops.hyprland.enable [
-          "SUPER, P, exec, launcher-toggle"
-        ];
+        wayland.windowManager.hyprland.settings.bind =
+          lib.mkIf config.wayland.windowManager.hyprland.enable
+            (
+              with lib.generators;
+              [
+                {
+                  _args = [
+                    "SUPER + P"
+                    (mkLuaInline ''hl.dsp.exec_cmd("launcher-toggle")'')
+                  ];
+                }
+              ]
+            );
 
         systemd.services.quickshell-dynamic-island = {
           after = [ "wayland-session-waitenv.service" ];

@@ -3,9 +3,19 @@
   den.aspects.foot.hjem =
     { config, lib, ... }:
     {
-      rum.desktops.hyprland.settings.bind = lib.mkIf config.rum.desktops.hyprland.enable [
-        "SUPER, Q, exec, foot"
-      ];
+      wayland.windowManager.hyprland.settings.bind =
+        lib.mkIf config.wayland.windowManager.hyprland.enable
+          (
+            with lib.generators;
+            [
+              {
+                _args = [
+                  "SUPER + Q"
+                  (mkLuaInline ''hl.dsp.exec_cmd("foot")'')
+                ];
+              }
+            ]
+          );
 
       rum.programs.foot = {
         enable = true;
