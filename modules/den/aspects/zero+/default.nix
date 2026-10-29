@@ -56,10 +56,6 @@ lib.mkMerge [
             podman
             ssh
             tailscale
-          ])
-          ++ (with den.aspects; [
-            # hardware
-            (power-management power-management.ignore-lid-on-ac)
           ]);
 
         nixos =
@@ -107,6 +103,9 @@ lib.mkMerge [
             networking.useDHCP = lib.mkDefault true;
 
             environment.systemPackages = [ pkgs.networkmanager ];
+
+            # Keep zero running with the lid closed while connected to external power.
+            services.logind.settings.Login.HandleLidSwitchExternalPower = "ignore";
 
             swapDevices = [
               { device = "/dev/disk/by-uuid/ef842ad0-2a1b-4e24-a71b-61bb49cc4c55"; }
