@@ -20,7 +20,7 @@ lib.mkMerge [
         2. Register its `homeModules.default` in `den.default.nixos.hjem.extraModules`.
         3. Configure its native Home Manager options inside the relevant `hjem` aspect.
 
-        Use `${checkedPath ./den/aspects/nvim.nix}` as the reference; upstream export names may differ.
+        Use `${checkedPath ./den/aspects/nvim/default.nix}` as the reference; upstream export names may differ.
 
         ## Routing
 

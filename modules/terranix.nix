@@ -1,6 +1,5 @@
 {
   inputs,
-  lib,
   recovery,
   ...
 }:
@@ -45,10 +44,6 @@
       terranix.exportDevShells = false;
 
       terranix.terranixConfigurations.terranix = {
-        modules = [
-          (inputs.import-tree.initFilter (lib.hasInfix "/_terranix/") ./den/aspects)
-        ];
-
         terraformWrapper = {
           extraRuntimeInputs = [
             pkgs.jq

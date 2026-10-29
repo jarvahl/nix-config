@@ -8,8 +8,7 @@
 lib.mkMerge [
   {
     den.aspects.tailscale = {
-      includes =
-        (with den.aspects; [ (tailscale.tags [ "host" ]) ]) ++ (with den.batteries; [ (import-tree ./.) ]);
+      includes = with den.aspects; [ (tailscale.tags [ "host" ]) ];
 
       nixos =
         { config, pkgs, ... }:
