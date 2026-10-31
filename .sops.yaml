@@ -45,7 +45,7 @@ creation_rules:
   - age:
     - age1ahknfhq9muvqrss3jgpwssa8af2wuuez4k8nn9g552y9hcyj63rqstkm58
     - age17dkg84wglz4nq2523fayp528qr82njr2znlwc6fvdhzy8k3pg3gsusgx2q
-  path_regex: modules/den/aspects/dvalin\+/user-jarvahl\.sops\.yaml$
+  path_regex: modules/den/aspects/dvalin\+/user-assistant\.sops\.yaml$
 - key_groups:
   - age:
     - age1muvk3n4qdla548vsgqmpg2xr2tnrkv70aeykncmvttrg2dlfzyustnyawd
