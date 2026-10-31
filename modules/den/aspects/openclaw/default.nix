@@ -20,11 +20,13 @@
               };
               career = {
                 description = "Proactively manages the user's long-term career direction";
+                identity.name = "Career";
                 subagents.allowAgents = [ "recruiter" ];
                 workspace = "~/.openclaw/workspace/career";
               };
               recruiter = {
                 description = "Finds opportunities and tracks companies, applications, contacts, and follow-ups";
+                identity.name = "Recruiter";
                 model = "openai/gpt-5.6-sol";
                 subagents.allowAgents = [ ];
                 workspace = "~/.openclaw/workspace/recruiter";

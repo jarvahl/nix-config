@@ -125,7 +125,7 @@ lib.mkMerge [
   }
   (
     let
-      user = "jarvahl";
+      user = "assistant";
     in
     {
       den = {
@@ -211,6 +211,9 @@ lib.mkMerge [
                   users.users.${user} = {
                     hashedPasswordFile = path;
                     initialPassword = lib.mkForce null;
+                    openssh.authorizedKeys.keys = [
+                      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFBmMnmmkTSEsCQNf5C24GEhdO8vziNCMxqagUCD/eXN zero-to-dvalin"
+                    ];
                   };
                 };
               };
