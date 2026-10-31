@@ -131,6 +131,8 @@ lib.mkMerge [
       den = {
         aspects."${user}@${host}" = {
           includes = with den.aspects; [
+            console
+            development
             linger
             (openclaw {
               hjem = { config, ... }: {
