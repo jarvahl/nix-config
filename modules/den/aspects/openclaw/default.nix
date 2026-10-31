@@ -26,7 +26,7 @@
                 identity.name = "Birthdays";
                 model = "openai/gpt-5.6-sol";
                 subagents.allowAgents = [ ];
-                workspace = "~/.openclaw/workspace/occasions/birthdays";
+                workspace = "~/.openclaw/workspace/birthdays";
               };
               career = {
                 description = "Proactively manages the user's long-term career direction";
@@ -39,7 +39,7 @@
                 identity.name = "Holidays";
                 model = "openai/gpt-5.6-sol";
                 subagents.allowAgents = [ ];
-                workspace = "~/.openclaw/workspace/occasions/holidays";
+                workspace = "~/.openclaw/workspace/holidays";
               };
               occasions = {
                 description = "Coordinates birthdays, holidays, and relationship-oriented preparations proactively";
@@ -55,7 +55,7 @@
                 identity.name = "Recruiter";
                 model = "openai/gpt-5.6-sol";
                 subagents.allowAgents = [ ];
-                workspace = "~/.openclaw/workspace/career/recruiter";
+                workspace = "~/.openclaw/workspace/recruiter";
               };
             };
             ownership = "explicit";
@@ -83,10 +83,10 @@
         enable = true;
         workspace.files = {
           "career/AGENTS.md" = ./career/AGENTS.md;
+          "birthdays/AGENTS.md" = ./occasions/birthdays/AGENTS.md;
+          "holidays/AGENTS.md" = ./occasions/holidays/AGENTS.md;
           "occasions/AGENTS.md" = ./occasions/AGENTS.md;
-          "occasions/birthdays/AGENTS.md" = ./occasions/birthdays/AGENTS.md;
-          "occasions/holidays/AGENTS.md" = ./occasions/holidays/AGENTS.md;
-          "career/recruiter/AGENTS.md" = ./recruiter/AGENTS.md;
+          "recruiter/AGENTS.md" = ./recruiter/AGENTS.md;
         };
       };
 
