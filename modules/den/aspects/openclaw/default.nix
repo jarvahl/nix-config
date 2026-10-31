@@ -55,7 +55,7 @@
                 identity.name = "Recruiter";
                 model = "openai/gpt-5.6-sol";
                 subagents.allowAgents = [ ];
-                workspace = "~/.openclaw/workspace/recruiter";
+                workspace = "~/.openclaw/workspace/career/recruiter";
               };
             };
             ownership = "explicit";
@@ -86,7 +86,7 @@
           "occasions/AGENTS.md" = ./occasions/AGENTS.md;
           "occasions/birthdays/AGENTS.md" = ./occasions/birthdays/AGENTS.md;
           "occasions/holidays/AGENTS.md" = ./occasions/holidays/AGENTS.md;
-          "recruiter/AGENTS.md" = ./recruiter/AGENTS.md;
+          "career/recruiter/AGENTS.md" = ./recruiter/AGENTS.md;
         };
       };
 
