@@ -8,7 +8,10 @@
             defaults = {
               model = "openai/gpt-5.6-luna";
               subagents = {
-                allowAgents = [ "career" ];
+                allowAgents = [
+                  "career"
+                  "occasions"
+                ];
                 maxSpawnDepth = 2;
               };
             };
@@ -18,11 +21,34 @@
                 identity.name = "Assistant";
                 workspace = "~/.openclaw/workspace";
               };
+              birthdays = {
+                description = "Tracks birthdays and personal anniversaries and prepares thoughtful suggestions";
+                identity.name = "Birthdays";
+                model = "openai/gpt-5.6-sol";
+                subagents.allowAgents = [ ];
+                workspace = "~/.openclaw/workspace/occasions/birthdays";
+              };
               career = {
                 description = "Proactively manages the user's long-term career direction";
                 identity.name = "Career";
                 subagents.allowAgents = [ "recruiter" ];
                 workspace = "~/.openclaw/workspace/career";
+              };
+              holidays = {
+                description = "Plans seasonal and cultural holidays, traditions, gatherings, and preparations";
+                identity.name = "Holidays";
+                model = "openai/gpt-5.6-sol";
+                subagents.allowAgents = [ ];
+                workspace = "~/.openclaw/workspace/occasions/holidays";
+              };
+              occasions = {
+                description = "Coordinates birthdays, holidays, and relationship-oriented preparations proactively";
+                identity.name = "Occasions";
+                subagents.allowAgents = [
+                  "birthdays"
+                  "holidays"
+                ];
+                workspace = "~/.openclaw/workspace/occasions";
               };
               recruiter = {
                 description = "Finds opportunities and tracks companies, applications, contacts, and follow-ups";
@@ -57,6 +83,9 @@
         enable = true;
         workspace.files = {
           "career/AGENTS.md" = ./career/AGENTS.md;
+          "occasions/AGENTS.md" = ./occasions/AGENTS.md;
+          "occasions/birthdays/AGENTS.md" = ./occasions/birthdays/AGENTS.md;
+          "occasions/holidays/AGENTS.md" = ./occasions/holidays/AGENTS.md;
           "recruiter/AGENTS.md" = ./recruiter/AGENTS.md;
         };
       };
