@@ -14,6 +14,7 @@
                 ];
                 maxSpawnDepth = 2;
               };
+              systemAgent.agentId = "gaia";
             };
             entries = {
               artemis = {
