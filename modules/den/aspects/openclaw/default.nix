@@ -43,6 +43,15 @@
             };
             ownership = "explicit";
           };
+          bindings = [
+            {
+              agentId = "gaia";
+              match = {
+                accountId = "default";
+                channel = "telegram";
+              };
+            }
+          ];
           browser = {
             defaultProfile = "openclaw";
             enabled = true;
