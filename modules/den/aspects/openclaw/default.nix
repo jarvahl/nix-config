@@ -91,9 +91,20 @@
       };
 
       systemd.services.openclaw-gateway = {
+        after = [ "openclaw-xvfb.service" ];
+        environment.DISPLAY = ":99";
+        requires = [ "openclaw-xvfb.service" ];
         serviceConfig = {
           StandardError = lib.mkForce "journal";
           StandardOutput = lib.mkForce "journal";
+        };
+        wantedBy = [ "default.target" ];
+      };
+
+      systemd.services.openclaw-xvfb = {
+        serviceConfig = {
+          ExecStart = "${pkgs.xorg-server}/bin/Xvfb :99 -screen 0 1920x1080x24 -ac -nolisten tcp";
+          Restart = "on-failure";
         };
         wantedBy = [ "default.target" ];
       };
