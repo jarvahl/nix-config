@@ -2,6 +2,76 @@
 {
   den.aspects.openclaw = den.lib.callable {
     hjem = { lib, pkgs, ... }: {
+      files = {
+        ".openclaw/workspace/artemis/AGENTS.md" = {
+          source = ./artemis/AGENTS.md;
+          type = "copy";
+        };
+        ".openclaw/workspace/artemis/IDENTITY.md" = {
+          source = ./artemis/IDENTITY.md;
+          type = "copy";
+        };
+        ".openclaw/workspace/artemis/SOUL.md" = {
+          source = ./artemis/SOUL.md;
+          type = "copy";
+        };
+        ".openclaw/workspace/artemis/USER.md" = {
+          source = ./artemis/USER.md;
+          type = "copy";
+        };
+        ".openclaw/workspace/hermes/AGENTS.md" = {
+          source = ./hermes/AGENTS.md;
+          type = "copy";
+        };
+        ".openclaw/workspace/hermes/IDENTITY.md" = {
+          source = ./hermes/IDENTITY.md;
+          type = "copy";
+        };
+        ".openclaw/workspace/hermes/SOUL.md" = {
+          source = ./hermes/SOUL.md;
+          type = "copy";
+        };
+        ".openclaw/workspace/hermes/TOOLS.md" = {
+          source = ./hermes/TOOLS.md;
+          type = "copy";
+        };
+        ".openclaw/workspace/hermes/USER.md" = {
+          source = ./hermes/USER.md;
+          type = "copy";
+        };
+        ".openclaw/workspace/hestia/AGENTS.md" = {
+          source = ./hestia/AGENTS.md;
+          type = "copy";
+        };
+        ".openclaw/workspace/hestia/IDENTITY.md" = {
+          source = ./hestia/IDENTITY.md;
+          type = "copy";
+        };
+        ".openclaw/workspace/hestia/SOUL.md" = {
+          source = ./hestia/SOUL.md;
+          type = "copy";
+        };
+        ".openclaw/workspace/hestia/USER.md" = {
+          source = ./hestia/USER.md;
+          type = "copy";
+        };
+        ".openclaw/workspace/metis/AGENTS.md" = {
+          source = ./metis/AGENTS.md;
+          type = "copy";
+        };
+        ".openclaw/workspace/metis/IDENTITY.md" = {
+          source = ./metis/IDENTITY.md;
+          type = "copy";
+        };
+        ".openclaw/workspace/metis/SOUL.md" = {
+          source = ./metis/SOUL.md;
+          type = "copy";
+        };
+        ".openclaw/workspace/metis/USER.md" = {
+          source = ./metis/USER.md;
+          type = "copy";
+        };
+      };
       programs.openclaw = {
         config = {
           agents = {
@@ -10,6 +80,7 @@
               subagents = {
                 allowAgents = [
                   "hestia"
+                  "hermes"
                   "metis"
                 ];
                 maxSpawnDepth = 2;
@@ -23,16 +94,23 @@
                 subagents.allowAgents = [ ];
                 workspace = "~/.openclaw/workspace/artemis";
               };
+              gaia = {
+                description = "Personal assistant";
+                identity.name = "GAIA";
+                workspace = "~/.openclaw/workspace";
+              };
+              hermes = {
+                description = "Triages email, prepares drafts, tracks follow-ups, and creates actionable tasks";
+                identity.name = "HERMES";
+                subagents.allowAgents = [ ];
+                tools.agentToAgent.send = [ "gaia" ];
+                workspace = "~/.openclaw/workspace/hermes";
+              };
               hestia = {
                 description = "Coordinates birthdays, holidays, and relationship-oriented preparations proactively";
                 identity.name = "HESTIA";
                 subagents.allowAgents = [ ];
                 workspace = "~/.openclaw/workspace/hestia";
-              };
-              gaia = {
-                description = "Personal assistant";
-                identity.name = "GAIA";
-                workspace = "~/.openclaw/workspace";
               };
               metis = {
                 description = "Proactively manages the user's long-term career direction";
@@ -81,13 +159,7 @@
           tools = ./gaia/TOOLS.md;
           user = ./gaia/USER.md;
         };
-        workspace.files = {
-          "artemis/AGENTS.md" = ./artemis/AGENTS.md;
-          "hestia/AGENTS.md" = ./hestia/AGENTS.md;
-          "hestia/birthdays/AGENTS.md" = ./hestia/birthdays/AGENTS.md;
-          "hestia/holidays/AGENTS.md" = ./hestia/holidays/AGENTS.md;
-          "metis/AGENTS.md" = ./metis/AGENTS.md;
-        };
+
       };
 
       systemd.services.openclaw-gateway = {
