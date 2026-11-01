@@ -9,7 +9,7 @@
               model = "openai/gpt-5.6-luna";
               subagents = {
                 allowAgents = [
-                  "chronos"
+                  "hestia"
                   "metis"
                 ];
                 maxSpawnDepth = 2;
@@ -23,11 +23,11 @@
                 subagents.allowAgents = [ ];
                 workspace = "~/.openclaw/workspace/artemis";
               };
-              chronos = {
+              hestia = {
                 description = "Coordinates birthdays, holidays, and relationship-oriented preparations proactively";
-                identity.name = "CHRONOS";
+                identity.name = "HESTIA";
                 subagents.allowAgents = [ ];
-                workspace = "~/.openclaw/workspace/chronos";
+                workspace = "~/.openclaw/workspace/hestia";
               };
               gaia = {
                 description = "Personal assistant";
@@ -73,11 +73,18 @@
           skills.workshop.autonomous.mode = "off";
         };
         enable = true;
+        workspace.bootstrapFiles = {
+          agents = ./gaia/AGENTS.md;
+          identity = ./gaia/IDENTITY.md;
+          soul = ./gaia/SOUL.md;
+          tools = ./gaia/TOOLS.md;
+          user = ./gaia/USER.md;
+        };
         workspace.files = {
           "artemis/AGENTS.md" = ./artemis/AGENTS.md;
-          "chronos/AGENTS.md" = ./chronos/AGENTS.md;
-          "chronos/birthdays/AGENTS.md" = ./chronos/birthdays/AGENTS.md;
-          "chronos/holidays/AGENTS.md" = ./chronos/holidays/AGENTS.md;
+          "hestia/AGENTS.md" = ./hestia/AGENTS.md;
+          "hestia/birthdays/AGENTS.md" = ./hestia/birthdays/AGENTS.md;
+          "hestia/holidays/AGENTS.md" = ./hestia/holidays/AGENTS.md;
           "metis/AGENTS.md" = ./metis/AGENTS.md;
         };
       };
