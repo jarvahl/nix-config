@@ -9,53 +9,36 @@
               model = "openai/gpt-5.6-luna";
               subagents = {
                 allowAgents = [
-                  "career"
-                  "occasions"
+                  "chronos"
+                  "metis"
                 ];
                 maxSpawnDepth = 2;
               };
             };
             entries = {
-              assistant = {
+              artemis = {
+                description = "Finds opportunities and tracks companies, applications, contacts, and follow-ups";
+                identity.name = "ARTEMIS";
+                model = "openai/gpt-5.6-sol";
+                subagents.allowAgents = [ ];
+                workspace = "~/.openclaw/workspace/artemis";
+              };
+              chronos = {
+                description = "Coordinates birthdays, holidays, and relationship-oriented preparations proactively";
+                identity.name = "CHRONOS";
+                subagents.allowAgents = [ ];
+                workspace = "~/.openclaw/workspace/chronos";
+              };
+              gaia = {
                 description = "Personal assistant";
-                identity.name = "Assistant";
+                identity.name = "GAIA";
                 workspace = "~/.openclaw/workspace";
               };
-              birthdays = {
-                description = "Tracks birthdays and personal anniversaries and prepares thoughtful suggestions";
-                identity.name = "Birthdays";
-                model = "openai/gpt-5.6-sol";
-                subagents.allowAgents = [ ];
-                workspace = "~/.openclaw/workspace/birthdays";
-              };
-              career = {
+              metis = {
                 description = "Proactively manages the user's long-term career direction";
-                identity.name = "Career";
-                subagents.allowAgents = [ "recruiter" ];
-                workspace = "~/.openclaw/workspace/career";
-              };
-              holidays = {
-                description = "Plans seasonal and cultural holidays, traditions, gatherings, and preparations";
-                identity.name = "Holidays";
-                model = "openai/gpt-5.6-sol";
-                subagents.allowAgents = [ ];
-                workspace = "~/.openclaw/workspace/holidays";
-              };
-              occasions = {
-                description = "Coordinates birthdays, holidays, and relationship-oriented preparations proactively";
-                identity.name = "Occasions";
-                subagents.allowAgents = [
-                  "birthdays"
-                  "holidays"
-                ];
-                workspace = "~/.openclaw/workspace/occasions";
-              };
-              recruiter = {
-                description = "Finds opportunities and tracks companies, applications, contacts, and follow-ups";
-                identity.name = "Recruiter";
-                model = "openai/gpt-5.6-sol";
-                subagents.allowAgents = [ ];
-                workspace = "~/.openclaw/workspace/recruiter";
+                identity.name = "METIS";
+                subagents.allowAgents = [ "artemis" ];
+                workspace = "~/.openclaw/workspace/metis";
               };
             };
             ownership = "explicit";
@@ -82,11 +65,11 @@
         };
         enable = true;
         workspace.files = {
-          "career/AGENTS.md" = ./career/AGENTS.md;
-          "birthdays/AGENTS.md" = ./occasions/birthdays/AGENTS.md;
-          "holidays/AGENTS.md" = ./occasions/holidays/AGENTS.md;
-          "occasions/AGENTS.md" = ./occasions/AGENTS.md;
-          "recruiter/AGENTS.md" = ./recruiter/AGENTS.md;
+          "artemis/AGENTS.md" = ./artemis/AGENTS.md;
+          "chronos/AGENTS.md" = ./chronos/AGENTS.md;
+          "chronos/birthdays/AGENTS.md" = ./chronos/birthdays/AGENTS.md;
+          "chronos/holidays/AGENTS.md" = ./chronos/holidays/AGENTS.md;
+          "metis/AGENTS.md" = ./metis/AGENTS.md;
         };
       };
 
