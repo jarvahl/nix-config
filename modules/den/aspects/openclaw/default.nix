@@ -56,7 +56,7 @@
             defaultProfile = "openclaw";
             enabled = true;
             executablePath = "${pkgs.chromium}/bin/chromium";
-            headless = true;
+            headless = false;
           };
           gateway = {
             auth = {
