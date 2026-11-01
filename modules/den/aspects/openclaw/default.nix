@@ -44,12 +44,14 @@
                 description = "Coordinates birthdays, holidays, and relationship-oriented preparations proactively";
                 identity.name = "HESTIA";
                 subagents.allowAgents = [ ];
+                tools.agentToAgent.send = [ "gaia" ];
                 workspace = "~/.openclaw/workspace/hestia";
               };
               metis = {
                 description = "Proactively manages the user's long-term career direction";
                 identity.name = "METIS";
                 subagents.allowAgents = [ "artemis" ];
+                tools.agentToAgent.send = [ "gaia" ];
                 workspace = "~/.openclaw/workspace/metis";
               };
             };
