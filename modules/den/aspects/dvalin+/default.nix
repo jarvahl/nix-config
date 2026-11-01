@@ -145,6 +145,11 @@ lib.mkMerge [
                   '';
                   path = "${config.home.homeDirectory}/.openclaw/.env";
                 };
+                sops.templates."openclaw.telegram-bot-token" = {
+                  content = config.sops.placeholder."telegram/bot_token";
+                  mode = "0400";
+                  path = "${config.home.homeDirectory}/.config/openclaw/telegram-bot-token";
+                };
                 systemd.services.openclaw-gateway = {
                   after = [ "sops-nix.service" ];
                   requires = [ "sops-nix.service" ];
@@ -198,13 +203,12 @@ lib.mkMerge [
                 (secret
                   {
                     name = "telegram/bot_token";
-                    path = ".config/openclaw/telegram-bot-token";
                   }
                   {
-                    hjem = { path, ... }: {
+                    hjem = { config, ... }: {
                       programs.openclaw.config.channels.telegram = {
                         allowFrom = [ 1919581469 ];
-                        tokenFile = path;
+                        tokenFile = "${config.home.homeDirectory}/.config/openclaw/telegram-bot-token";
                       };
                     };
                   }
