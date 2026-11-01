@@ -195,6 +195,20 @@ lib.mkMerge [
                     };
                   }
                 )
+                (secret
+                  {
+                    name = "telegram/bot_token";
+                    path = ".config/openclaw/telegram-bot-token";
+                  }
+                  {
+                    hjem = { path, ... }: {
+                      programs.openclaw.config.channels.telegram = {
+                        allowFrom = [ 1919581469 ];
+                        tokenFile = path;
+                      };
+                    };
+                  }
+                )
               ]);
             })
           ];

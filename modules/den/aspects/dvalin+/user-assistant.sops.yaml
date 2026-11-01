@@ -3,6 +3,8 @@ openclaw:
 composio:
     api_key: ENC[AES256_GCM,data:ofLgHIIDWD2b9Sz0v+m3EimjUP3Qwrg=,iv:HaMmKIufgTA+INAa+QFBA5BIBuaXhV+TkrIy2xY3VNc=,tag:UUjjSU63rMHitzTDk/7bMg==,type:str]
     mcp_url: ENC[AES256_GCM,data:cWXBdXjyNq5fiKRirR7AOjLsVomcYcVWMvVpGSZAkkVV9SJfsmorrbfJoOf87CzohrQvZ/FEyHCU858jcw==,iv:4yvxrTJm1NkBjg7CSe/TMhr6ipOnafD6er3Ki3aTUqg=,tag:pW6YCTLFs8RIPpQN9aYzXg==,type:str]
+telegram:
+    bot_token: ENC[AES256_GCM,data:7+oSp0EjA3MfAjgR/SYqKzi77mCGZxKH+sLDkBflS112gM1jm2n580dhIJ/+2g==,iv:kpyc7HgIZESZH3aaduoN2zvE4sV7CGE/T/1QZPWUgec=,tag:TGGe6Ya+jy2qk4g65hF9OQ==,type:str]
 sops:
     age:
         - enc: |
@@ -23,7 +25,7 @@ sops:
             ho8YGZRQ0vmmy1xfQUd8tL9MB7PZDjr16bjyfjxnUplnNVd4264x+w==
             -----END AGE ENCRYPTED FILE-----
           recipient: age17dkg84wglz4nq2523fayp528qr82njr2znlwc6fvdhzy8k3pg3gsusgx2q
-    lastmodified: "2026-10-26T00:01:11Z"
-    mac: ENC[AES256_GCM,data:ffuAll/Lkp/gGnutkym9D73mC3XKp2QCUfAH0T9tPN1gOy79+0KstoEE3G0zVxe9hJM3r2JWaHZe2jnUvB1GclTl/6NiwbwIh2YiwHiOIxi/wh0ojMTxq7JolKuDD/3lv140SDRXU4Vu4kQz4OYm/vUi8N363epA9Fj6Tt/km6E=,iv:+CAhasaNB+5ooWqtdOuXwDZBh6Ym2xAVESOinEyR92g=,tag:NTLd6+5m8lhXTtWVAHsTYA==,type:str]
+    lastmodified: "2026-11-01T11:24:23Z"
+    mac: ENC[AES256_GCM,data:hLvXwF2LBryqt9Xl/c8oiI0z98MKavQKV6I5msJx1Z1Qjsrt+5ATRCgVmvY8bvBwnLCNG0cbeT//cRIUlNUjWugsSvoIjVcpCb2fC6J+C1H9OTn6Wbb8v0w1zOvCPMQOXBoft38oKQWP2bNJoN60ujNaz3QxJE5VIRhgfWRhvWs=,iv:+UKd6BhtugClo2TpPB1q30VKIA2u0qZQHm1w3nOAX4A=,tag:Wx1WAJ9f2bHO78CC2TaiYA==,type:str]
     unencrypted_suffix: _unencrypted
     version: 3.13.3
