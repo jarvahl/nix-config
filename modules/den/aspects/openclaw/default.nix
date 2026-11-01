@@ -70,6 +70,7 @@
             bind = "loopback";
             mode = "local";
           };
+          plugins.entries.workboard.enabled = true;
           skills.workshop.autonomous.mode = "off";
         };
         enable = true;
