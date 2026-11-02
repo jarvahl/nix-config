@@ -86,6 +86,23 @@ export class PiRpc {
     this.process.stderr.on("data", (data) => process.stderr.write(`[pi] ${data}`));
   }
 
+  public async close(): Promise<void> {
+    const process = this.process;
+    if (!process) return;
+    await new Promise<void>((resolve) => {
+      const finish = () => {
+        clearTimeout(timeout);
+        resolve();
+      };
+      const timeout = setTimeout(() => {
+        process.kill("SIGTERM");
+        finish();
+      }, 5000);
+      process.once("exit", finish);
+      process.stdin.end();
+    });
+  }
+
   private nextEvent(): Promise<RpcEvent> {
     const event = this.events.shift();
     if (event) return Promise.resolve(event);

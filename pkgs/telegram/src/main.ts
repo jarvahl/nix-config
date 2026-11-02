@@ -12,6 +12,37 @@ if (!token || !allowedUserId) throw new Error("TELEGRAM_BOT_TOKEN and TELEGRAM_A
 
 const bot = new Bot(token);
 const authorized = (ctx: Context) => ctx.from?.id === allowedUserId && ctx.chat?.type === "private";
+const chunks = (text: string, limit = 3900): string[] => {
+  const result: string[] = [];
+  while (text.length > limit) {
+    const split = text.lastIndexOf("\n", limit);
+    const at = split > limit / 2 ? split : limit;
+    result.push(text.slice(0, at));
+    text = text.slice(at).replace(/^\n+/, "");
+  }
+  result.push(text || "(no response)");
+  return result;
+};
+
+function telegramHtml(markdown: string): string {
+  const blocks: string[] = [];
+  const escaped = markdown
+    .replace(/```(?:[a-zA-Z0-9_+-]+)?\n?([\s\S]*?)```/g, (_, code: string) => {
+      blocks.push(`<pre>${code.trimEnd().replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")}</pre>`);
+      return `\u0000${blocks.length - 1}\u0000`;
+    })
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/^#{1,6}\s+(.+)$/gm, "<b>$1</b>")
+    .replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, '<a href="$2">$1</a>')
+    .replace(/`([^`\n]+)`/g, "<code>$1</code>")
+    .replace(/\*\*([^*\n]+)\*\*/g, "<b>$1</b>")
+    .replace(/(?<!\w)\*([^*\n]+)\*(?!\w)/g, "<i>$1</i>")
+    .replace(/^\s*[-*]\s+/gm, "• ")
+    .replace(/\u0000(\d+)\u0000/g, (_, index: string) => blocks[Number(index)]);
+  return escaped;
+}
 
 type Event = { type: string; text?: string; message?: string; name?: string };
 type Image = { type: "image"; data: string; mimeType: string };
@@ -47,39 +78,62 @@ async function withTyping<T>(ctx: Context, task: () => Promise<T>): Promise<T> {
 }
 
 async function replyWithStream(ctx: Context, text: string, images?: Image[]): Promise<void> {
-  let draft = "";
   let finalText: string | undefined;
-  const progress: string[] = [];
+  let statusBuffer = "";
+  let currentStatus = "";
+  let statusQueue = Promise.resolve();
   const draftId = randomInt(1, 2 ** 31 - 1);
   let lastUpdate = 0;
-  const render = () => [...progress, draft].filter(Boolean).join("\n\n").slice(0, 4096);
+  let draftsDisabled = false;
+  const render = () => currentStatus.slice(0, 4096);
+  const enqueueStatus = (status: string) => {
+    const text = status.trim();
+    if (!text) return;
+    statusQueue = statusQueue.then(async () => {
+      currentStatus = text;
+      await update(true);
+      await new Promise((resolve) => setTimeout(resolve, 1200));
+    });
+  };
+  const collectStatuses = (text: string) => {
+    statusBuffer += text;
+    const marker = /\[\[draft\]\]([\s\S]*?)\[\[\/draft\]\]/g;
+    let match: RegExpExecArray | null;
+    let consumed = 0;
+    while ((match = marker.exec(statusBuffer))) {
+      enqueueStatus(match[1]);
+      consumed = marker.lastIndex;
+    }
+    if (consumed) statusBuffer = statusBuffer.slice(consumed);
+  };
   const update = async (force = false) => {
+    if (draftsDisabled) return;
     const rendered = render();
-    if (!rendered || (!force && Date.now() - lastUpdate <= 800)) return;
-    const delay = Math.max(0, 350 - (Date.now() - lastUpdate));
+    if (!rendered || (!force && Date.now() - lastUpdate <= 1200)) return;
+    const delay = Math.max(0, 1000 - (Date.now() - lastUpdate));
     if (delay) await new Promise((resolve) => setTimeout(resolve, delay));
-    await ctx.api.sendMessageDraft(ctx.chat!.id, draftId, rendered);
-    lastUpdate = Date.now();
+    try {
+      await ctx.api.sendMessageDraft(ctx.chat!.id, draftId, rendered);
+      lastUpdate = Date.now();
+    } catch (error) {
+      draftsDisabled = true;
+      console.error("Telegram draft streaming failed; sending final reply", error);
+    }
   };
 
   for await (const event of input(text, images)) {
-    if (event.type === "text_delta") draft += event.text ?? "";
-    if (event.type === "tool_start") {
-      if (draft.trim()) progress.push(draft.trim());
-      draft = `▸ ${event.name ?? "Working"}`;
-      await update(true);
-    }
+    if (event.type === "text_delta") collectStatuses(event.text ?? "");
     if (event.type === "error") throw new Error(event.message ?? "GAIA request failed");
-    if (event.type === "done") {
-      finalText = event.text ?? draft;
-      progress.length = 0;
-      draft = finalText;
-    }
-    await update(event.type === "done");
+    if (event.type === "done") finalText = event.text;
   }
 
-  const result = (finalText ?? draft ?? "(no response)").slice(0, 4096);
-  await ctx.reply(result);
+  await statusQueue;
+  const result = (finalText ?? "(no response)")
+    .replace(/\[\[draft\]\][\s\S]*?\[\[\/draft\]\]/g, "")
+    .trim();
+  const html = telegramHtml(result);
+  if (html.length <= 4096) await ctx.reply(html, { parse_mode: "HTML" });
+  else for (const chunk of chunks(result)) await ctx.reply(chunk);
 }
 
 async function startControlSocket(): Promise<void> {

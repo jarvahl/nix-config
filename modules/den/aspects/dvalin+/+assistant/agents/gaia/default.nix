@@ -18,6 +18,7 @@
               {
                 pi.coding-agent.extensions = with self'.packages; [
                   "${pi-core-skill-tool}/pi-core-skill-tool/index.ts"
+                  "${pi-memory}/pi-memory/index.ts"
                   "${pi-self-compact}/pi-self-compact/index.ts"
                 ];
                 pi.coding-agent.rules = ./AGENTS.md;
@@ -51,6 +52,9 @@
             AGENT_SESSION_ID = "gaia";
             AGENT_SOCKET = "%t/agents/gaia/gaia.sock";
             AGENT_STATE_DIR = "${config.home.homeDirectory}/.local/state/gaia";
+            PI_MEMORY_DIR = "${config.home.homeDirectory}/.local/share/gaia/memory";
+            PI_MEMORY_EXIT_SUMMARY = "1";
+            PI_MEMORY_SNAPSHOT = "stable";
           };
           serviceConfig = {
             ExecStart = "${self'.packages.agent}/bin/agent serve";

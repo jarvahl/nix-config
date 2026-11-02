@@ -12,8 +12,7 @@ export async function serve(): Promise<void> {
   const socketDir = socketPath.slice(0, socketPath.lastIndexOf("/"));
   await mkdir(socketDir, { recursive: true, mode: 0o700 });
   await rm(socketPath, { force: true });
-  const session = createSession();
-  const server = createServer((socket) => handleClient(socket, session));
+  const server = createServer((socket) => handleClient(socket));
   server.listen(socketPath, async () => chmod(socketPath, 0o600));
   const close = async () => {
     server.close();
@@ -23,7 +22,9 @@ export async function serve(): Promise<void> {
   process.once("SIGINT", close);
 }
 
-async function handleClient(socket: Socket, session: PiRpc): Promise<void> {
+let requestQueue = Promise.resolve();
+
+async function handleClient(socket: Socket): Promise<void> {
   socket.on("error", (error) => {
     if ((error as NodeJS.ErrnoException).code !== "ECONNRESET") console.error(error);
   });
@@ -36,13 +37,22 @@ async function handleClient(socket: Socket, session: PiRpc): Promise<void> {
         if (request.type !== "input" || typeof request.text !== "string") throw new Error("Invalid input request");
         const requestId = request.requestId ?? randomUUID();
         send(socket, { type: "started", requestId });
-        const text = await session.prompt(
-          request.text,
-          request.images,
-          (delta) => send(socket, { type: "text_delta", requestId, text: delta }),
-          (name) => send(socket, { type: "tool_start", requestId, name }),
-        );
-        send(socket, { type: "done", requestId, text });
+        const run = requestQueue.then(async () => {
+          const session = createSession();
+          try {
+            const text = await session.prompt(
+              request.text,
+              request.images,
+              (delta) => send(socket, { type: "text_delta", requestId, text: delta }),
+              (name) => send(socket, { type: "tool_start", requestId, name }),
+            );
+            send(socket, { type: "done", requestId, text });
+          } finally {
+            await session.close();
+          }
+        });
+        requestQueue = run.catch(() => undefined);
+        await run;
       } catch (error) {
         send(socket, { type: "error", requestId: "unknown", message: error instanceof Error ? error.message : String(error) });
       }
@@ -56,13 +66,15 @@ async function handleClient(socket: Socket, session: PiRpc): Promise<void> {
 }
 
 function createSession(): PiRpc {
+  const prefix = env("AGENT_SESSION_ID", `agent-${env("AGENT_NAME", "default")}`);
+  const runId = `${prefix}-${Date.now()}-${randomUUID().slice(0, 8)}`;
   return new PiRpc({
     command: env("AGENT_PI_COMMAND", "pi"),
     cwd: env("AGENT_CWD", process.cwd()),
     sessionDir: env("AGENT_SESSION_DIR", `${env("XDG_STATE_HOME", `${process.env.HOME}/.local/state`)}/pi/sessions`),
     provider: process.env.AGENT_PROVIDER,
     model: process.env.AGENT_MODEL,
-  }, env("AGENT_SESSION_ID", `agent-${env("AGENT_NAME", "default")}`));
+  }, runId);
 }
 
 function send(socket: Socket, event: OutputEvent): void {
