@@ -5,7 +5,7 @@ lib.mkMerge [
     flake-file.inputs.pi.url = "github:lukasl-dev/pi.nix";
 
     den.aspects.pi.hjem =
-      { pkgs, ... }:
+      { self', ... }:
       {
         programs.pi.coding-agent = {
           enable = true;
@@ -19,7 +19,7 @@ lib.mkMerge [
             PI_SKIP_VERSION_CHECK.value = "1";
             PI_TELEMETRY.value = "0";
           };
-          extensions = with pkgs; [
+          extensions = with self'.packages; [
             "${pi-core-skill-tool}/pi-core-skill-tool/index.ts"
             "${pi-diff-review}/pi-diff-review/index.ts"
             "${pi-prompt-timer}/pi-prompt-timer/index.ts"

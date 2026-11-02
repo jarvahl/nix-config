@@ -1,0 +1,16 @@
+{
+  "name": "dvalin-agent",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc"
+  },
+  "bin": {
+    "agent": "dist/cli.js"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "typescript": "^5.0.0"
+  }
+}
