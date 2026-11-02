@@ -18,7 +18,7 @@
       { config, ... }:
       {
         files = {
-          ".local/share/gaia/AGENTS.md".text = builtins.readFile ./AGENTS.md;
+          ".local/share/gaia/AGENTS.md".source = ./AGENTS.md;
           ".config/pi-gateway/gaia.yaml".text = ''
             instanceName: gaia
             databasePath: ~/.local/state/pi-gateway/gateway.sqlite3
