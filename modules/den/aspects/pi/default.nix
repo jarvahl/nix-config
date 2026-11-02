@@ -9,6 +9,12 @@ lib.mkMerge [
       {
         programs.pi.coding-agent = {
           enable = true;
+          extraArgs = [
+            "--provider"
+            "openai"
+            "--model"
+            "gpt-5.6-luna"
+          ];
           environment = {
             PI_SKIP_VERSION_CHECK.value = "1";
             PI_TELEMETRY.value = "0";
@@ -21,6 +27,7 @@ lib.mkMerge [
             "${pi-ponytail}/pi-ponytail/index.js"
           ];
         };
+
       };
 
     den.default.nixos.hjem.extraModules = [

@@ -100,14 +100,6 @@
       url = "github:nix-community/nix-index-database";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    nix-openclaw = {
-      url = "github:openclaw/nix-openclaw";
-      inputs = {
-        home-manager.follows = "home-manager";
-        nix-openclaw-tools.inputs.nixpkgs.follows = "nixpkgs";
-        nixpkgs.follows = "nixpkgs";
-      };
-    };
     nix-unit = {
       url = "github:nix-community/nix-unit";
       inputs = {
