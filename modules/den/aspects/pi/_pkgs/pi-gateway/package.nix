@@ -7,10 +7,10 @@ buildPythonApplication {
   pyproject = true;
 
   src = fetchFromGitHub {
-    hash = "sha256-OOlacr5dO9KLn1M/eMiPiJiZ0oljtyqfs2gSuQXY60E=";
+    hash = "sha256-oQw94Q04swySty0Zl7muR04OfA5zDslIo+J1WtPRpkY=";
     owner = "jarvahl";
     repo = "pi-gateway";
-    rev = "fecb485";
+    rev = "a807c26";
   };
 
   postPatch = ''
