@@ -8,7 +8,7 @@ buildNpmPackage {
   pname = "telegram";
   version = "0.1.0";
 
-  src = ./src;
+  src = ./.;
 
   dontNpmInstall = true;
   nativeBuildInputs = [ makeWrapper ];
