@@ -4,6 +4,8 @@
   den.aspects."assistant@dvalin".hjem =
     { config, pkgs, ... }:
     {
+      packages = [ pkgs.pi-gateway ];
+
       systemd.services.pi-gateway = {
         after = [ "sops-nix.service" ];
         requires = [ "sops-nix.service" ];
