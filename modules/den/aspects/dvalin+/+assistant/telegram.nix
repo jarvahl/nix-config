@@ -15,7 +15,12 @@
     ];
 
     hjem =
-      { config, self', ... }:
+      {
+        config,
+        pkgs,
+        self',
+        ...
+      }:
       {
         packages = [ self'.packages.telegram ];
 
@@ -38,10 +43,12 @@
           serviceConfig = {
             EnvironmentFile = config.sops.templates."telegram.env".path;
             Environment = [
-              "TELEGRAM_AGENT_SOCKET=%t/agents/gaia.sock"
+              "TELEGRAM_AGENT_SOCKET=%t/agents/gaia/gaia.sock"
+              "TELEGRAM_CONTROL_SOCKET=%t/agents/telegram/telegram.sock"
               "TELEGRAM_ALLOWED_USER_ID=1919581469"
             ];
             ExecStart = "${self'.packages.telegram}/bin/telegram";
+            ExecStartPre = "${pkgs.coreutils}/bin/mkdir -p %t/agents/telegram";
             Restart = "always";
             RestartSec = 5;
           };

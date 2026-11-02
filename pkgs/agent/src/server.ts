@@ -12,8 +12,8 @@ export async function serve(): Promise<void> {
   const socketDir = socketPath.slice(0, socketPath.lastIndexOf("/"));
   await mkdir(socketDir, { recursive: true, mode: 0o700 });
   await rm(socketPath, { force: true });
-  const sessions = new Map<string, PiRpc>();
-  const server = createServer((socket) => handleClient(socket, sessions));
+  const session = createSession();
+  const server = createServer((socket) => handleClient(socket, session));
   server.listen(socketPath, async () => chmod(socketPath, 0o600));
   const close = async () => {
     server.close();
@@ -23,35 +23,46 @@ export async function serve(): Promise<void> {
   process.once("SIGINT", close);
 }
 
-async function handleClient(socket: Socket, sessions: Map<string, PiRpc>): Promise<void> {
+async function handleClient(socket: Socket, session: PiRpc): Promise<void> {
+  socket.on("error", (error) => {
+    if ((error as NodeJS.ErrnoException).code !== "ECONNRESET") console.error(error);
+  });
   const lines = createInterface({ input: socket });
-  for await (const line of lines) {
-    let request: InputRequest;
-    try {
-      request = JSON.parse(line) as InputRequest;
-      if (request.type !== "input" || typeof request.text !== "string") throw new Error("Invalid input request");
-      const requestId = request.requestId ?? randomUUID();
-      const conversation = request.conversation ?? "default";
-      const session = sessions.get(conversation) ?? createSession();
-      sessions.set(conversation, session);
-      send(socket, { type: "started", requestId });
-      const text = await session.prompt(request.text, request.images, (delta) => send(socket, { type: "text_delta", requestId, text: delta }));
-      send(socket, { type: "done", requestId, text });
-    } catch (error) {
-      send(socket, { type: "error", requestId: "unknown", message: error instanceof Error ? error.message : String(error) });
+  try {
+    for await (const line of lines) {
+      let request: InputRequest;
+      try {
+        request = JSON.parse(line) as InputRequest;
+        if (request.type !== "input" || typeof request.text !== "string") throw new Error("Invalid input request");
+        const requestId = request.requestId ?? randomUUID();
+        send(socket, { type: "started", requestId });
+        const text = await session.prompt(
+          request.text,
+          request.images,
+          (delta) => send(socket, { type: "text_delta", requestId, text: delta }),
+          (name) => send(socket, { type: "tool_start", requestId, name }),
+        );
+        send(socket, { type: "done", requestId, text });
+      } catch (error) {
+        send(socket, { type: "error", requestId: "unknown", message: error instanceof Error ? error.message : String(error) });
+      }
     }
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code !== "ECONNRESET") console.error(error);
+  } finally {
+    socket.end();
   }
-  socket.end();
 
-  function createSession(): PiRpc {
-    return new PiRpc({
-      command: env("AGENT_PI_COMMAND", "pi"),
-      cwd: env("AGENT_CWD", process.cwd()),
-      sessionDir: env("AGENT_SESSION_DIR", `${env("XDG_STATE_HOME", `${process.env.HOME}/.local/state`)}/pi/sessions`),
-      provider: process.env.AGENT_PROVIDER,
-      model: process.env.AGENT_MODEL,
-    });
-  }
+}
+
+function createSession(): PiRpc {
+  return new PiRpc({
+    command: env("AGENT_PI_COMMAND", "pi"),
+    cwd: env("AGENT_CWD", process.cwd()),
+    sessionDir: env("AGENT_SESSION_DIR", `${env("XDG_STATE_HOME", `${process.env.HOME}/.local/state`)}/pi/sessions`),
+    provider: process.env.AGENT_PROVIDER,
+    model: process.env.AGENT_MODEL,
+  }, env("AGENT_SESSION_ID", `agent-${env("AGENT_NAME", "default")}`));
 }
 
 function send(socket: Socket, event: OutputEvent): void {

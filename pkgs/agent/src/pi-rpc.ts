@@ -25,7 +25,7 @@ export class PiRpc {
   public async start(): Promise<void> {
     if (this.process) return;
     const args = ["--mode", "rpc", "--session-dir", this.config.sessionDir];
-    if (this.session) args.push("--session", this.session);
+    if (this.session) args.push("--session-id", this.session);
     if (this.config.provider) args.push("--provider", this.config.provider);
     if (this.config.model) args.push("--model", this.config.model);
     this.process = spawn(this.config.command, args, {
@@ -77,7 +77,7 @@ export class PiRpc {
   private async startWithoutState(): Promise<void> {
     if (this.process) return;
     const args = ["--mode", "rpc", "--session-dir", this.config.sessionDir];
-    if (this.session) args.push("--session", this.session);
+    if (this.session) args.push("--session-id", this.session);
     if (this.config.provider) args.push("--provider", this.config.provider);
     if (this.config.model) args.push("--model", this.config.model);
     this.process = spawn(this.config.command, args, { cwd: this.config.cwd, stdio: ["pipe", "pipe", "pipe"] });
@@ -92,7 +92,7 @@ export class PiRpc {
     return new Promise((resolve) => this.waiters.push(resolve));
   }
 
-  public async prompt(text: string, images?: Image[], onDelta?: (text: string) => void): Promise<string> {
+  public async prompt(text: string, images?: Image[], onDelta?: (text: string) => void, onTool?: (name: string) => void): Promise<string> {
     await this.startWithoutState();
     const requestId = `agent-${this.nextId++}`;
     const payload: Record<string, unknown> = { type: "prompt", id: requestId, message: text };
@@ -109,9 +109,19 @@ export class PiRpc {
           answer += update.delta;
           onDelta?.(update.delta);
         }
+      } else if (event.type === "tool_execution_start") {
+        if (typeof event.toolName === "string") onTool?.(event.toolName);
       } else if (event.type === "message_end") {
         const message = event.message as { role?: string; content?: unknown } | undefined;
-        if (message?.role === "assistant" && typeof message.content === "string") answer = message.content;
+        if (message?.role === "assistant") {
+          answer = typeof message.content === "string"
+            ? message.content
+            : Array.isArray(message.content)
+              ? message.content
+                .filter((part): part is { type: string; text: string } => typeof part === "object" && part !== null && "text" in part && typeof part.text === "string")
+                .at(-1)?.text ?? answer
+              : answer;
+        }
       } else if (event.type === "agent_settled") {
         return answer;
       }
