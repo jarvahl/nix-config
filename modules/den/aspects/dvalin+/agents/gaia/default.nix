@@ -18,12 +18,7 @@
       { config, ... }:
       {
         files = {
-          ".local/share/gaia/AGENTS.md".text = ''
-            # GAIA
-
-            You are GAIA, the personal assistant. Keep changes small, explain risky actions,
-            and ask before deleting data or sending external messages.
-          '';
+          ".local/share/gaia/AGENTS.md".text = builtins.readFile ./AGENTS.md;
           ".config/pi-gateway/gaia.yaml".text = ''
             instanceName: gaia
             databasePath: ~/.local/state/pi-gateway/gateway.sqlite3
