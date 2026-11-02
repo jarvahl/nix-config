@@ -18,7 +18,6 @@
       { config, ... }:
       {
         files = {
-          ".local/share/gaia/AGENTS.md".source = ./AGENTS.md;
           ".config/pi-gateway/gaia.yaml".text = ''
             instanceName: gaia
             databasePath: ~/.local/state/pi-gateway/gateway.sqlite3
@@ -40,6 +39,7 @@
               rpcStreamLimit: 16777216
               extraArgs: []
           '';
+          ".local/share/gaia/AGENTS.md".source = ./AGENTS.md;
         };
 
         sops.templates."pi-gateway.env" = {
