@@ -42,6 +42,7 @@
               ]
             );
             AGENT_CWD = "${config.home.homeDirectory}/.local/share/gaia";
+            AGENT_IDLE_TIMEOUT_MS = "300000";
             AGENT_MODEL = "gpt-5.6-luna";
             AGENT_NAME = "gaia";
             AGENT_PI_COMMAND = "${gaiaPi}/bin/pi";

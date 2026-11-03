@@ -22,7 +22,49 @@ export async function serve(): Promise<void> {
   process.once("SIGINT", close);
 }
 
+const IDLE_TIMEOUT_MS = Number.parseInt(process.env.AGENT_IDLE_TIMEOUT_MS ?? "300000", 10);
+if (!Number.isFinite(IDLE_TIMEOUT_MS) || IDLE_TIMEOUT_MS <= 0) throw new Error("AGENT_IDLE_TIMEOUT_MS must be a positive integer");
+
+type ActiveSession = {
+  session: PiRpc;
+  lastInputAt: number;
+  busy: boolean;
+};
+
+let activeSession: ActiveSession | undefined;
+let idleTimer: ReturnType<typeof setTimeout> | undefined;
 let requestQueue = Promise.resolve();
+
+function scheduleIdleClose(): void {
+  if (idleTimer) clearTimeout(idleTimer);
+  if (!activeSession || activeSession.busy) return;
+  const session = activeSession;
+  const delay = Math.max(0, IDLE_TIMEOUT_MS - (Date.now() - session.lastInputAt));
+  idleTimer = setTimeout(() => {
+    if (activeSession !== session || session.busy) return;
+    activeSession = undefined;
+    idleTimer = undefined;
+    void session.session.close().catch((error) => console.error("Failed to close idle session", error));
+  }, delay);
+}
+
+function touchActiveSession(receivedAt: number): void {
+  if (!activeSession) return;
+  activeSession.lastInputAt = receivedAt;
+  if (idleTimer) {
+    clearTimeout(idleTimer);
+    idleTimer = undefined;
+  }
+}
+
+function sessionForInput(receivedAt: number): ActiveSession {
+  if (!activeSession) {
+    activeSession = { session: createSession(), lastInputAt: receivedAt, busy: false };
+  } else {
+    touchActiveSession(receivedAt);
+  }
+  return activeSession;
+}
 
 async function handleClient(socket: Socket): Promise<void> {
   socket.on("error", (error) => {
@@ -36,19 +78,31 @@ async function handleClient(socket: Socket): Promise<void> {
         request = JSON.parse(line) as InputRequest;
         if (request.type !== "input" || typeof request.text !== "string") throw new Error("Invalid input request");
         const requestId = request.requestId ?? randomUUID();
+        const receivedAt = Date.now();
+        touchActiveSession(receivedAt);
         send(socket, { type: "started", requestId });
         const run = requestQueue.then(async () => {
-          const session = createSession();
+          const active = sessionForInput(receivedAt);
+          active.busy = true;
           try {
-            const text = await session.prompt(
+            const text = await active.session.prompt(
               request.text,
               request.images,
               (delta) => send(socket, { type: "text_delta", requestId, text: delta }),
               (name) => send(socket, { type: "tool_start", requestId, name }),
             );
             send(socket, { type: "done", requestId, text });
+          } catch (error) {
+            if (activeSession === active) {
+              activeSession = undefined;
+              await active.session.close();
+            }
+            throw error;
           } finally {
-            await session.close();
+            if (activeSession === active) {
+              active.busy = false;
+              scheduleIdleClose();
+            }
           }
         });
         requestQueue = run.catch(() => undefined);
