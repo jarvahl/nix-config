@@ -47,7 +47,7 @@
             AGENT_PI_COMMAND = "${gaiaPi}/bin/pi";
             AGENT_PROVIDER = "openai";
             GAIA_DEFAULT_CONVERSATION = "telegram:1919581469";
-            GAIA_TELEGRAM_SOCKET = "%t/agents/telegram/telegram.sock";
+            GAIA_TELEGRAM_SOCKET = "%t/agents/telegram-for-gaia/telegram.sock";
             AGENT_SESSION_DIR = "${config.home.homeDirectory}/.local/state/pi/sessions";
             AGENT_SESSION_ID = "gaia";
             AGENT_SOCKET = "%t/agents/gaia/gaia.sock";
