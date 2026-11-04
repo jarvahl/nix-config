@@ -8,7 +8,10 @@ stdenvNoCC.mkDerivation {
     cp index.ts "$out/pi-telegram/index.ts"
   '';
 
-  patches = [ ./headless-autostart.patch ];
+  patches = [
+    ./draft-finalization.patch
+    ./headless-autostart.patch
+  ];
 
   pname = "pi-telegram";
   src = fetchFromGitHub {
