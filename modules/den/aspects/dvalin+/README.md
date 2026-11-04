@@ -1,8 +1,9 @@
 ```mermaid
 flowchart LR
-    T[telegram-for-gaia.service]
     G[gaia.service]
+    P[pi-telegram extension]
+    T[Telegram Bot API]
 
-    T -->|messages and replies| G
-    G -->|proactive notifications| T
+    G --> P
+    P <-->|polling and replies| T
 ```

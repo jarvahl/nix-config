@@ -1,0 +1,5 @@
+diff --git a/index.ts b/index.ts
+--- a/index.ts
++++ b/index.ts
+@@ -1025,0 +1026 @@
++		if (process.env.PI_TELEGRAM_AUTOSTART === "1" && config.botToken) await startPolling(ctx);
