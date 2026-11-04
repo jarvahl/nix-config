@@ -1,17 +1,24 @@
-{ fetchFromGitHub, stdenvNoCC }:
+{
+  buildNpmPackage,
+  fetchFromGitHub,
+}:
 
-stdenvNoCC.mkDerivation {
-  dontBuild = true;
+buildNpmPackage {
+  dontNpmBuild = true;
+  npmDepsHash = "sha256-QUvD5j7nWeFtBqQ9RxiWfT01H08nAydoPUhm89yZVPU=";
 
   installPhase = ''
     mkdir -p "$out/pi-telegram"
-    cp index.ts "$out/pi-telegram/index.ts"
+    cp index.ts package.json "$out/pi-telegram/"
+    cp -r node_modules "$out/pi-telegram/"
   '';
 
   patches = [
     ./draft-finalization.patch
     ./headless-autostart.patch
     ./ignore-empty-updates.patch
+    ./reply-context.patch
+    ./formatting.patch
   ];
 
   pname = "pi-telegram";
@@ -22,4 +29,9 @@ stdenvNoCC.mkDerivation {
     rev = "cb34008460b6c1ca036d92322f69d87f626be0fc";
   };
   version = "0.1.0";
+
+  postPatch = ''
+    cp ${./package.json} package.json
+    cp ${./package-lock.json} package-lock.json
+  '';
 }

@@ -33,8 +33,20 @@
                   "${pi-memory}/pi-memory/index.ts"
                   "${pi-self-compact}/pi-self-compact/index.ts"
                   "${pi-telegram}/pi-telegram/index.ts"
+                  "${pi-browser-use}/pi-browser-use/dist/index.js"
                 ];
                 pi.coding-agent.rules = ./AGENTS.md;
+                pi.coding-agent.settings.defaultModel = "gpt-5.6-luna";
+                pi.coding-agent.settings.defaultProvider = "openai";
+                pi.coding-agent.settings."pi-browser-use" = {
+                  executablePath = "${pkgs.chromium}/bin/chromium";
+                  headed = false;
+                  mode = "persistent";
+                  userDataDir = "${config.home.homeDirectory}/.local/share/gaia/browser";
+                };
+                pi.coding-agent.skills = with self'.packages; [
+                  "${pi-browser-use}/pi-browser-use/skills"
+                ];
               }
             ];
           }).package;
@@ -46,17 +58,18 @@
             allowedUserId = 1919581469;
             botToken = config.sops.placeholder."gaia/telegram/apiKey";
           };
+          mode = "0600";
           path = "${config.home.homeDirectory}/.pi/agent/telegram.json";
         };
 
         systemd.services.gaia = {
           after = [ "sops-nix.service" ];
-          requires = [ "sops-nix.service" ];
           environment = {
             PATH = lib.mkForce (
               lib.makeBinPath [
                 pkgs.bash
                 pkgs.coreutils
+                pkgs.diffutils
                 pkgs.findutils
                 pkgs.gnugrep
                 pkgs.gnused
@@ -70,11 +83,12 @@
             PI_TELEGRAM_AUTOSTART = "1";
             PI_MEMORY_SNAPSHOT = "stable";
           };
+          reloadTriggers = [ gaiaPi ];
+          requires = [ "sops-nix.service" ];
           serviceConfig = {
             ExecStart = "${pkgs.bash}/bin/bash -c '${pkgs.coreutils}/bin/tail -f /dev/null | ${gaiaPi}/bin/pi --mode rpc --session-dir %h/.local/state/pi/sessions --session-id ${sessionId} --provider openai --model gpt-5.6-luna'";
             ExecStartPre = [
               "${pkgs.coreutils}/bin/mkdir -p %h/.pi/agent %h/.local/state/pi/sessions"
-              "${pkgs.coreutils}/bin/chmod 600 %h/.pi/agent/telegram.json"
             ];
             Restart = "always";
             RestartSec = 5;

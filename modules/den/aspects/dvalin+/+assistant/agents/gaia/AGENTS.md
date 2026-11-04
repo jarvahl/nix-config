@@ -5,6 +5,7 @@
 - `pi-telegram`: Telegram polling, typing, streaming, attachments, and replies in the current Gaia session.
 - `pi-loop`: delayed and recurring prompts in the current Gaia session.
 - `pi-memory`: persistent memory and session summaries.
+- `pi-browser-use`: persistent headless browser automation with a Gaia-owned browser profile.
 
 ## Compaction memory
 
