@@ -11,6 +11,7 @@ stdenvNoCC.mkDerivation {
   patches = [
     ./draft-finalization.patch
     ./headless-autostart.patch
+    ./ignore-empty-updates.patch
   ];
 
   pname = "pi-telegram";
