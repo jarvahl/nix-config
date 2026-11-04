@@ -50,7 +50,7 @@
               }
             ];
           }).package;
-        sessionId = "gaia-${builtins.substring 0 12 (builtins.baseNameOf gaiaPi)}";
+        sessionId = "gaia";
       in
       {
         sops.templates."pi-telegram.json" = {
