@@ -38,6 +38,7 @@
               }
             ];
           }).package;
+        sessionId = "gaia-${builtins.substring 0 12 (builtins.baseNameOf gaiaPi)}";
       in
       {
         sops.templates."pi-telegram.json" = {
@@ -70,7 +71,7 @@
             PI_MEMORY_SNAPSHOT = "stable";
           };
           serviceConfig = {
-            ExecStart = "${pkgs.bash}/bin/bash -c '${pkgs.coreutils}/bin/tail -f /dev/null | ${gaiaPi}/bin/pi --mode rpc --session-dir %h/.local/state/pi/sessions --session-id gaia --provider openai --model gpt-5.6-luna'";
+            ExecStart = "${pkgs.bash}/bin/bash -c '${pkgs.coreutils}/bin/tail -f /dev/null | ${gaiaPi}/bin/pi --mode rpc --session-dir %h/.local/state/pi/sessions --session-id ${sessionId} --provider openai --model gpt-5.6-luna'";
             ExecStartPre = [
               "${pkgs.coreutils}/bin/mkdir -p %h/.pi/agent %h/.local/state/pi/sessions"
               "${pkgs.coreutils}/bin/chmod 600 %h/.pi/agent/telegram.json"
