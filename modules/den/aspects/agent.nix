@@ -53,6 +53,23 @@
         }:
         let
           dataDirectory = "${config.home.homeDirectory}/.local/share/agents/${name}";
+          piServiceScript = pkgs.writeShellScript "${name}-pi-service" ''
+            set -euo pipefail
+
+            fifo="$PI_CODING_AGENT_DIR/rpc.stdin"
+            /etc/profiles/per-user/${config.user}/bin/pi --mode rpc < "$fifo" &
+            pi_pid=$!
+            exec 3> "$fifo"
+
+            shutdown() {
+              exec 3>&-
+              wait "$pi_pid" || true
+              exit 0
+            }
+
+            trap shutdown TERM INT
+            wait "$pi_pid"
+          '';
           sessionDirectory = "${dataDirectory}/pi/sessions/--${
             lib.replaceStrings [ "/" ":" ] [ "-" "-" ] (lib.removePrefix "/" dataDirectory)
           }--";
@@ -82,12 +99,13 @@
               };
 
               serviceConfig = {
-                ExecStartPre = "${pkgs.coreutils}/bin/mkdir -p ${dataDirectory} ${sessionDirectory}";
-                ExecStart = lib.concatStringsSep " " [
-                  "${pkgs.bash}/bin/bash"
-                  "-c"
-                  "'${pkgs.coreutils}/bin/tail -f /dev/null | /etc/profiles/per-user/${config.user}/bin/pi --mode rpc'"
+                ExecStartPre = [
+                  "${pkgs.coreutils}/bin/mkdir -p ${dataDirectory} ${sessionDirectory}"
+                  "${pkgs.coreutils}/bin/rm -f ${dataDirectory}/pi/rpc.stdin"
+                  "${pkgs.coreutils}/bin/mkfifo -m 600 ${dataDirectory}/pi/rpc.stdin"
                 ];
+                ExecStart = piServiceScript;
+                KillMode = "process";
                 Restart = "always";
                 RestartSec = 5;
                 WorkingDirectory = dataDirectory;
