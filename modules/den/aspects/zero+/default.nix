@@ -161,7 +161,16 @@ lib.mkMerge [
               console
               development
               herdr
-              pi
+              (pi {
+                extensions =
+                  { self', ... }:
+                  with self'.packages;
+                  [
+                    "${pi-diff-review}/pi-diff-review/index.ts"
+                    "${pi-prompt-timer}/pi-prompt-timer/index.ts"
+                    "${pi-ponytail}/pi-ponytail/index.js"
+                  ];
+              })
             ])
             ++ (with den.aspects; [
               # accounts

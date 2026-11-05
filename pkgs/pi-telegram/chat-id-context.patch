@@ -1,0 +1,10 @@
+--- a/index.ts
++++ b/index.ts
+@@ -703,7 +703,7 @@
+ 		const rawText = messages.map((message) => (message.text || message.caption || "").trim()).filter(Boolean).join("\n\n");
+ 		const files = await buildTelegramFiles(messages);
+ 		const content: Array<TextContent | ImageContent> = [];
+-		let prompt = `${TELEGRAM_PREFIX} message_id=${firstMessage.message_id}`;
++		let prompt = `${TELEGRAM_PREFIX} chat_id=${firstMessage.chat.id} message_id=${firstMessage.message_id}`;
+ 
+ 		if (historyTurns.length > 0) {

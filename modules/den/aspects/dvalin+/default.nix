@@ -130,12 +130,37 @@ lib.mkMerge [
     {
       den = {
         aspects."${user}@${host}" = {
-          includes = with den.aspects; [
-            console
-            development
-            linger
-            pi
-          ];
+          includes =
+            (with den.aspects; [
+              console
+              development
+              linger
+            ])
+            ++ (with den.aspects.sops; [
+              (secret
+                {
+                  name = "gaia/telegram/apiKey";
+                  path = ".config/telegram/apiKey";
+                }
+                {
+                  hjem = { ... }: { };
+                }
+              )
+            ]);
+
+          hjem =
+            { config, ... }:
+            {
+              sops.templates."pi-telegram.json" = {
+                content = builtins.toJSON {
+                  allowedUserId = 1919581469;
+                  botToken = config.sops.placeholder."gaia/telegram/apiKey";
+                };
+                mode = "0600";
+                path = "${config.home.homeDirectory}/.pi/agent/telegram.json";
+              };
+            };
+
           provides.to-hosts =
             with den.aspects.sops;
             secret

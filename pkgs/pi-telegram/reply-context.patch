@@ -25,7 +25,7 @@
 +			const sent = await callTelegram<TelegramSentMessage>("sendMessage", {
 +				chat_id: chatId,
 +				text: truncated,
-+				...(replyToMessageId === undefined ? {} : { reply_parameters: { message_id: replyToMessageId } }),
++				...(replyToMessageId === undefined ? {} : { reply_parameters: { message_id: replyToMessageId, allow_sending_without_reply: true } }),
 +			});
  			state.messageId = sent.message_id;
  			state.mode = "message";
@@ -56,7 +56,7 @@
 +			await callTelegram<TelegramSentMessage>("sendMessage", {
 +				chat_id: chatId,
 +				text: finalText,
-+				...(replyToMessageId === undefined ? {} : { reply_parameters: { message_id: replyToMessageId } }),
++				...(replyToMessageId === undefined ? {} : { reply_parameters: { message_id: replyToMessageId, allow_sending_without_reply: true } }),
 +			});
  			return true;
  		}
@@ -72,7 +72,7 @@
  			const sent = await callTelegram<TelegramSentMessage>("sendMessage", {
  				chat_id: chatId,
  				text: chunk,
-+				reply_parameters: { message_id: replyToMessageId },
++				reply_parameters: { message_id: replyToMessageId, allow_sending_without_reply: true },
  			});
  			lastMessageId = sent.message_id;
  		}
@@ -85,7 +85,7 @@
  
  		if (historyTurns.length > 0) {
  			prompt += `\n\nEarlier Telegram messages arrived after an aborted turn. Treat them as prior user messages, in order:`;
-@@ -706,6 +716,12 @@
+@@ -706,6 +716,11 @@
  		if (rawText.length > 0) {
  			prompt += historyTurns.length > 0 ? `\n${rawText}` : ` ${rawText}`;
  		}
@@ -93,7 +93,6 @@
 +		const repliedText = repliedTo ? (repliedTo.text || repliedTo.caption || "").trim() : "";
 +		if (repliedTo && repliedText.length > 0) {
 +			prompt += `\n${TELEGRAM_PREFIX} reply_to_message_id=${repliedTo.message_id} ${repliedText}`;
-+			prompt += `\n[telegram instruction] This message replies to an earlier message. Check the quoted message and the session history first. If the user asks to repeat or resend something, carry out the earlier request instead of asking what should be repeated.`;
 +		}
  		if (files.length > 0) {
  			prompt += `\n\nTelegram attachments were saved locally:`;

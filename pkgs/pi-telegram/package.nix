@@ -19,6 +19,9 @@ buildNpmPackage {
     ./ignore-empty-updates.patch
     ./reply-context.patch
     ./formatting.patch
+    ./chat-id-context.patch
+    ./outgoing-message-context.patch
+    ./progress-preview.patch
   ];
 
   pname = "pi-telegram";
