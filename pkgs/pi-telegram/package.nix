@@ -11,6 +11,7 @@ buildNpmPackage {
     cp -r node_modules "$out/pi-telegram/"
   '';
   npmDepsHash = "sha256-QUvD5j7nWeFtBqQ9RxiWfT01H08nAydoPUhm89yZVPU=";
+  patches = [ ./empty-message.patch ];
   pname = "pi-telegram";
   postPatch = ''
     cp ${./package.json} package.json

@@ -1,0 +1,7 @@
+--- a/index.ts
++++ b/index.ts
+@@ -508,3 +508,4 @@
+ 	async function sendTextReply(chatId: number, _replyToMessageId: number, text: string): Promise<number | undefined> {
++		if (!text.trim()) return undefined;
+ 		const chunks = chunkParagraphs(text);
+ 		let lastMessageId: number | undefined;
