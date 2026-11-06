@@ -81,7 +81,6 @@
             /etc/profiles/per-user/${config.user}/bin/pi --mode rpc < "$fifo" &
             pi_pid=$!
             exec 3> "$fifo"
-            (sleep 30; printf '%s\n' '{"type":"prompt","message":"/telegram-connect"}' >&3) &
 
             shutdown() {
               exec 3>&-
