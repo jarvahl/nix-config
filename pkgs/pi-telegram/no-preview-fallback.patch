@@ -1,0 +1,23 @@
+--- a/index.ts
++++ b/index.ts
+@@ -468,14 +468,7 @@
+ 			}
+ 		}
+ 
+-		if (state.messageId === undefined) {
+-			const sent = await callTelegram<TelegramSentMessage>("sendMessage", { chat_id: chatId, text: truncated });
+-			state.messageId = sent.message_id;
+-			state.mode = "message";
+-			state.lastSentText = truncated;
+-			return;
+-		}
+-		await callTelegram("editMessageText", { chat_id: chatId, message_id: state.messageId, text: truncated });
+-		state.mode = "message";
+-		state.lastSentText = truncated;
++		// Do not turn an unsupported draft preview into a real Telegram message.
++		// The final response is sent by agent_end.
++		return;
+ 	}
+@@ -1104,1 +1097,1 @@
+-		if (finalText && finalText.length <= MAX_MESSAGE_LENGTH) {
++		if (finalText && finalText.length <= MAX_MESSAGE_LENGTH && (previewState?.mode === "draft" || previewState?.messageId !== undefined)) {
