@@ -1,4 +1,4 @@
-{ den, ... }:
+{ den, lib, ... }:
 
 {
   den.aspects.agent =
@@ -14,16 +14,32 @@
     {
       includes = [
         (den.aspects.pi {
-          inherit name rules;
+          inherit name;
+          rules =
+            let
+              extraRules =
+                if rules == null then
+                  ""
+                else if builtins.isPath rules then
+                  builtins.readFile rules
+                else
+                  rules;
+            in
+            ''
+              Be direct and proportionate. Understand intent; act on straightforward tasks. Ask before destructive, irreversible, or external actions.
+              Be honest about uncertainty. Never invent context, completed actions, tool results, or memory changes. Explain decisions plainly and do not expose internal protocols.
+              Preserve continuity by recovering relevant context from history or memory when needed, while prioritizing the current user message.
+            ''
+            + lib.optionalString (extraRules != "") "\n\n${extraRules}";
           extensions =
             { self', ... }:
             with self'.packages;
             [
+              "${./agent/pi-idle-new-session.ts}"
               "${pi-browser-use}/pi-browser-use/dist/index.js"
               "${pi-idle-session}/pi-idle-session/index.ts"
               "${pi-loop}/pi-loop/index.ts"
               "${pi-telegram}/pi-telegram/index.ts"
-              "${pi-telegram-reply-context}/pi-telegram-reply-context/index.ts"
             ]
             ++ extensions;
           skills =
@@ -35,7 +51,7 @@
             {
               "pi-browser-use" = {
                 executablePath = "${pkgs.chromium}/bin/chromium";
-                headed = false;
+                headless = false;
                 mode = "persistent";
                 userDataDir = "${config.home.homeDirectory}/.local/share/agents/${name}/browser";
               };
@@ -53,6 +69,11 @@
         }:
         let
           dataDirectory = "${config.home.homeDirectory}/.local/share/agents/${name}";
+          browserCleanupScript = pkgs.writeShellScript "${name}-browser-cleanup" ''
+            ${pkgs.procps}/bin/pkill -TERM -f -- "--user-data-dir=${dataDirectory}/browser" || true
+            sleep 2
+            ${pkgs.procps}/bin/pkill -KILL -f -- "--user-data-dir=${dataDirectory}/browser" || true
+          '';
           piServiceScript = pkgs.writeShellScript "${name}-pi-service" ''
             set -euo pipefail
 
@@ -60,6 +81,7 @@
             /etc/profiles/per-user/${config.user}/bin/pi --mode rpc < "$fifo" &
             pi_pid=$!
             exec 3> "$fifo"
+            (sleep 30; printf '%s\n' '{"type":"prompt","message":"/telegram-connect"}' >&3) &
 
             shutdown() {
               exec 3>&-
@@ -103,9 +125,10 @@
                   "${pkgs.coreutils}/bin/mkdir -p ${dataDirectory} ${sessionDirectory}"
                   "${pkgs.coreutils}/bin/rm -f ${dataDirectory}/pi/rpc.stdin"
                   "${pkgs.coreutils}/bin/mkfifo -m 600 ${dataDirectory}/pi/rpc.stdin"
+                  browserCleanupScript
                 ];
-                ExecStart = piServiceScript;
-                KillMode = "process";
+                ExecStart = "${pkgs.xvfb-run}/bin/xvfb-run -a -s '-screen 0 1280x1024x24' ${piServiceScript}";
+                KillMode = "control-group";
                 Restart = "always";
                 RestartSec = 5;
                 WorkingDirectory = dataDirectory;

@@ -34,6 +34,7 @@
                           "${pi-core-skill-tool}/pi-core-skill-tool/index.ts"
                           "${pi-memory}/pi-memory/index.ts"
                           "${pi-self-compact}/pi-self-compact/index.ts"
+                          "${pi-web-access}/pi-web-access/index.ts"
                           "${pi-session}/pi-session/index.ts"
                         ]
                         ++ resolve extensions;
