@@ -1,4 +1,7 @@
 { config, lib, ... }:
+let
+  serviceNames = builtins.attrNames config.services.tailscale.services;
+in
 {
   options.services.tailscale.services = lib.mkOption {
     default = { };
@@ -23,8 +26,22 @@
 
   config.systemd.services = lib.mapAttrs' (
     name: service:
+    let
+      previousServices =
+        let
+          takeBefore =
+            names:
+            if names == [ ] then
+              [ ]
+            else if builtins.head names == name then
+              [ ]
+            else
+              [ (builtins.head names) ] ++ takeBefore (builtins.tail names);
+        in
+        takeBefore serviceNames;
+    in
     lib.nameValuePair "tailscale-${name}" {
-      after = [ "tailscaled.service" ];
+      after = [ "tailscaled.service" ] ++ map (other: "tailscale-${other}.service") previousServices;
       description = "Publish ${name} through Tailscale";
       serviceConfig = {
         ExecStart =

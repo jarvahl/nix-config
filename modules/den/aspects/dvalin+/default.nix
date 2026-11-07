@@ -49,6 +49,7 @@ lib.mkMerge [
             )
           ])
           ++ (with den.aspects; [
+            matrix
             ssh
             tailscale
             (tailscale.tags [ "services" ])
@@ -95,6 +96,11 @@ lib.mkMerge [
 
             networking.networkmanager.enable = true;
 
+            services.tailscale.services.openclaw = {
+              comment = "OpenClaw gateway";
+              port = 18789;
+            };
+
             users.users.nixos = {
               extraGroups = [
                 "wheel"
@@ -125,7 +131,7 @@ lib.mkMerge [
   }
   (
     let
-      user = "assistant";
+      user = "jarvahl";
     in
     {
       den = {
@@ -137,14 +143,20 @@ lib.mkMerge [
               linger
             ])
             ++ (with den.aspects.sops; [
-              (secret { name = "gaia/telegram/apiKey"; } { hjem = { }; })
+              (secret { name = "gaia/matrix/password"; } { hjem = { }; })
+              (secret { name = "gaia/matrix/user_id"; } { hjem = { }; })
+              (secret {
+                name = "matrix/password";
+              } { hjem = { }; })
+              (secret { name = "matrix/user_id"; } { hjem = { }; })
               (template
                 {
                   content = secrets: ''
-                    TELEGRAM_BOT_TOKEN="${secrets."gaia/telegram/apiKey"}"
+                    MATRIX_PASSWORD="${secrets."gaia/matrix/password"}"
+                    MATRIX_USER_ID="${secrets."gaia/matrix/user_id"}"
                   '';
                   mode = "0400";
-                  name = "pi-telegram-environment";
+                  name = "gaia-matrix-environment";
                 }
                 {
                   hjem = { path, ... }: {
@@ -191,8 +203,27 @@ lib.mkMerge [
           }
         ];
 
-        keys."${user}@${host}" = "age1ahknfhq9muvqrss3jgpwssa8af2wuuez4k8nn9g552y9hcyj63rqstkm58";
+        keys."${user}@${host}" = "age15ny8fkpgznutmkze50rcvceq400r6nq68n2vpdsq3muuq6vcwqmqlspkng";
       };
     }
   )
+  {
+    den.hosts.x86_64-linux.${host}.users.nixos = {
+      classes = [ "hjem" ];
+      secrets.file = ./user-nixos.sops.yaml;
+    };
+
+    sopsFile = {
+      creation_rules = recovery [
+        {
+          key_groups = [
+            { age = [ "nixos@${host}" ]; }
+          ];
+          path_regex = ./user-nixos.sops.yaml;
+        }
+      ];
+
+      keys."nixos@${host}" = "age1uj0ultfy0sxxty4jrczl7ajwwg42tefqqpzjedl246eghy7yjdjqfp6ysz";
+    };
+  }
 ]

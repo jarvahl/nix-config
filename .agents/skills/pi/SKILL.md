@@ -9,9 +9,9 @@ description: "Use when configuring Pi or adding Pi extensions; not for unrelated
 
 Use this skill for Pi configuration and extensions.
 
-| Task | Read |
-| --- | --- |
-| Adding or updating an extension | `references/extensions.md` |
+| Task | Read |\
+| --- | --- |\
+| Adding or updating an extension | `references/extensions.md` |\
 
 
 ## References

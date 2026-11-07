@@ -1,5 +1,6 @@
 {
   inputs,
+  lib,
   recovery,
   ...
 }:
@@ -42,6 +43,112 @@
     in
     {
       terranix.exportDevShells = false;
+
+      apps.sops-import-from-terranix = {
+        meta.description = "Import Terranix SOPS outputs into encrypted SOPS files";
+        type = "app";
+        program = lib.getExe (
+          pkgs.writeShellApplication {
+            name = "sops-import-from-terranix";
+            runtimeInputs = [
+              pkgs.coreutils
+              pkgs.git
+              pkgs.jq
+              pkgs.opentofu
+              pkgs.sops
+            ];
+            text = ''
+              set -euo pipefail
+
+              if [ "''${SOPS_SHELL_KEY_NAME:-}" != recovery ] || [ ! -r "''${SOPS_AGE_KEY_FILE:-}" ]; then
+                printf 'Run this command inside: nix develop .#sops\n' >&2
+                exit 1
+              fi
+
+              root="$(git rev-parse --show-toplevel)"
+              cd "$root"
+              encrypted_state="$root/terraform.tfstate.sops.json"
+              if [ ! -f "$encrypted_state" ]; then
+                printf 'Missing encrypted Terranix state: %s\n' "$encrypted_state" >&2
+                exit 1
+              fi
+
+              temporary="$(mktemp -d)"
+              chmod 0700 "$temporary"
+              trap 'rm -rf -- "$temporary"' EXIT
+              state="$temporary/terraform.tfstate"
+              sops -d "$encrypted_state" > "$state"
+              chmod 0600 "$state"
+              outputs="$(cd "$temporary" && tofu output -json)"
+
+              count=0
+              while IFS=$'\t' read -r name value; do
+                [ -n "$name" ] || continue
+                if [[ "$name" != sops__* ]]; then
+                  printf 'Invalid SOPS output name: %s\n' "$name" >&2
+                  exit 1
+                fi
+                remaining="''${name#sops__}"
+                if [[ "$remaining" != *__* ]]; then
+                  printf 'Invalid SOPS output name: %s\n' "$name" >&2
+                  exit 1
+                fi
+                aspect="''${remaining%%__*}"
+                remaining="''${remaining#*__}"
+                if [[ "$remaining" != *__* ]]; then
+                  printf 'Invalid SOPS output name: %s\n' "$name" >&2
+                  exit 1
+                fi
+                entity="''${remaining%%__*}"
+                key_path="''${remaining#*__}"
+                if [[ ! "$aspect" =~ ^[a-zA-Z0-9_-]+$ || ! "$entity" =~ ^[a-zA-Z0-9_-]+$ || "$entity" == *__* || ! "$key_path" =~ ^[a-zA-Z0-9_-]+(__[a-zA-Z0-9_-]+)*$ ]]; then
+                  printf 'Invalid SOPS output name: %s\n' "$name" >&2
+                  exit 1
+                fi
+                if [ "$entity" = host ]; then
+                  target="modules/den/aspects/''${aspect}+/host.sops.yaml"
+                else
+                  target="modules/den/aspects/''${aspect}+/user-''${entity}.sops.yaml"
+                fi
+                if [ ! -f "$target" ]; then
+                  printf 'SOPS output target does not exist: %s\n' "$target" >&2
+                  exit 1
+                fi
+
+                path=""
+                remaining="$key_path"
+                while [[ "$remaining" == *__* ]]; do
+                  segment="''${remaining%%__*}"
+                  [ -n "$segment" ] || { printf 'Empty SOPS key segment in output: %s\n' "$name" >&2; exit 1; }
+                  encoded="$(printf '%s' "$segment" | jq -Rr @json)"
+                  path+="[$encoded]"
+                  remaining="''${remaining#*__}"
+                done
+                [ -n "$remaining" ] || { printf 'Empty SOPS key segment in output: %s\n' "$name" >&2; exit 1; }
+                encoded="$(printf '%s' "$remaining" | jq -Rr @json)"
+                path+="[$encoded]"
+
+                directory="$(dirname "$target")"
+                temporary_file="$(mktemp "$directory/.sops-import.XXXXXX.yaml")"
+                cp -- "$target" "$temporary_file"
+                if ! printf '%s' "$value" | sops set --idempotent --value-stdin "$temporary_file" "$path" >/dev/null; then
+                  rm -f -- "$temporary_file"
+                  exit 1
+                fi
+                if ! cmp -s "$target" "$temporary_file"; then
+                  chmod --reference="$target" "$temporary_file"
+                  mv -- "$temporary_file" "$target"
+                else
+                  rm -f -- "$temporary_file"
+                fi
+                count=$((count + 1))
+              done < <(jq -r 'to_entries[] | select(.key | startswith("sops__")) | [.key, (.value.value | tojson)] | @tsv' <<< "$outputs")
+
+              printf 'Imported %s Terranix output(s) into SOPS.\n' "$count"
+            '';
+          }
+        );
+      };
 
       terranix.terranixConfigurations.terranix = {
         terraformWrapper = {

@@ -5,6 +5,7 @@
     {
       name,
       extensions ? [ ],
+      matrix ? false,
       skills ? [ ],
       rules ? null,
       settings ? { },
@@ -39,8 +40,8 @@
               "${pi-browser-use}/pi-browser-use/dist/index.js"
               "${pi-idle-session}/pi-idle-session/index.ts"
               "${pi-loop}/pi-loop/index.ts"
-              "${pi-telegram}/pi-telegram/index.ts"
             ]
+            ++ lib.optional matrix "${pi-matrix-synapse}/pi-matrix-synapse/index.ts"
             ++ extensions;
           skills =
             { self', ... }:

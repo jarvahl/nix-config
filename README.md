@@ -94,7 +94,11 @@ including after SIGKILL. Run Terranix commands inside this shell:
 
 ```sh
 nix run .#terranix.plan
+nix run .#terranix.apply
+nix run .#sops-import-from-terranix
 ```
 
 Terranix reuses the unlocked key and exports secrets from `terranix.sops.yaml`
 to its command environment, with uppercase path segments joined by underscores.
+After applying Terranix, `sops-import-from-terranix` imports outputs named
+`sops__<aspect>__<host-or-user>__<key>__<path>` into the matching host or user SOPS file.

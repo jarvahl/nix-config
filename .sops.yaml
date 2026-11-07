@@ -43,9 +43,14 @@ creation_rules:
   path_regex: modules/den/aspects/dvalin\+/host\.sops\.yaml$
 - key_groups:
   - age:
-    - age1ahknfhq9muvqrss3jgpwssa8af2wuuez4k8nn9g552y9hcyj63rqstkm58
+    - age15ny8fkpgznutmkze50rcvceq400r6nq68n2vpdsq3muuq6vcwqmqlspkng
     - age17dkg84wglz4nq2523fayp528qr82njr2znlwc6fvdhzy8k3pg3gsusgx2q
-  path_regex: modules/den/aspects/dvalin\+/user-assistant\.sops\.yaml$
+  path_regex: modules/den/aspects/dvalin\+/user-jarvahl\.sops\.yaml$
+- key_groups:
+  - age:
+    - age1uj0ultfy0sxxty4jrczl7ajwwg42tefqqpzjedl246eghy7yjdjqfp6ysz
+    - age17dkg84wglz4nq2523fayp528qr82njr2znlwc6fvdhzy8k3pg3gsusgx2q
+  path_regex: modules/den/aspects/dvalin\+/user-nixos\.sops\.yaml$
 - key_groups:
   - age:
     - age1muvk3n4qdla548vsgqmpg2xr2tnrkv70aeykncmvttrg2dlfzyustnyawd

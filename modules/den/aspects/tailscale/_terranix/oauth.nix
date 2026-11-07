@@ -5,10 +5,13 @@ let
   ) flakeConfig.nixosConfigurations;
 in
 {
-  output.tailscale_oauth_keys = {
-    sensitive = true;
-    value = lib.mapAttrs (host: _: "\${tailscale_oauth_client.${host}.key}") hosts;
-  };
+  output = lib.mapAttrs' (
+    host: _:
+    lib.nameValuePair "sops__${host}__host__tailscale__auth_key" {
+      sensitive = true;
+      value = "\${tailscale_oauth_client.${host}.key}";
+    }
+  ) hosts;
 
   resource.tailscale_oauth_client = lib.mapAttrs (host: nixos: {
     depends_on = [ "tailscale_acl.tags" ];
