@@ -4,8 +4,12 @@ import {
   extractFinalAssistantText,
   invitedRoomIds,
   matrixPath,
+  hasMentionOfAnotherMember,
+  hasOwnMatrixMention,
+  matrixMentionedUserIds,
   matrixTypingPath,
   normalizeHomeserver,
+  shouldRespond,
 } from "./index.ts";
 
 test("normalizes homeserver URLs without duplicating the scheme", () => {
@@ -39,6 +43,25 @@ test("builds the Matrix typing notification path", () => {
     matrixTypingPath("!room:matrix.example", "@gaia:matrix.example"),
     "/_matrix/client/v3/rooms/!room%3Amatrix.example/typing/%40gaia%3Amatrix.example",
   );
+});
+
+test("routes Matrix activation rules by room size, mentions, and replies", () => {
+  const own = "@gaia:matrix.example";
+  const other = "@nixos-agent:matrix.example";
+  const members = ["@jarvahl:matrix.example", own, other];
+  assert.equal(shouldRespond({ agentUserId: own, event: { body: "hello" }, isReplyToAgent: false, memberIds: ["@jarvahl:matrix.example", own] }), true);
+  assert.equal(shouldRespond({ agentUserId: own, event: { body: "hello" }, isReplyToAgent: false, memberIds: members }), false);
+  assert.equal(shouldRespond({ agentUserId: own, event: { body: "@gaia check" }, isReplyToAgent: false, memberIds: members }), true);
+  assert.equal(shouldRespond({ agentUserId: own, event: { body: "reply @nixos-agent" }, isReplyToAgent: true, memberIds: members }), false);
+  assert.equal(shouldRespond({ agentUserId: own, event: { body: "reply" }, isReplyToAgent: true, memberIds: members }), true);
+});
+
+test("extracts Matrix and textual member mentions", () => {
+  const own = "@gaia:matrix.example";
+  const other = "@nixos-agent:matrix.example";
+  const mentioned = matrixMentionedUserIds("@gaia @nixos-agent", {}, [own, other]);
+  assert.equal(hasOwnMatrixMention(mentioned, own), true);
+  assert.equal(hasMentionOfAnotherMember(mentioned, [own, other], own), true);
 });
 
 test("extracts the last assistant text response", () => {

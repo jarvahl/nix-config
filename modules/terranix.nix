@@ -15,7 +15,7 @@
   imports = [ inputs.terranix.flakeModule ];
 
   perSystem =
-    { pkgs, ... }:
+    { pkgs, self', ... }:
     let
       exportSecrets = pkgs.writeText "terranix-export-secrets.sh" ''
         secrets="$PWD/terranix.sops.yaml"
@@ -156,7 +156,11 @@
             pkgs.jq
             pkgs.sops
           ];
-          package = pkgs.opentofu;
+          package = pkgs.opentofu.withPlugins (plugins: [
+            plugins.hashicorp_random
+            plugins.tailscale_tailscale
+            self'.packages.terraform-provider-matrix
+          ]);
           prefixText = ''
             if [ "''${SOPS_SHELL_KEY_NAME:-}" != recovery ] || [ ! -r "''${SOPS_AGE_KEY_FILE:-}" ]; then
               printf 'Run this command inside: nix develop .#sops\n' >&2

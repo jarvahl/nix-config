@@ -4,7 +4,7 @@ import { homedir } from "node:os";
 import { dirname, join } from "node:path";
 import { randomUUID } from "node:crypto";
 
-const instructions = "Use Gaia's existing personality: reply naturally, warmly, and in Polish by default, using feminine forms for yourself. Respond to what the person said rather than sounding like a service or repeating the prompt; keep replies concise but human. The [Matrix room_id=...] prefix is routing metadata: never mention or echo it. Do not send private reasoning. Only respond in one-to-one rooms with exactly two joined members. For scheduled messages, preserve the exact originating [Matrix room_id=...] header in the scheduled prompt and call matrix_send_message with that roomId when the task fires. Create durable tasks and do not use Telegram.";
+const instructions = "The [Matrix room_id=...] prefix is routing metadata; never mention or echo it. Preserve room_id for scheduled Matrix messages.";
 
 export const normalizeHomeserver = (value: string) => {
   const trimmed = value.trim();
@@ -35,12 +35,71 @@ export const invitedRoomIds = (rooms: Record<string, any> | undefined, userId: s
     )
     .map(([roomId]) => roomId);
 
+type MatrixMessage = {
+  body: string;
+  content?: Record<string, any>;
+};
+
+type MatrixResponseContext = {
+  agentUserId: string;
+  event: MatrixMessage;
+  isReplyToAgent: boolean;
+  memberIds: string[];
+};
+
+export const matrixMentionedUserIds = (
+  body: string,
+  content: Record<string, any> | undefined,
+  memberIds: string[],
+) => {
+  const mentionedUserIds = new Set<string>(
+    Array.isArray(content?.["m.mentions"]?.user_ids) ? content["m.mentions"].user_ids : [],
+  );
+  for (const userId of memberIds) {
+    const localpart = userId.match(/^@([^:]+):/)?.[1];
+    if (localpart && new RegExp(`(^|\\s)@${localpart}(?=$|[\\s:,.!?])`, "i").test(body)) {
+      mentionedUserIds.add(userId);
+    }
+  }
+  return mentionedUserIds;
+};
+
+export const hasOwnMatrixMention = (mentionedUserIds: Set<string>, ownUserId: string) =>
+  mentionedUserIds.has(ownUserId);
+
+export const hasMentionOfAnotherMember = (
+  mentionedUserIds: Set<string>,
+  memberIds: string[],
+  ownUserId: string,
+) => [...mentionedUserIds].some(
+  (userId) => userId !== ownUserId && memberIds.includes(userId),
+);
+
+export const shouldRespond = ({
+  agentUserId,
+  event,
+  isReplyToAgent,
+  memberIds,
+}: MatrixResponseContext) => {
+  if (memberIds.length < 2 || !memberIds.includes(agentUserId) || !event.body.trim()) return false;
+  const mentionedUserIds = matrixMentionedUserIds(event.body, event.content, memberIds);
+  const directRoom = memberIds.length === 2;
+  const ownMention = hasOwnMatrixMention(mentionedUserIds, agentUserId);
+  const competingMention = hasMentionOfAnotherMember(mentionedUserIds, memberIds, agentUserId);
+  return directRoom || ownMention || (isReplyToAgent && !competingMention);
+};
+
 export function createMatrixExtension(pi: ExtensionAPI, Type: any, dependencies = { fetch: globalThis.fetch }) {
   const homeserverValue = process.env.MATRIX_HOMESERVER?.trim();
   const userId = process.env.MATRIX_USER_ID?.trim();
   const password = process.env.MATRIX_PASSWORD?.trim();
+  const allowedInviteUsers = new Set(
+    (process.env.MATRIX_ALLOWED_INVITE_USERS ?? "").split(",").map((value) => value.trim()).filter(Boolean),
+  );
   const agentDir = process.env.PI_CODING_AGENT_DIR ?? join(homedir(), ".pi", "agent");
   const cursorFile = join(agentDir, "tmp", "matrix-sync-cursor");
+  const archivedRoomsFile = join(agentDir, "tmp", "matrix-archived-rooms.json");
+  const archivedRooms = new Set<string>();
 
   type ActiveTurn = { roomId: string; eventId: string };
   let token: string | undefined;
@@ -67,6 +126,20 @@ export function createMatrixExtension(pi: ExtensionAPI, Type: any, dependencies 
   const saveCursor = async (cursor: string) => {
     await mkdir(dirname(cursorFile), { recursive: true, mode: 0o700 });
     await writeFile(cursorFile, cursor, { mode: 0o600 });
+  };
+
+  const loadArchivedRooms = async () => {
+    try {
+      const rooms = JSON.parse(await readFile(archivedRoomsFile, "utf8"));
+      if (Array.isArray(rooms)) for (const roomId of rooms) if (typeof roomId === "string") archivedRooms.add(roomId);
+    } catch {
+      // No archive registry on first start.
+    }
+  };
+
+  const saveArchivedRooms = async () => {
+    await mkdir(dirname(archivedRoomsFile), { recursive: true, mode: 0o700 });
+    await writeFile(archivedRoomsFile, JSON.stringify([...archivedRooms], null, 2), { mode: 0o600 });
   };
 
   const updateTyping = async (roomId: string, typing: boolean) => {
@@ -118,13 +191,31 @@ export function createMatrixExtension(pi: ExtensionAPI, Type: any, dependencies 
   };
 
   const processEvent = async (roomId: string, event: any) => {
-    if (event.type !== "m.room.message" || event.sender === ownUserId) return;
+    if (event.type !== "m.room.message" || event.sender === ownUserId || archivedRooms.has(roomId)) return;
     if (event.content?.msgtype !== "m.text" || typeof event.content?.body !== "string") return;
     const members = await api(`/_matrix/client/v3/rooms/${encodeURIComponent(roomId)}/joined_members`);
     const memberIds = Object.keys(members.joined ?? {});
-    if (memberIds.length !== 2 || !memberIds.includes(ownUserId!) || !memberIds.includes(event.sender)) return;
+    if (memberIds.length < 2 || !memberIds.includes(ownUserId!) || !memberIds.includes(event.sender)) return;
     const body = event.content.body.trim();
     if (!body) return;
+    const replyTo = event.content?.["m.relates_to"]?.["m.in_reply_to"]?.event_id;
+    let isReplyToAgent = false;
+    if (replyTo) {
+      try {
+        const repliedEvent = await api(
+          `/_matrix/client/v3/rooms/${encodeURIComponent(roomId)}/event/${encodeURIComponent(replyTo)}`,
+        );
+        isReplyToAgent = repliedEvent.sender === ownUserId;
+      } catch {
+        // An unavailable reply target cannot activate the agent.
+      }
+    }
+    if (!shouldRespond({
+      agentUserId: ownUserId!,
+      event: { body, content: event.content },
+      isReplyToAgent,
+      memberIds,
+    })) return;
     queue.push({ roomId, eventId: event.event_id, prompt: `[Matrix room_id=${roomId}] ${body}` });
     processQueue();
   };
@@ -141,6 +232,7 @@ export function createMatrixExtension(pi: ExtensionAPI, Type: any, dependencies 
       console.error("pi-matrix-synapse: homeserver, user, and password are required");
       return;
     }
+    await loadArchivedRooms();
     const login = await api("/_matrix/client/v3/login", {
       method: "POST",
       body: JSON.stringify({
@@ -188,25 +280,85 @@ export function createMatrixExtension(pi: ExtensionAPI, Type: any, dependencies 
   };
 
   pi.registerTool({
+    name: "matrix_create_room",
+    label: "Create Matrix room",
+    description: "Create a private Matrix topic room and invite explicitly allowed Matrix users or agents.",
+    parameters: Type.Object({
+      name: Type.String({ description: "Room name" }),
+      topic: Type.Optional(Type.String({ description: "Optional room topic" })),
+      inviteUserIds: Type.Array(Type.String({ description: "Full Matrix user IDs to invite" })),
+    }),
+    async execute(_id: string, params: { name?: string; topic?: string; inviteUserIds?: string[] }) {
+      const name = params.name?.trim();
+      const inviteUserIds = [...new Set((params.inviteUserIds ?? []).map((userId) => userId.trim()).filter(Boolean))];
+      if (!name) throw new Error("name is required");
+      if (!token) throw new Error("Matrix is not connected");
+      if (!inviteUserIds.every((userId) => allowedInviteUsers.has(userId))) {
+        throw new Error("One or more invited Matrix users are not on the configured allowlist");
+      }
+      const room = await api("/_matrix/client/v3/createRoom", {
+        method: "POST",
+        body: JSON.stringify({
+          invite: inviteUserIds,
+          is_direct: false,
+          name,
+          preset: "private_chat",
+          ...(params.topic?.trim() ? { topic: params.topic.trim() } : {}),
+        }),
+      });
+      return {
+        content: [{ type: "text", text: `Created private Matrix room ${room.room_id}.` }],
+        details: { roomId: room.room_id, invitedUserIds: inviteUserIds },
+      };
+    },
+  });
+
+  pi.registerTool({
+    name: "matrix_archive_room",
+    label: "Archive Matrix room",
+    description: "Archive a private Matrix room by sending an agent-written notice and ignoring future messages. This does not purge server history.",
+    parameters: Type.Object({
+      notice: Type.String({ description: "Natural-language notice to send before leaving" }),
+      roomId: Type.Optional(Type.String({ description: "Room to archive; defaults to the current Matrix room" })),
+    }),
+    async execute(_id: string, params: { notice?: string; roomId?: string }) {
+      const destination = params.roomId?.trim() || active?.roomId;
+      const notice = params.notice?.trim();
+      if (!destination) throw new Error("No Matrix room to archive");
+      if (!notice) throw new Error("notice is required");
+      if (!token || !ownUserId) throw new Error("Matrix is not connected");
+      const members = await api(`/_matrix/client/v3/rooms/${encodeURIComponent(destination)}/joined_members`);
+      const memberIds = Object.keys(members.joined ?? {});
+      if (!memberIds.includes(ownUserId)) throw new Error("This agent is not a member of that Matrix room");
+      await sendMessage(destination, notice);
+      await stopTyping();
+      archivedRooms.add(destination);
+      await saveArchivedRooms();
+      if (active?.roomId === destination) active = undefined;
+      return { content: [], details: { roomId: destination, archived: true } };
+    },
+  });
+
+  pi.registerTool({
     name: "matrix_send_message",
     label: "Send Matrix message",
-    description: "Send a concise message to a direct Matrix room. Pass roomId from the originating Matrix prompt for scheduled messages.",
+    description: "Send a concise message to a private Matrix room. Pass roomId from the originating Matrix prompt for scheduled messages.",
     parameters: Type.Object({
+      replyToEventId: Type.Optional(Type.String({ description: "Optional event ID to use as the topic anchor" })),
       roomId: Type.Optional(Type.String({ description: "The originating Matrix room_id; required for scheduled messages" })),
       text: Type.String({ description: "The message to send" }),
     }),
-    async execute(_id: string, params: { roomId?: string; text?: string }) {
+    async execute(_id: string, params: { replyToEventId?: string; roomId?: string; text?: string }) {
       const text = params.text?.trim();
       if (!text) throw new Error("text is required");
       const destination = params.roomId?.trim() || active?.roomId;
       if (!destination) throw new Error("No active Matrix room; scheduled messages must provide roomId");
       const members = await api(`/_matrix/client/v3/rooms/${encodeURIComponent(destination)}/joined_members`);
       const memberIds = Object.keys(members.joined ?? {});
-      if (!ownUserId || memberIds.length !== 2 || !memberIds.includes(ownUserId)) {
-        throw new Error("Messages may only be sent to direct rooms with exactly two joined members");
+      if (!ownUserId || memberIds.length < 2 || !memberIds.includes(ownUserId)) {
+        throw new Error("Messages may only be sent to private Matrix rooms where this agent is a member");
       }
-      const replyTo = active?.roomId === destination ? active.eventId : undefined;
-      await sendMessage(destination, text, replyTo);
+      await sendMessage(destination, text, params.replyToEventId?.trim() || undefined);
       return { content: [{ type: "text", text: "Matrix message sent." }], details: undefined };
     },
   });
@@ -246,7 +398,7 @@ export function createMatrixExtension(pi: ExtensionAPI, Type: any, dependencies 
     const turn = active;
     const text = extractFinalAssistantText(event.messages);
     try {
-      if (text) await sendMessage(turn.roomId, text, turn.eventId);
+      if (text) await sendMessage(turn.roomId, text);
     } finally {
       active = undefined;
       processQueue();

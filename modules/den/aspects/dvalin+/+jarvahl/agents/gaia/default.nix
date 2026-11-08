@@ -6,12 +6,15 @@
       (den.aspects.agent {
         name = "gaia";
         rules = ./AGENTS.md;
-        matrix = true;
+        extensions =
+          { self', ... }:
+          [ "${self'.packages.pi-matrix-synapse}/pi-matrix-synapse/index.ts" ];
         settings = {
           defaultModel = "gpt-6-luna";
           defaultProvider = "openai";
         };
         environment = {
+          MATRIX_ALLOWED_INVITE_USERS = "@jarvahl:matrix.tailbf412b.ts.net,@nixos:matrix.tailbf412b.ts.net";
           MATRIX_HOMESERVER = "https://matrix.tailbf412b.ts.net";
           PI_MEMORY_EXIT_SUMMARY = "1";
           PI_MEMORY_EXIT_SUMMARY_TIMEOUT_MS = "30000";
@@ -23,6 +26,11 @@
           requires = [ "sops-nix.service" ];
           serviceConfig.TimeoutStopSec = "60s";
         };
+      })
+      (den.aspects.matrix.user {
+        avatar = ./avatar.jpeg;
+        displayName = "Gaia · AI";
+        name = "gaia";
       })
     ];
   };

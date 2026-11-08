@@ -42,7 +42,7 @@
               "${pi-loop}/pi-loop/index.ts"
             ]
             ++ lib.optional matrix "${pi-matrix-synapse}/pi-matrix-synapse/index.ts"
-            ++ extensions;
+            ++ (if lib.isFunction extensions then extensions { inherit self'; } else extensions);
           skills =
             { self', ... }:
             with self'.packages;

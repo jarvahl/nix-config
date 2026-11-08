@@ -1,7 +1,8 @@
 tailscale:
     api:
         key: ENC[AES256_GCM,data:kOFi+ZxzbklgKuavan1D7JmYj4MVtmhnXF3abznzVml/pod7AVBnazXXupZ72Cp1YLCODbpjR8HtStX+,iv:l8GVeSk9GAEnI5piyrWLFCjaKf3VsFnHPkuRyH2zQmw=,tag:nLXTgaOov8J+soqb7mb9LQ==,type:str]
-tf_var_matrix_registration_shared_secret: ENC[AES256_GCM,data:vBiw7erD0E/awVZP2nesLyj7UkeMZBsBn4jnOLm+KOaPncprN5z6GixK10LJ8H/7cMPp/TN50diSVBYNLTXMWQ==,iv:Qs/bBHzk83zGdWglFpkm+Ruz9OVh2ujMhwwLEZFMM4k=,tag:7o0SQKoxq+FqdcT187Lafg==,type:str]
+matrix:
+    admin_password: ENC[AES256_GCM,data:VjbcBozJTtV4wRcCfCXlOvloC7R0Z5qhqFhzuhZgSItf0RIoBPeB++k7GIW47nYoDa0W7h85DbeOZkVXdSHGuw==,iv:8OHGJthaua3qoKtkrkFqQHFusqXHIah75OpUj0+gs0w=,tag:3ChlG/QKcEUyS3bwcSuPjw==,type:str]
 sops:
     age:
         - enc: |
@@ -13,7 +14,7 @@ sops:
             rp+4WGLJOKN+iV7RDN8p5Fkjg9CbW+B3qnosAUqAQfyKYr8PMHzSKA==
             -----END AGE ENCRYPTED FILE-----
           recipient: age17dkg84wglz4nq2523fayp528qr82njr2znlwc6fvdhzy8k3pg3gsusgx2q
-    lastmodified: "2026-11-07T11:55:38Z"
-    mac: ENC[AES256_GCM,data:bAD5ZxVSnF7hZnJdaJRLfviwUdndJvzzM9jR7bht7oAfCySHtFzj9HBV8qEl4+98AwggWQUP+WF9oNC0rBxzB2pzJzPOjIsbUbP0Voi9Heq2K4Iscqdpj2G8mzzX96kjT7p5/5kgOSnWBiIPnFQ/5FxAW/NhJnFdKtF9l0MPkIc=,iv:Ja82l65wiS3Ot7e4LScvViF+b4KDyYKs+QQIZH3vcNc=,tag:GyinwCXCBAc2yLRJhufXNg==,type:str]
+    lastmodified: "2026-11-08T00:31:38Z"
+    mac: ENC[AES256_GCM,data:sr/CVtarBaUS5vVDWbCvp1aYJXrN9y2LaW4eNeLSB9wGgisBm5h3GFi/p20RXwWPuxFNtgKy051H5WQ1mUxFPznfpS+E8AJsAhtkLK9nEnwGieSA7tLehwGwq91AfQDvHQTB4hrnRvDf05axUVlkHXOpnsJVxVjgZ8ikvPwGWlc=,iv:daCagFeBLVTbcXWUw5OvKQIvqjP4seicXmAtaMtsRHQ=,tag:xupozUEZZAEqSlgbWu8zGQ==,type:str]
     unencrypted_suffix: _unencrypted
     version: 3.13.3

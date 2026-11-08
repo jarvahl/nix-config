@@ -143,27 +143,7 @@ lib.mkMerge [
               linger
             ])
             ++ (with den.aspects.sops; [
-              (secret { name = "gaia/matrix/password"; } { hjem = { }; })
-              (secret { name = "gaia/matrix/user_id"; } { hjem = { }; })
-              (secret {
-                name = "matrix/password";
-              } { hjem = { }; })
-              (secret { name = "matrix/user_id"; } { hjem = { }; })
-              (template
-                {
-                  content = secrets: ''
-                    MATRIX_PASSWORD="${secrets."gaia/matrix/password"}"
-                    MATRIX_USER_ID="${secrets."gaia/matrix/user_id"}"
-                  '';
-                  mode = "0400";
-                  name = "gaia-matrix-environment";
-                }
-                {
-                  hjem = { path, ... }: {
-                    systemd.services.gaia.serviceConfig.EnvironmentFile = path;
-                  };
-                }
-              )
+
             ]);
 
           provides.to-hosts =
