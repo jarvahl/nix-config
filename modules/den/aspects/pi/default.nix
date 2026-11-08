@@ -45,7 +45,8 @@
                         with self'.packages;
                         [
                           "${pi-core-skill-tool}/pi-core-skill-tool/index.ts"
-                          "${pi-memory}/pi-memory/index.ts"
+                          "${pi-memory}/pi-memory/dist/extensions/memory/index.js"
+                          "${pi-memory}/pi-memory/dist/extensions/skill-evolution/index.js"
                           "${pi-self-compact}/pi-self-compact/index.ts"
                           "${pi-web-access}/pi-web-access/index.ts"
                           "${pi-session}/pi-session/index.ts"
@@ -58,7 +59,7 @@
                       // (if environment == null then { } else resolve environment);
                       rules = resolve rules;
                       settings = resolve settings;
-                      skills = resolve skills;
+                      skills = with self'.packages; [ "${pi-memory}/pi-memory/skills" ] ++ resolve skills;
                     };
                   }
                 ];

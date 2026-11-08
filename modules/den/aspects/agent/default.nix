@@ -36,7 +36,7 @@
             { self', ... }:
             with self'.packages;
             [
-              "${./agent/pi-idle-new-session.ts}"
+              "${./pi-idle-new-session.ts}"
               "${pi-browser-use}/pi-browser-use/dist/index.js"
               "${pi-idle-session}/pi-idle-session/index.ts"
               "${pi-loop}/pi-loop/index.ts"
@@ -92,9 +92,6 @@
             trap shutdown TERM INT
             wait "$pi_pid"
           '';
-          sessionDirectory = "${dataDirectory}/pi/sessions/--${
-            lib.replaceStrings [ "/" ":" ] [ "-" "-" ] (lib.removePrefix "/" dataDirectory)
-          }--";
         in
         {
           files.".local/share/agents/${name}/.keep".text = "";
@@ -102,10 +99,8 @@
           systemd.services.${name} = lib.mkMerge [
             {
               environment = environment // {
-                PI_CODING_AGENT_DIR = "${dataDirectory}/pi";
-                PI_MEMORY_DIR = "${dataDirectory}/memory";
-                PI_MEMORY_SESSIONS_DIR = sessionDirectory;
                 PATH = lib.mkForce (
+
                   lib.concatStringsSep ":" [
                     "/etc/profiles/per-user/${config.user}/bin"
                     (lib.makeBinPath [
@@ -118,11 +113,13 @@
                     ])
                   ]
                 );
+                PI_CODING_AGENT_DIR = "${dataDirectory}/pi";
+                PI_MIND_DIR = "${dataDirectory}/memory";
               };
 
               serviceConfig = {
                 ExecStartPre = [
-                  "${pkgs.coreutils}/bin/mkdir -p ${dataDirectory} ${sessionDirectory}"
+                  "${pkgs.coreutils}/bin/mkdir -p ${dataDirectory} ${dataDirectory}/pi"
                   "${pkgs.coreutils}/bin/rm -f ${dataDirectory}/pi/rpc.stdin"
                   "${pkgs.coreutils}/bin/mkfifo -m 600 ${dataDirectory}/pi/rpc.stdin"
                   browserCleanupScript

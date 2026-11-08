@@ -1,20 +1,38 @@
-{ fetchFromGitHub, stdenvNoCC }:
+{
+  buildNpmPackage,
+  fetchurl,
+  lib,
+}:
 
-stdenvNoCC.mkDerivation {
-  dontBuild = true;
+buildNpmPackage {
+  pname = "pi-memory";
+  version = "0.15.1";
 
-  installPhase = ''
-    mkdir -p "$out/pi-memory"
-    cp index.ts "$out/pi-memory/"
+  src = fetchurl {
+    hash = "sha256-l2aItlHXaJezRac/+ejJx674097UwV7kHLS5vHrMjWo=";
+    url = "https://registry.npmjs.org/@shog-lab/pi-memory/-/pi-memory-0.15.1.tgz";
+  };
+
+  sourceRoot = "package";
+  npmDepsHash = "sha256-L+/XiEJCRCWBdiGIqFeJsTiCEokBPb5K/FEgB/G7L4Q=";
+  dontNpmBuild = true;
+  npmFlags = [ "--legacy-peer-deps" ];
+
+  postPatch = ''
+    cp ${./package-lock.json} package-lock.json
   '';
 
-  pname = "pi-memory";
+  installPhase = ''
+    runHook preInstall
+    mkdir -p "$out/pi-memory"
+    cp -r dist skills package.json bin "$out/pi-memory/"
+    cp -r node_modules "$out/pi-memory/"
+    runHook postInstall
+  '';
 
-  src = fetchFromGitHub {
-    hash = "sha256-JHhR4Wwhq5VVEVSbjBBkui7T2dkcLvCzvX7PvWkN/2I=";
-    owner = "jayzeng";
-    repo = "pi-memory";
-    rev = "1e276a762a666a7031459fdf7af018cc7966663e";
+  meta = {
+    description = "Persistent, inspectable memory with hybrid retrieval and knowledge-graph triples for Pi";
+    homepage = "https://github.com/shog-lab/pi-mind";
+    license = lib.licenses.mit;
   };
-  version = "0.4.2";
 }

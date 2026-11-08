@@ -4,7 +4,7 @@ import { homedir } from "node:os";
 import { dirname, join } from "node:path";
 import { randomUUID } from "node:crypto";
 
-const instructions = "The [Matrix room_id=...] prefix is routing metadata; never mention or echo it. Preserve room_id for scheduled Matrix messages.";
+const instructions = "The trailing [Matrix event: ...] or [Matrix thread: ...] line is private routing metadata. Do not quote or echo it in replies.";
 
 export const normalizeHomeserver = (value: string) => {
   const trimmed = value.trim();
@@ -38,6 +38,13 @@ export const invitedRoomIds = (rooms: Record<string, any> | undefined, userId: s
 type MatrixMessage = {
   body: string;
   content?: Record<string, any>;
+};
+
+type MatrixPrompt = {
+  content: Array<Record<string, string>>;
+  eventId: string;
+  roomId: string;
+  threadRootId?: string;
 };
 
 type MatrixResponseContext = {
@@ -100,8 +107,9 @@ export function createMatrixExtension(pi: ExtensionAPI, Type: any, dependencies 
   const cursorFile = join(agentDir, "tmp", "matrix-sync-cursor");
   const archivedRoomsFile = join(agentDir, "tmp", "matrix-archived-rooms.json");
   const archivedRooms = new Set<string>();
+  const mediaDirectory = join(agentDir, "tmp", "matrix-media");
 
-  type ActiveTurn = { roomId: string; eventId: string };
+  type ActiveTurn = { eventId: string; roomId: string; threadRootId?: string };
   let token: string | undefined;
   let ownUserId = userId;
   let active: ActiveTurn | undefined;
@@ -110,7 +118,7 @@ export function createMatrixExtension(pi: ExtensionAPI, Type: any, dependencies 
   let typingTimer: ReturnType<typeof setInterval> | undefined;
   let stopping = false;
   let loop: Promise<void> | undefined;
-  const queue: Array<{ roomId: string; eventId: string; prompt: string }> = [];
+  const queue: MatrixPrompt[] = [];
 
   const api = async (path: string, init: RequestInit = {}) => {
     if (!homeserverValue) throw new Error("MATRIX_HOMESERVER is not configured");
@@ -142,6 +150,25 @@ export function createMatrixExtension(pi: ExtensionAPI, Type: any, dependencies 
     await writeFile(archivedRoomsFile, JSON.stringify([...archivedRooms], null, 2), { mode: 0o600 });
   };
 
+  const downloadMedia = async (mxc: string, fileName: string, mimeType: string) => {
+    if (!token || !homeserverValue || !mxc.startsWith("mxc://")) throw new Error("Invalid Matrix media URL");
+    const [server, ...mediaParts] = mxc.slice("mxc://".length).split("/");
+    const mediaId = mediaParts.join("/");
+    if (!server || !mediaId) throw new Error("Invalid Matrix media URL");
+    const response = await dependencies.fetch(
+      `${normalizeHomeserver(homeserverValue)}/_matrix/client/v1/media/download/${encodeURIComponent(server)}/${encodeURIComponent(mediaId)}`,
+      { headers: { authorization: `Bearer ${token}` } },
+    );
+    if (!response.ok) throw new Error(`Matrix media download failed (${response.status})`);
+    const bytes = new Uint8Array(await response.arrayBuffer());
+    if (bytes.byteLength > 10 * 1024 * 1024) throw new Error("Matrix media exceeds the 10 MiB limit");
+    await mkdir(mediaDirectory, { recursive: true, mode: 0o700 });
+    const safeName = fileName.replace(/[^a-zA-Z0-9._-]/g, "_") || "attachment";
+    const path = join(mediaDirectory, `${randomUUID()}-${safeName}`);
+    await writeFile(path, bytes, { mode: 0o600 });
+    return { path, data: Buffer.from(bytes).toString("base64"), mimeType };
+  };
+
   const updateTyping = async (roomId: string, typing: boolean) => {
     if (!token || !ownUserId) return;
     try {
@@ -170,11 +197,33 @@ export function createMatrixExtension(pi: ExtensionAPI, Type: any, dependencies 
     typingTimer = setInterval(() => void updateTyping(roomId, true), 15000);
   };
 
-  const sendMessage = async (roomId: string, text: string, replyTo?: string) => {
+  const uploadMedia = async (filePath: string, mimeType: string) => {
+    if (!token || !homeserverValue) throw new Error("Matrix is not connected");
+    const data = await readFile(filePath);
+    if (data.byteLength > 10 * 1024 * 1024) throw new Error("Matrix media exceeds the 10 MiB limit");
+    const fileName = filePath.split("/").pop() || "attachment";
+    const response = await dependencies.fetch(
+      `${normalizeHomeserver(homeserverValue)}/_matrix/media/v3/upload?filename=${encodeURIComponent(fileName)}`,
+      { method: "POST", headers: { authorization: `Bearer ${token}`, "content-type": mimeType }, body: data },
+    );
+    const result = await response.json().catch(() => ({}));
+    if (!response.ok || typeof result.content_uri !== "string") {
+      throw new Error(`Matrix media upload failed (${response.status})`);
+    }
+    return { contentUri: result.content_uri, fileName, size: data.byteLength };
+  };
+
+  const sendMessage = async (roomId: string, text: string, replyTo?: string, threadRootId?: string) => {
     if (!token) throw new Error("Matrix is not connected");
     const txnId = randomUUID();
     const content: Record<string, unknown> = { msgtype: "m.text", body: text };
-    if (replyTo) {
+    if (threadRootId) {
+      content["m.relates_to"] = {
+        event_id: threadRootId,
+        rel_type: "m.thread",
+        ...(replyTo ? { "m.in_reply_to": { event_id: replyTo } } : {}),
+      };
+    } else if (replyTo) {
       content["m.relates_to"] = { "m.in_reply_to": { event_id: replyTo } };
     }
     return api(matrixPath(roomId, `send/m.room.message/${txnId}`), {
@@ -192,13 +241,16 @@ export function createMatrixExtension(pi: ExtensionAPI, Type: any, dependencies 
 
   const processEvent = async (roomId: string, event: any) => {
     if (event.type !== "m.room.message" || event.sender === ownUserId || archivedRooms.has(roomId)) return;
-    if (event.content?.msgtype !== "m.text" || typeof event.content?.body !== "string") return;
+    const msgtype = event.content?.msgtype;
+    if (!["m.text", "m.image", "m.file"].includes(msgtype)) return;
+    if (typeof event.content?.body !== "string") event.content.body = "";
     const members = await api(`/_matrix/client/v3/rooms/${encodeURIComponent(roomId)}/joined_members`);
     const memberIds = Object.keys(members.joined ?? {});
     if (memberIds.length < 2 || !memberIds.includes(ownUserId!) || !memberIds.includes(event.sender)) return;
-    const body = event.content.body.trim();
-    if (!body) return;
-    const replyTo = event.content?.["m.relates_to"]?.["m.in_reply_to"]?.event_id;
+    const body = event.content.body.trim() || `[Matrix ${msgtype === "m.image" ? "image" : "file"}]`;
+    const relatesTo = event.content?.["m.relates_to"] ?? {};
+    const threadRootId = relatesTo.rel_type === "m.thread" ? relatesTo.event_id : undefined;
+    const replyTo = relatesTo["m.in_reply_to"]?.event_id || threadRootId;
     let isReplyToAgent = false;
     if (replyTo) {
       try {
@@ -216,15 +268,33 @@ export function createMatrixExtension(pi: ExtensionAPI, Type: any, dependencies 
       isReplyToAgent,
       memberIds,
     })) return;
-    queue.push({ roomId, eventId: event.event_id, prompt: `[Matrix room_id=${roomId}] ${body}` });
+    const threadHint = threadRootId
+      ? `\n[Matrix thread: room_id=${roomId}; event_id=${event.event_id}; thread_root_id=${threadRootId}]`
+      : `\n[Matrix event: room_id=${roomId}; event_id=${event.event_id}]`;
+    const content: Array<Record<string, string>> = [{ type: "text", text: `${body}${threadHint}` }];
+    const mediaUrl = event.content.url;
+    if (typeof mediaUrl === "string") {
+      try {
+        const mimeType = event.content.info?.mimetype || (msgtype === "m.image" ? "image/*" : "application/octet-stream");
+        const attachment = await downloadMedia(mediaUrl, event.content.body || "attachment", mimeType);
+        if (msgtype === "m.image" && mimeType.startsWith("image/")) {
+          content.push({ type: "image", data: attachment.data, mimeType: attachment.mimeType });
+        } else {
+          content[0].text += `\nAttachment saved at: ${attachment.path}`;
+        }
+      } catch (error) {
+        content[0].text += `\nAttachment unavailable: ${error instanceof Error ? error.message : String(error)}`;
+      }
+    }
+    queue.push({ content, eventId: event.event_id, roomId, threadRootId });
     processQueue();
   };
 
   const processQueue = () => {
     if (active || queue.length === 0) return;
     const next = queue.shift()!;
-    active = { roomId: next.roomId, eventId: next.eventId };
-    pi.sendUserMessage([{ type: "text", text: next.prompt }], { deliverAs: "followUp" });
+    active = { eventId: next.eventId, roomId: next.roomId, threadRootId: next.threadRootId };
+    pi.sendUserMessage(next.content, { deliverAs: "followUp" });
   };
 
   const syncLoop = async () => {
@@ -340,17 +410,52 @@ export function createMatrixExtension(pi: ExtensionAPI, Type: any, dependencies 
   });
 
   pi.registerTool({
+    name: "matrix_get_message",
+    label: "Get Matrix message",
+    description: "Fetch a specific Matrix event by room_id and event_id, including its media attachment when available.",
+    parameters: Type.Object({
+      eventId: Type.String({ description: "Matrix event ID" }),
+      roomId: Type.String({ description: "Matrix room ID" }),
+    }),
+    async execute(_id: string, params: { eventId?: string; roomId?: string }) {
+      const eventId = params.eventId?.trim();
+      const roomId = params.roomId?.trim();
+      if (!eventId || !roomId) throw new Error("roomId and eventId are required");
+      const event = await api(`/_matrix/client/v3/rooms/${encodeURIComponent(roomId)}/event/${encodeURIComponent(eventId)}`);
+      const eventContent = event.content ?? {};
+      const body = typeof eventContent.body === "string" ? eventContent.body : "";
+      const content: Array<Record<string, string>> = [{ type: "text", text: body }];
+      if (typeof eventContent.url === "string") {
+        const mimeType = eventContent.info?.mimetype || "application/octet-stream";
+        const media = await downloadMedia(eventContent.url, body || "attachment", mimeType);
+        if (eventContent.msgtype === "m.image" && mimeType.startsWith("image/")) {
+          content.push({ type: "image", data: media.data, mimeType });
+        } else {
+          content[0].text += `\nAttachment saved at: ${media.path}`;
+        }
+      }
+      return { content, details: { roomId, eventId, sender: event.sender } };
+    },
+  });
+
+  pi.registerTool({
     name: "matrix_send_message",
     label: "Send Matrix message",
-    description: "Send a concise message to a private Matrix room. Pass roomId from the originating Matrix prompt for scheduled messages.",
+    description: "Send a text message or upload a file/image to a private Matrix room. Pass roomId from the originating Matrix prompt for scheduled messages.",
     parameters: Type.Object({
+      filePath: Type.Optional(Type.String({ description: "Local path of an optional file or image to upload" })),
+      mimeType: Type.Optional(Type.String({ description: "MIME type for filePath, for example image/png" })),
       replyToEventId: Type.Optional(Type.String({ description: "Optional event ID to use as the topic anchor" })),
       roomId: Type.Optional(Type.String({ description: "The originating Matrix room_id; required for scheduled messages" })),
-      text: Type.String({ description: "The message to send" }),
+      threadRootId: Type.Optional(Type.String({ description: "Optional thread root event ID" })),
+      text: Type.Optional(Type.String({ description: "Optional message text or media caption" })),
     }),
-    async execute(_id: string, params: { replyToEventId?: string; roomId?: string; text?: string }) {
-      const text = params.text?.trim();
-      if (!text) throw new Error("text is required");
+    async execute(_id: string, params: { filePath?: string; mimeType?: string; replyToEventId?: string; roomId?: string; text?: string; threadRootId?: string }) {
+      const text = params.text?.trim() ?? "";
+      const filePath = params.filePath?.trim();
+      const mimeType = params.mimeType?.trim();
+      if (!text && !filePath) throw new Error("text or filePath is required");
+      if (filePath && !mimeType) throw new Error("mimeType is required with filePath");
       const destination = params.roomId?.trim() || active?.roomId;
       if (!destination) throw new Error("No active Matrix room; scheduled messages must provide roomId");
       const members = await api(`/_matrix/client/v3/rooms/${encodeURIComponent(destination)}/joined_members`);
@@ -358,8 +463,36 @@ export function createMatrixExtension(pi: ExtensionAPI, Type: any, dependencies 
       if (!ownUserId || memberIds.length < 2 || !memberIds.includes(ownUserId)) {
         throw new Error("Messages may only be sent to private Matrix rooms where this agent is a member");
       }
-      await sendMessage(destination, text, params.replyToEventId?.trim() || undefined);
-      return { content: [{ type: "text", text: "Matrix message sent." }], details: undefined };
+      if (filePath) {
+        const media = await uploadMedia(filePath, mimeType!);
+        const msgtype = mimeType!.startsWith("image/") ? "m.image" : "m.file";
+        await api(matrixPath(destination, `send/${msgtype}/${randomUUID()}`), {
+          method: "PUT",
+          body: JSON.stringify({
+            body: media.fileName,
+            filename: media.fileName,
+            info: { mimetype: mimeType, size: media.size },
+            msgtype,
+            url: media.contentUri,
+            ...(params.threadRootId?.trim() ? {
+              "m.relates_to": {
+                event_id: params.threadRootId.trim(),
+                rel_type: "m.thread",
+                ...(params.replyToEventId?.trim() ? { "m.in_reply_to": { event_id: params.replyToEventId.trim() } } : {}),
+              },
+            } : params.replyToEventId?.trim() ? { "m.relates_to": { "m.in_reply_to": { event_id: params.replyToEventId.trim() } } } : {}),
+            ...(text ? { caption: text } : {}),
+          }),
+        });
+        return { content: [], details: { roomId: destination, contentUri: media.contentUri } };
+      }
+      await sendMessage(
+        destination,
+        text,
+        params.replyToEventId?.trim() || undefined,
+        params.threadRootId?.trim() || active?.threadRootId,
+      );
+      return { content: [], details: undefined };
     },
   });
 
@@ -398,7 +531,7 @@ export function createMatrixExtension(pi: ExtensionAPI, Type: any, dependencies 
     const turn = active;
     const text = extractFinalAssistantText(event.messages);
     try {
-      if (text) await sendMessage(turn.roomId, text);
+      if (text) await sendMessage(turn.roomId, text, turn.eventId, turn.threadRootId);
     } finally {
       active = undefined;
       processQueue();
