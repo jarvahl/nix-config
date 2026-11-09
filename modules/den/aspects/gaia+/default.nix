@@ -92,7 +92,7 @@ lib.mkMerge [
 
               # accounts
               gh
-              gitlab
+              glab
             ])
             ++ (with den.batteries; [
               # batteries
