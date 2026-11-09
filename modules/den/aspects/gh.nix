@@ -14,16 +14,16 @@ lib.mkMerge [
       hjem =
         { config, ... }:
         {
-          sops.secrets."ssh/identity" = {
+          sops.secrets."github/ssh_key" = {
             mode = "0600";
-            path = "${config.home.homeDirectory}/.ssh/id_ed25519";
+            path = "${config.home.homeDirectory}/.ssh/id_ed25519_github";
           };
 
           files.".ssh/config.d/github".text = ''
             Host github.com
               HostName github.com
               User git
-              IdentityFile ${config.sops.secrets."ssh/identity".path}
+              IdentityFile ${config.sops.secrets."github/ssh_key".path}
               IdentitiesOnly yes
           '';
         };

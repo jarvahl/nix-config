@@ -264,8 +264,7 @@ lib.mkMerge [
 
           Related declarations may be nested in an application's callable `includes`.
           Keep shared source and identity settings on the enclosing user entity.
-          See `${checkedPath ./den/aspects/dvalin+/default.nix}` for OpenClaw and
-          `${checkedPath ./den/aspects/github.nix}` for wiring a consumer in the second argument.
+          See `${checkedPath ./den/aspects/dvalin+/default.nix}` for OpenClaw.
 
           ## Host secrets
 
@@ -312,7 +311,6 @@ lib.mkMerge [
 
           The template example is an alternative consumer, not required for OpenClaw.
           Templates retain native SOPS path semantics; use an absolute custom `path`.
-          See `${checkedPath ./den/aspects/gitlab.nix}` for a template consumer.
 
           ## Checks and safety
 

@@ -55,8 +55,7 @@ ensure the host's encrypted file contains it.
 
 Related declarations may be nested in an application's callable `includes`.
 Keep shared source and identity settings on the enclosing user entity.
-See `modules/den/aspects/dvalin+/default.nix` for OpenClaw and
-`modules/den/aspects/github.nix` for wiring a consumer in the second argument.
+See `modules/den/aspects/dvalin+/default.nix` for OpenClaw.
 
 ## Host secrets
 
@@ -103,7 +102,6 @@ includes = with den.aspects.sops; [
 
 The template example is an alternative consumer, not required for OpenClaw.
 Templates retain native SOPS path semantics; use an absolute custom `path`.
-See `modules/den/aspects/gitlab.nix` for a template consumer.
 
 ## Checks and safety
 

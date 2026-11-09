@@ -52,22 +52,13 @@
   {
     agent-files.skills.den = {
       description = "Use when editing Den aspects, host includes, namespaces, or callable aspects in modules/den/**; not for unrelated NixOS configuration.";
-      instructions = { references, ... }: ''
+      instructions = ''
         # Den
 
         Use this skill before editing `modules/den/**`.
 
-        ## Routing
-
-        | Task | Read |
-        | --- | --- |
-        | Editing or creating Den aspects | `${references.aspects}` |
-        | Working with callable aspects / parametric aspect args | `${references.callable-aspects}` |
-        | Selecting child aspects from a parent namespace | `${references.callable-aspects}` |
-        | Deciding whether something should be standalone or a child aspect | `${references.aspects}`, then `${references.callable-aspects}` |
-        | Unsure | Start with `${references.aspects}` |
-
-        Keep this file light. Detailed rules live in `references/`.
+        Keep Den aspect definitions under `modules/den/aspects/` and read the
+        surrounding modules before changing host/user includes or callable aspects.
       '';
     };
   }

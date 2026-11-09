@@ -38,6 +38,11 @@ creation_rules:
   path_regex: modules/den/aspects/gaia\+/user-nixos\.sops\.yaml$
 - key_groups:
   - age:
+    - age1l0qjp2htt794ugmkwyuxlttxzskmk0d9yrxtr2ru75707k5djd6smpgntq
+    - age17dkg84wglz4nq2523fayp528qr82njr2znlwc6fvdhzy8k3pg3gsusgx2q
+  path_regex: modules/den/aspects/gaia\+/user-jarvahl\.sops\.yaml$
+- key_groups:
+  - age:
     - age1dtpml670fkfe63gnrc5qn29aye00h3al2yhrte88m9q58rszsatqjpxskz
     - age17dkg84wglz4nq2523fayp528qr82njr2znlwc6fvdhzy8k3pg3gsusgx2q
   path_regex: modules/den/aspects/dvalin\+/host\.sops\.yaml$
@@ -61,3 +66,8 @@ creation_rules:
     - age1d3qae5nevuu0vrt33ehjck00tyt6ym23gdjf9r5fatxaplh6yg6szgzeqx
     - age17dkg84wglz4nq2523fayp528qr82njr2znlwc6fvdhzy8k3pg3gsusgx2q
   path_regex: modules/den/aspects/cargo\+/user-nixos\.sops\.yaml$
+- key_groups:
+  - age:
+    - age13wj39r09ax4j0ekzhqx9h7ha0e2k20j45262ydcsx2az0qatlcesxp6230
+    - age17dkg84wglz4nq2523fayp528qr82njr2znlwc6fvdhzy8k3pg3gsusgx2q
+  path_regex: modules/den/aspects/cargo\+/user-jarvahl\.sops\.yaml$
