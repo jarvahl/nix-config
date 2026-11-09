@@ -1,112 +1,34 @@
-{ checkedPath, lib, ... }:
-lib.mkMerge [
-  { }
-  {
-    agent-files.skills.den.references = {
-      aspects = {
-        description = "Den aspects";
-        text = ''
-          # Den aspects
+{ den, lib, ... }:
+let
+  inherit (builtins) hasAttr;
+  inherit (den.lib) policy;
+  inherit (lib)
+    concatLists
+    filterAttrs
+    isAttrs
+    mapAttrsToList
+    ;
 
-          This repo keeps reusable Den behavior under:
+  isAspectExtension = name: value: hasAttr name den.aspects && isAttrs value;
 
-          ```text
-          ${checkedPath ./.}/
-          ```
+  extensionsOf = parent: parent |> filterAttrs isAspectExtension;
 
-          `import-tree` merges files recursively. Do not manually import sibling aspect files.
+  includeWhenActive =
+    parent: extensionName: extension:
+    policy.when (
+      { hasAspect, ... }:
+      hasAspect parent && hasAspect den.aspects.${extensionName}
+    ) (policy.include extension);
 
-          ## Conventions
+  extensionPoliciesFor =
+    parent:
+    extensionsOf parent
+    |> mapAttrsToList (extensionName: extension: includeWhenActive parent extensionName extension);
 
-          Host includes should read declaratively:
-
-          ```nix
-          includes = with den.aspects; [
-            ssh
-
-            (hyperland hyperland.autologin)
-          ];
-          ```
-
-          Prefer names that say what happens:
-
-          ```nix
-          sops.secret
-          sops.template
-          ssh
-          ```
-
-          Avoid vague helpers and compatibility aliases unless there is a real external caller.
-        '';
-      };
-
-      callable-aspects = {
-        description = "Callable aspects";
-        text = ''
-          # Callable aspects
-
-          ## General rule
-
-          Den aspects can be called with an attrset:
-
-          ```nix
-          (aspect { arg = value; })
-          ```
-
-          Native Den calls pass that attrset as context for parametric entries.
-          The repository's `den.lib.callable` helper instead takes an additional aspect;
-          it does not forward the argument as descendant context.
-
-          ## Pattern
-
-          ```nix
-          den.aspects.parent = den.lib.callable {
-            # base aspect config...
-          };
-          ```
-
-          Child feature in another file:
-
-          ```nix
-          den.aspects.parent.child.nixos = { ... }: {
-            # child feature config
-          };
-          ```
-
-          Pass a single child aspect directly:
-
-          ```nix
-          (parent parent.child)
-          ```
-
-          To group several aspects, pass an anonymous aspect with `includes`:
-
-          ```nix
-          (parent {
-            includes = with parent; [
-              child
-            ];
-          })
-          ```
-
-          The functor appends `[ extraAspect ]` to the parent's base `includes`, preserving both.
-          The argument may also define `nixos` or `hjem` configuration directly.
-          Den resolves it as an aspect, not as call parameters.
-
-          Do not implement this with a parametric include that reads `includes` from context:
-          nested callable aspects can inherit the parent's list and recursively include themselves.
-          Keep normal host/user context resolution in Den's parametric entries.
-
-          An anonymous aspect can group related aspects, such as a service and its SOPS secret.
-          `sops.secret params modules` takes explicit class modules (`nixos`, `hjem`, or
-          `homeManager`); module functions receive `path` and `placeholder` alongside normal
-          arguments. `sops.template params modules` passes `path` to its module functions.
-          Both return plain aspects. Consumers are modules, not aspects: keep aspect-level
-          `includes` outside them. No additional callable wrapper is needed.
-          See `${checkedPath ./dvalin+/default.nix}`; the secret stays in the user's context.
-          Regression tests live in `flake.tests.callable` in `${checkedPath ../lib.nix}`.
-        '';
-      };
-    };
-  }
-]
+  aspectExtensionPolicies =
+    den.aspects |> mapAttrsToList (_parentName: parent: extensionPoliciesFor parent) |> concatLists;
+in
+{
+  den.schema.host.includes = aspectExtensionPolicies;
+  den.schema.user.includes = aspectExtensionPolicies;
+}
