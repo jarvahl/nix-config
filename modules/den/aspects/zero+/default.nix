@@ -174,7 +174,7 @@ lib.mkMerge [
             ])
             ++ (with den.aspects; [
               # accounts
-              github
+              gh
             ])
             ++ (with den.batteries; [
               # batteries

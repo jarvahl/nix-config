@@ -140,7 +140,7 @@ lib.mkMerge [
             (with den.aspects; [
               console
               development
-              github
+              gh
               linger
             ])
             ++ (with den.aspects.sops; [

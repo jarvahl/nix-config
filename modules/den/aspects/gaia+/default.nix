@@ -91,7 +91,7 @@ lib.mkMerge [
               development
 
               # accounts
-              github
+              gh
               gitlab
             ])
             ++ (with den.batteries; [
@@ -148,7 +148,7 @@ lib.mkMerge [
               clipboard
               console
               development
-              github
+              gh
             ])
             ++ (with den.batteries; [
               (user-shell "zsh")
