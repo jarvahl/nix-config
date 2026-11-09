@@ -55,7 +55,7 @@ ensure the host's encrypted file contains it.
 
 Related declarations may be nested in an application's callable `includes`.
 Keep shared source and identity settings on the enclosing user entity.
-See `modules/den/aspects/dvalin+/default.nix` for OpenClaw.
+See `modules/den/aspects/dvalin+/host.nix` for OpenClaw.
 
 ## Host secrets
 
@@ -66,7 +66,7 @@ Use an absolute secret destination; set `owner`, `group`, and `restartUnits`
 when the consuming service requires them. The default mode is `0600`.
 Consume the injected `path` inside the second argument's `nixos` module;
 user consumers belong in `hjem` modules instead.
-See the Tailscale secret in `modules/den/aspects/dvalin+/default.nix`.
+See the Tailscale secret in `modules/den/aspects/dvalin+/host.nix`.
 
 Declare login password hashes in each user's aspect through `provides.to-hosts`,
 using `secret` with `mode = "0400"`. They are decrypted from the host's SOPS file.

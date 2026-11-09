@@ -264,7 +264,7 @@ lib.mkMerge [
 
           Related declarations may be nested in an application's callable `includes`.
           Keep shared source and identity settings on the enclosing user entity.
-          See `${checkedPath ./den/aspects/dvalin+/default.nix}` for OpenClaw.
+          See `${checkedPath ./den/aspects/dvalin+/host.nix}` for OpenClaw.
 
           ## Host secrets
 
@@ -275,7 +275,7 @@ lib.mkMerge [
           when the consuming service requires them. The default mode is `0600`.
           Consume the injected `path` inside the second argument's `nixos` module;
           user consumers belong in `hjem` modules instead.
-          See the Tailscale secret in `${checkedPath ./den/aspects/dvalin+/default.nix}`.
+          See the Tailscale secret in `${checkedPath ./den/aspects/dvalin+/host.nix}`.
 
           Declare login password hashes in each user's aspect through `provides.to-hosts`,
           using `secret` with `mode = "0400"`. They are decrypted from the host's SOPS file.
