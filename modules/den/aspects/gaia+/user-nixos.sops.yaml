@@ -1,5 +1,5 @@
-github:
-    ssh-key: ENC[AES256_GCM,data:2JYreys0WBBzvYkQr1ksHKNZiwq1rPsFb2aWMkaNJ7dRZpmEnmmadXN89rkArx/FGVQG92XWaKAMvujam0nAPcJBYjHdWoVkoPx1uhAl6iFUlpoB38yeTgRyoFJXXH40oc2ciZYkuORBSozJDbbclY7hAr3lrqx08BiKqPJv1RseIjWMbkweeRiMiwUUeRrSxPukJvOFaFWuZGP6iWWFcmiYsihTdtYNc9Bz/cF4ZZIxRGvnuvDoxP5kucaHUuF1/DYLgkUv0tNfoDfYjZXEXkslBYt3JnNdO7mIDzzA55g3AqwfhdLC/PPgj7vLWBDnd6BI7eOyggdmWPb7wp4TlLScQpitGcpu1YIyFMS61yUWMGVYzhWer5Cxhzyn6tEZjPyoJwrMl509GLF42CVOBbaY+cjpotXJOH1gMpimtZPl0s1IP5rLtelKOV+quB74JAdUILpm/JwzQ4c67YU02IRmr/IsbvVHOOSTERma6Orl/+0pRuBCQ8iULSRbxIrV67PQUWece9ijMgrCYjIB,iv:9vR39so8Oepi2QM/h14fWgARalvIHY1VyrvtcNXWuMU=,tag:OELaYCm1ZnVFYl95c2mEZg==,type:str]
+ssh:
+    identity: ENC[AES256_GCM,data:poUKztG3mfmdXIhqMkPA0ClSR8WVwlvZNd1IsMVL5xYJfs2YoJ5ejUWqb0aOfOpr7SD337/8PgRwpwTzv20NQsFiS0uP7CFcjIWW4ZodnjJV8MFSXDoCjfUnI/eYtYiZY/VxndoC60ILr6976uRd+8B0whd1a7P1eAiULXP/buNRGp3tjDILVC7GhEPnodMIRzJLyNsYfYbltrFQxbiw4Dw4dHJO4dQI0y8ypPgXI+Ryrt9v9LqtEQ/LciGh+kCDwAZlq6EHL7RaFO3zvZjHTe8OO+Yg0beP++LMboW6Y+gzFAFvn4ZHB4tC3VS1pMjtyOPrNDeQHiQ/7jv23EOQY2EEqs40WMW80k9NZRlViqUkOP3i+DL7wPZjaThpX3pq8OcXJJk7IF3ssxH5Ws37OIPbg7yb3ydPD4Yvi0c1xMSws2PNjtIP9VWzHiMl/WiBl8/RWUmriiqCl+iHOAFBaGX3nNLw6z/W5wcCINvQXWaemE4U5cUvca3DDrowS3jX11Ffd3Gtl/Tmk4ys/co=,iv:qNFyAcIvE7RV5FPKzQkYFTztjP1ERWFM1k5GxT6LL2E=,tag:BTtS/WuI6AxKQy15cwdKkw==,type:str]
 sops:
     age:
         - enc: |
@@ -20,7 +20,7 @@ sops:
             KwlidL1D4wuDF8F3O+O+n9h+m4/+4erhvMLap16diTC5FIeL+oJctg==
             -----END AGE ENCRYPTED FILE-----
           recipient: age17dkg84wglz4nq2523fayp528qr82njr2znlwc6fvdhzy8k3pg3gsusgx2q
-    lastmodified: "2026-10-14T10:56:38Z"
-    mac: ENC[AES256_GCM,data:reiFzAvXBGa1g7Qh7QFUSB1q6XOHJ46mnCuoVYK6/vRFk1YXQlWZ2NlByAqJjOixEXsl0VNenF19yDDfxrBpF20dRIsMWLH8hFA8VIW60gi6Wk2VaQwgBLSYjSHWiNYu1iCEJX7T5YJDPeCGkTsmgBpppYKNdDn09oDOUrflINU=,iv:UA8nvLe7xBSsXeck39kBwiJ7BelkheOBWsDsB0HhOxo=,tag:lQes9X2uhuogryTkzziS9Q==,type:str]
+    lastmodified: "2026-11-09T17:02:59Z"
+    mac: ENC[AES256_GCM,data:78ibcf2Fh6I2udY2Xok5TIs74ANOg+Oug84Xt0X/wvKB8d39a4jwPgg3PGbvmssXo3p+eTaIG4bXjDGV1oL0XAd3Dbm8DE3z1fPRxEdqPkbbR+d0X5FSdOAb/fmMqj4AhwlGM9f6RQf98gMHbuZG7Loa9exfAt6Wa/e3UoSqRh8=,iv:YbVm84WgZAS7ONfJeUIKZlw+fVY1ohQJIvV/GfV7i0Y=,tag:PLE1ehwqhvemIEmkF0TdYA==,type:str]
     unencrypted_suffix: _unencrypted
     version: 3.13.3

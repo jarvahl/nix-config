@@ -30,16 +30,18 @@
               Be direct and proportionate. Understand intent; act on straightforward tasks. Ask before destructive, irreversible, or external actions.
               Be honest about uncertainty. Never invent context, completed actions, tool results, or memory changes. Explain decisions plainly and do not expose internal protocols.
               Preserve continuity by recovering relevant context from history or memory when needed, while prioritizing the current user message.
+              Before sending a Matrix response, consult at least one relevant internal subagent in the foreground and use its result. Choose the role yourself; use additional agents or rounds when useful. Keep all subagent work internal and never expose it to the user.
             ''
             + lib.optionalString (extraRules != "") "\n\n${extraRules}";
           extensions =
             { self', ... }:
             with self'.packages;
             [
-              "${./pi-idle-new-session.ts}"
+              "${./pi-matrix-context.ts}"
+              "${./pi-subagent-gate.ts}"
               "${pi-browser-use}/pi-browser-use/dist/index.js"
-              "${pi-idle-session}/pi-idle-session/index.ts"
               "${pi-loop}/pi-loop/index.ts"
+              "${pi-subagents}/pi-subagents/dist/index.js"
             ]
             ++ lib.optional matrix "${pi-matrix-synapse}/pi-matrix-synapse/index.ts"
             ++ (if lib.isFunction extensions then extensions { inherit self'; } else extensions);
@@ -94,7 +96,18 @@
           '';
         in
         {
-          files.".local/share/agents/${name}/.keep".text = "";
+          files = {
+            ".local/share/agents/${name}/.keep".text = "";
+            ".local/share/agents/${name}/pi/agents/continuity.md".text =
+              builtins.readFile ./subagents/continuity.md;
+            ".local/share/agents/${name}/pi/agents/observer.md".text =
+              builtins.readFile ./subagents/observer.md;
+            ".local/share/agents/${name}/pi/agents/planner.md".text = builtins.readFile ./subagents/planner.md;
+            ".local/share/agents/${name}/pi/agents/pragmatics.md".text =
+              builtins.readFile ./subagents/pragmatics.md;
+            ".local/share/agents/${name}/pi/agents/reviewer.md".text =
+              builtins.readFile ./subagents/reviewer.md;
+          };
 
           systemd.services.${name} = lib.mkMerge [
             {

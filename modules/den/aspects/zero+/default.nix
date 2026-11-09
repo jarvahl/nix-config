@@ -140,8 +140,8 @@ lib.mkMerge [
           hjem.files.".ssh/config.d/dvalin".text = ''
             Host dvalin
               HostName dvalin.tailbf412b.ts.net
-              User assistant
-              IdentityFile ~/.ssh/keys.d/dvalin
+              User jarvahl
+              IdentityFile ~/.ssh/id_ed25519
               IdentitiesOnly yes
           '';
 
@@ -175,18 +175,6 @@ lib.mkMerge [
             ++ (with den.aspects; [
               # accounts
               github
-            ])
-            ++ (with den.aspects.sops; [
-              (secret
-                {
-                  mode = "0600";
-                  name = "ssh/dvalin";
-                  path = ".ssh/keys.d/dvalin";
-                }
-                {
-                  hjem = { };
-                }
-              )
             ])
             ++ (with den.batteries; [
               # batteries

@@ -14,9 +14,10 @@ buildNpmPackage {
   };
 
   sourceRoot = "package";
-  npmDepsHash = "sha256-L+/XiEJCRCWBdiGIqFeJsTiCEokBPb5K/FEgB/G7L4Q=";
+  npmDepsHash = "sha256-JAiz2h35bzn0M5eCHWj7xrQjRbsVjjEywBbzBiwfKPs=";
   dontNpmBuild = true;
   npmFlags = [ "--legacy-peer-deps" ];
+  patches = [ ./better-sqlite3.patch ];
 
   postPatch = ''
     cp ${./package-lock.json} package-lock.json

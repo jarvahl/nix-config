@@ -5,8 +5,8 @@
       (secret
         {
           mode = "0600";
-          name = "github/ssh-key";
-          path = ".ssh/keys.d/github";
+          name = "ssh/identity";
+          path = ".ssh/id_ed25519";
         }
         {
           hjem = { path, ... }: {

@@ -95,6 +95,7 @@
             };
             report_stats = false;
             server_name = "matrix.tailbf412b.ts.net";
+            user_directory.search_all_users = true;
           };
         };
 

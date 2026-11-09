@@ -140,6 +140,7 @@ lib.mkMerge [
             (with den.aspects; [
               console
               development
+              github
               linger
             ])
             ++ (with den.aspects.sops; [
@@ -160,7 +161,7 @@ lib.mkMerge [
                     hashedPasswordFile = path;
                     initialPassword = lib.mkForce null;
                     openssh.authorizedKeys.keys = [
-                      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFBmMnmmkTSEsCQNf5C24GEhdO8vziNCMxqagUCD/eXN zero-to-dvalin"
+                      (lib.trim (builtins.readFile ../zero+/jarvahl.pub))
                     ];
                   };
                 };
