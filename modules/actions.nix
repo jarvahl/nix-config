@@ -3,6 +3,7 @@
   inputs,
   lib,
   nixExperimentalFeatures,
+  mkReadmeSection,
   ...
 }:
 {
@@ -74,33 +75,28 @@
       }) config.flake.actions-nix.workflows;
     };
 
-  readme-file.sections = lib.mkOrder 260 [
-    {
-      title = "CI";
-      text = ''
-        GitHub Actions runs `nix flake check` on pushes and pull requests.
-        Workflow definitions live in `modules/actions.nix`; `write-files`
-        generates their YAML and flake checks verify it is up to date.
+  readme.CI = mkReadmeSection 260 ''
+    GitHub Actions runs `nix flake check` on pushes and pull requests.
+    Workflow definitions live in `modules/actions.nix`; `write-files`
+    generates their YAML and flake checks verify it is up to date.
 
-        Run checks locally without containers:
+    Run checks locally without containers:
 
-        ```sh
-        nix flake check
-        ```
+    ```sh
+    nix flake check
+    ```
 
-        To regenerate workflow YAML and execute it locally with `act`:
+    To regenerate workflow YAML and execute it locally with `act`:
 
-        ```sh
-        nix run .#ci
-        nix run .#ci -- -j check
-        ```
+    ```sh
+    nix run .#ci
+    nix run .#ci -- -j check
+    ```
 
-        Arguments are forwarded to `act`; use `nix run .#ci -- --list` to list
-        jobs without executing them. Execution requires a working Docker API
-        socket (Docker or a compatible Podman socket). `act` may prompt for a
-        runner image and does not fully reproduce GitHub-hosted runners.
-        The CI command only regenerates workflows, not all repository files.
-      '';
-    }
-  ];
+    Arguments are forwarded to `act`; use `nix run .#ci -- --list` to list
+    jobs without executing them. Execution requires a working Docker API
+    socket (Docker or a compatible Podman socket). `act` may prompt for a
+    runner image and does not fully reproduce GitHub-hosted runners.
+    The CI command only regenerates workflows, not all repository files.
+  '';
 }

@@ -625,38 +625,6 @@
         "type": "github"
       }
     },
-    "readme-file": {
-      "inputs": {
-        "files": [
-          "files"
-        ],
-        "flake-parts": [
-          "flake-parts"
-        ],
-        "import-tree": [
-          "import-tree"
-        ],
-        "nixpkgs": [
-          "nixpkgs"
-        ],
-        "treefmt-nix": [
-          "treefmt-nix"
-        ]
-      },
-      "locked": {
-        "lastModified": 1792049104,
-        "narHash": "sha256-/1yKRAVwSAH64EUPiXGX7O4g6ueRG8sD/AF/oTdPTvs=",
-        "owner": "jarvahl",
-        "repo": "readme-file",
-        "rev": "f8f6fcf6514082cbdf6af3c21890984e13e1e741",
-        "type": "github"
-      },
-      "original": {
-        "owner": "jarvahl",
-        "repo": "readme-file",
-        "type": "github"
-      }
-    },
     "root": {
       "inputs": {
         "actions-nix": "actions-nix",
@@ -676,7 +644,6 @@
         "nixpkgs": "nixpkgs",
         "nvf": "nvf",
         "pi": "pi",
-        "readme-file": "readme-file",
         "sops-nix": "sops-nix",
         "terranix": "terranix",
         "treefmt-nix": "treefmt-nix",

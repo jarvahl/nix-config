@@ -1,4 +1,9 @@
-{ inputs, lib, ... }:
+{
+  inputs,
+  lib,
+  mkReadmeSection,
+  ...
+}:
 {
   imports = with inputs.flake-file.flakeModules; [
     auto-follow
@@ -15,7 +20,7 @@
       terranix.url = "github:terranix/terranix";
     };
 
-    readme-file.title = "nix-config";
+    readme."nix-config" = mkReadmeSection 0 "";
     systems = inputs.nixpkgs.lib.systems.flakeExposed;
   }
   (

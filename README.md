@@ -1,6 +1,8 @@
-<!-- DO-NOT-EDIT. This file was auto-generated using github:jarvahl/readme-file. Use nix run .#write-files to regenerate it. -->
+<!-- DO-NOT-EDIT. This file was auto-generated from readme config. Use nix run .#write-files to regenerate it. -->
 
 # nix-config
+
+
 
 ## Dev shell
 
@@ -14,6 +16,7 @@ Available tools:
 - `just` — run repo tasks; see `just --list`
 - `mdsh` — run markdown runbooks from agent skill references
 - `sops` — edit and decrypt secrets
+
 
 ## Available commands
 
@@ -41,6 +44,7 @@ use the updated inputs; each invocation uses its initial evaluation.
 Stage new source files before evaluation and new generated files before
 running `nix flake check`.
 
+
 ## CI
 
 GitHub Actions runs `nix flake check` on pushes and pull requests.
@@ -66,6 +70,7 @@ socket (Docker or a compatible Podman socket). `act` may prompt for a
 runner image and does not fully reproduce GitHub-hosted runners.
 The CI command only regenerates workflows, not all repository files.
 
+
 ## Runbooks
 
 Run executable runbooks with `mdsh`, for example:
@@ -73,6 +78,7 @@ Run executable runbooks with `mdsh`, for example:
 ```sh
 mdsh .agents/skills/sops/references/create-recovery-key.md
 ```
+
 
 ## SOPS recovery shell
 

@@ -1,6 +1,7 @@
 {
   config,
   lib,
+  mkReadmeSection,
   ...
 }:
 let
@@ -77,25 +78,22 @@ let
     else
       "";
 
-  describedRecipes = lib.filter (name: recipeDescription config.just-file.recipes.${name} != "") (
-    builtins.attrNames config.just-file.recipes
+  describedRecipes = lib.filter (name: recipeDescription config.just.recipes.${name} != "") (
+    builtins.attrNames config.just.recipes
   );
 in
 {
-  readme-file.sections = lib.mkOrder 200 [
-    {
-      title = "Available commands";
-      text = lib.concatMapStringsSep "\n" (
-        name:
-        let
-          description = recipeDescription config.just-file.recipes.${name};
-        in
-        "- `${name}` — ${description}"
-      ) describedRecipes;
-    }
-  ];
+  readme."Available commands" = mkReadmeSection 200 (
+    lib.concatMapStringsSep "\n" (
+      name:
+      let
+        description = recipeDescription config.just.recipes.${name};
+      in
+      "- `${name}` — ${description}"
+    ) describedRecipes
+  );
 
-  just-file.recipes = rebuildRecipes // {
+  just.recipes = rebuildRecipes // {
     default = "just --list";
   };
 }

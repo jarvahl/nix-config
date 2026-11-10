@@ -98,16 +98,6 @@
         nixpkgs.follows = "nixpkgs";
       };
     };
-    readme-file = {
-      url = "github:jarvahl/readme-file";
-      inputs = {
-        files.follows = "files";
-        flake-parts.follows = "flake-parts";
-        import-tree.follows = "import-tree";
-        nixpkgs.follows = "nixpkgs";
-        treefmt-nix.follows = "treefmt-nix";
-      };
-    };
     sops-nix = {
       url = "github:Mic92/sops-nix";
       inputs.nixpkgs.follows = "nixpkgs";

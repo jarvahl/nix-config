@@ -5,7 +5,7 @@
   ...
 }:
 {
-  gitignore.patterns = [
+  git.ignore = [
     "/.terraform/"
     "/config.tf.json"
     "/terraform.tfstate"

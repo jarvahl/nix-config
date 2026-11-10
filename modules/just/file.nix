@@ -1,6 +1,6 @@
 { config, lib, ... }:
 let
-  cfg = config.just-file;
+  cfg = config.just;
 
   concatLines = lib.concatStringsSep "\n";
 
@@ -94,7 +94,7 @@ let
     recipes:
     concatLines (
       [
-        "# DO-NOT-EDIT. This file was auto-generated from just-file config."
+        "# DO-NOT-EDIT. This file was auto-generated from just config."
         "# Use `nix run .#write-files` to regenerate it."
         ""
       ]
@@ -153,7 +153,7 @@ let
   };
 in
 {
-  options.just-file.recipes = lib.mkOption {
+  options.just.recipes = lib.mkOption {
     default = { };
     type = lib.types.attrsOf (lib.types.coercedTo lib.types.str (text: { inherit text; }) recipeType);
   };
