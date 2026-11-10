@@ -2,7 +2,6 @@
 name: "home-manager"
 description: "Use when configuring Home Manager modules through Hjem or registering external homeModules; not for standalone Home Manager setups."
 ---
-
 <!-- DO-NOT-EDIT. This file was auto-generated using local skills modules. Use nix run .#write-files to regenerate it. -->
 
 # Home Manager modules in Hjem

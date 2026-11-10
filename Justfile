@@ -1,4 +1,4 @@
-# DO-NOT-EDIT. This file was auto-generated using github:jarvahl/just-file.
+# DO-NOT-EDIT. This file was auto-generated from just-file config.
 # Use `nix run .#write-files` to regenerate it.
 
 # Schedule configuration for next boot

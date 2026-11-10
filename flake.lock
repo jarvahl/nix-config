@@ -36,7 +36,7 @@
           "pi",
           "nixpkgs"
         ],
-        "systems": "systems_3",
+        "systems": "systems_2",
         "treefmt-nix": [
           "treefmt-nix"
         ]
@@ -285,32 +285,6 @@
         "type": "github"
       }
     },
-    "gitignore-file": {
-      "inputs": {
-        "flake-parts": [
-          "flake-parts"
-        ],
-        "import-tree": [
-          "import-tree"
-        ],
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1792762048,
-        "narHash": "sha256-ZZ7Fg8EuJotzlb1Xcj1pBuYRE3ZqOft6At5Wu0BNL84=",
-        "owner": "jarvahl",
-        "repo": "gitignore-file",
-        "rev": "94d4910ce7ab1f91cf0952835f2eefe01865b135",
-        "type": "github"
-      },
-      "original": {
-        "owner": "jarvahl",
-        "repo": "gitignore-file",
-        "type": "github"
-      }
-    },
     "hjem": {
       "inputs": {
         "nixpkgs": [
@@ -437,45 +411,6 @@
         "owner": "~alexdavid",
         "repo": "jail.nix",
         "type": "sourcehut"
-      }
-    },
-    "just-file": {
-      "inputs": {
-        "files": [
-          "files"
-        ],
-        "flake-file": [
-          "flake-file"
-        ],
-        "flake-parts": [
-          "flake-parts"
-        ],
-        "git-hooks-nix": [
-          "git-hooks-nix"
-        ],
-        "import-tree": [
-          "import-tree"
-        ],
-        "nixpkgs": [
-          "nixpkgs"
-        ],
-        "systems": "systems_2",
-        "treefmt-nix": [
-          "treefmt-nix"
-        ]
-      },
-      "locked": {
-        "lastModified": 1792940717,
-        "narHash": "sha256-t4YaqOhoDPOMRYQi+Cu7/v/g73MIrH9hmOpOcQtXDdE=",
-        "owner": "jarvahl",
-        "repo": "just-file",
-        "rev": "41c532e421973d4b6937857f3c20cd4b0434e671",
-        "type": "github"
-      },
-      "original": {
-        "owner": "jarvahl",
-        "repo": "just-file",
-        "type": "github"
       }
     },
     "make-shell": {
@@ -730,13 +665,11 @@
         "flake-file": "flake-file",
         "flake-parts": "flake-parts",
         "git-hooks-nix": "git-hooks-nix",
-        "gitignore-file": "gitignore-file",
         "hjem": "hjem",
         "hjem-hm-modules": "hjem-hm-modules",
         "hjem-rum": "hjem-rum",
         "home-manager": "home-manager",
         "import-tree": "import-tree",
-        "just-file": "just-file",
         "nix-index-database": "nix-index-database",
         "nix-unit": "nix-unit",
         "nixos-wsl": "nixos-wsl",
@@ -744,49 +677,10 @@
         "nvf": "nvf",
         "pi": "pi",
         "readme-file": "readme-file",
-        "sops-file": "sops-file",
         "sops-nix": "sops-nix",
         "terranix": "terranix",
         "treefmt-nix": "treefmt-nix",
         "zsh-nix": "zsh-nix"
-      }
-    },
-    "sops-file": {
-      "inputs": {
-        "files": [
-          "files"
-        ],
-        "flake-file": [
-          "flake-file"
-        ],
-        "flake-parts": [
-          "flake-parts"
-        ],
-        "git-hooks-nix": [
-          "git-hooks-nix"
-        ],
-        "import-tree": [
-          "import-tree"
-        ],
-        "nixpkgs": [
-          "nixpkgs"
-        ],
-        "treefmt-nix": [
-          "treefmt-nix"
-        ]
-      },
-      "locked": {
-        "lastModified": 1792049030,
-        "narHash": "sha256-B/JEcPf/9VZgciW25GWRzp3LH+eVQHugQTUmyvsqc2s=",
-        "owner": "jarvahl",
-        "repo": "sops-file",
-        "rev": "a90d6ae1b5a41e734635e5e477c665b2235d93a3",
-        "type": "github"
-      },
-      "original": {
-        "owner": "jarvahl",
-        "repo": "sops-file",
-        "type": "github"
       }
     },
     "sops-nix": {
@@ -826,21 +720,6 @@
     },
     "systems_2": {
       "locked": {
-        "lastModified": 1791244623,
-        "narHash": "sha256-uuanbkFk8a313Zfrxdcz8Us/yQtaxNnKJtX8v0ZPpd8=",
-        "owner": "nix-systems",
-        "repo": "default",
-        "rev": "d36eeed142f88b5a636f2e3856a53c61654cf29b",
-        "type": "github"
-      },
-      "original": {
-        "owner": "nix-systems",
-        "repo": "default",
-        "type": "github"
-      }
-    },
-    "systems_3": {
-      "locked": {
         "lastModified": 1681028828,
         "narHash": "sha256-Vy1rq5AaRuLzOxct8nz4T6wlgyUR7zLU309k9mBC768=",
         "owner": "nix-systems",
@@ -854,7 +733,7 @@
         "type": "github"
       }
     },
-    "systems_4": {
+    "systems_3": {
       "locked": {
         "lastModified": 1681028828,
         "narHash": "sha256-Vy1rq5AaRuLzOxct8nz4T6wlgyUR7zLU309k9mBC768=",
@@ -880,7 +759,7 @@
         "nixpkgs": [
           "nixpkgs"
         ],
-        "systems": "systems_4"
+        "systems": "systems_3"
       },
       "locked": {
         "lastModified": 1792320669,

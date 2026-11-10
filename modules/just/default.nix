@@ -1,6 +1,5 @@
 {
   config,
-  inputs,
   lib,
   ...
 }:
@@ -95,21 +94,6 @@ in
       ) describedRecipes;
     }
   ];
-
-  flake-file.inputs.just-file = {
-    url = "github:jarvahl/just-file";
-    inputs = {
-      files.follows = "files";
-      flake-file.follows = "flake-file";
-      flake-parts.follows = "flake-parts";
-      git-hooks-nix.follows = "git-hooks-nix";
-      import-tree.follows = "import-tree";
-      nixpkgs.follows = "nixpkgs";
-      treefmt-nix.follows = "treefmt-nix";
-    };
-  };
-
-  imports = [ inputs.just-file.flakeModules.default ];
 
   just-file.recipes = rebuildRecipes // {
     default = "just --list";

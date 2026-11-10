@@ -35,14 +35,6 @@
       url = "github:cachix/git-hooks.nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    gitignore-file = {
-      url = "github:jarvahl/gitignore-file";
-      inputs = {
-        flake-parts.follows = "flake-parts";
-        import-tree.follows = "import-tree";
-        nixpkgs.follows = "nixpkgs";
-      };
-    };
     hjem = {
       url = "github:feel-co/hjem";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -71,18 +63,6 @@
     };
     import-tree = {
       url = "github:denful/import-tree";
-    };
-    just-file = {
-      url = "github:jarvahl/just-file";
-      inputs = {
-        files.follows = "files";
-        flake-file.follows = "flake-file";
-        flake-parts.follows = "flake-parts";
-        git-hooks-nix.follows = "git-hooks-nix";
-        import-tree.follows = "import-tree";
-        nixpkgs.follows = "nixpkgs";
-        treefmt-nix.follows = "treefmt-nix";
-      };
     };
     nix-index-database = {
       url = "github:nix-community/nix-index-database";
@@ -123,18 +103,6 @@
       inputs = {
         files.follows = "files";
         flake-parts.follows = "flake-parts";
-        import-tree.follows = "import-tree";
-        nixpkgs.follows = "nixpkgs";
-        treefmt-nix.follows = "treefmt-nix";
-      };
-    };
-    sops-file = {
-      url = "github:jarvahl/sops-file";
-      inputs = {
-        files.follows = "files";
-        flake-file.follows = "flake-file";
-        flake-parts.follows = "flake-parts";
-        git-hooks-nix.follows = "git-hooks-nix";
         import-tree.follows = "import-tree";
         nixpkgs.follows = "nixpkgs";
         treefmt-nix.follows = "treefmt-nix";
