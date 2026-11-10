@@ -1,5 +1,4 @@
 {
-  config,
   den,
   lib,
   ...
@@ -64,14 +63,5 @@ lib.mkMerge [
     den.aspects.tailscale.tags.__functor = _self: tags: {
       nixos.services.tailscale.tags = tags;
     };
-  }
-  {
-    perSystem.terranix.terranixConfigurations.terranix.modules = [
-      {
-        _module.args.flakeConfig = {
-          inherit (config.flake) nixosConfigurations;
-        };
-      }
-    ];
   }
 ]

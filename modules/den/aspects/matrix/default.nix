@@ -146,13 +146,4 @@
         };
       };
   };
-
-  perSystem.terranix.terranixConfigurations.terranix.modules = [
-    (
-      { ... }:
-      {
-
-      }
-    )
-  ];
 }
