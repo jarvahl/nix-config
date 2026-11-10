@@ -5,6 +5,8 @@
   ...
 }:
 {
+  flake-file.inputs.terranix.url = "github:terranix/terranix";
+
   git.ignore = [
     "/.terraform/"
     "/config.tf.json"
