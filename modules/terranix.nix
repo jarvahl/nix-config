@@ -1,7 +1,6 @@
 {
   inputs,
   lib,
-  recovery,
   ...
 }:
 {
@@ -62,7 +61,7 @@
             text = ''
               set -euo pipefail
 
-              if [ "''${SOPS_SHELL_KEY_NAME:-}" != recovery ] || [ ! -r "''${SOPS_AGE_KEY_FILE:-}" ]; then
+              if [ "''${SOPS_SHELL_KEY_NAME:-}" != breakglass ] || [ ! -r "''${SOPS_AGE_KEY_FILE:-}" ]; then
                 printf 'Run this command inside: nix develop .#sops\n' >&2
                 exit 1
               fi
@@ -164,7 +163,7 @@
             self'.packages.terraform-provider-matrix
           ]);
           prefixText = ''
-            if [ "''${SOPS_SHELL_KEY_NAME:-}" != recovery ] || [ ! -r "''${SOPS_AGE_KEY_FILE:-}" ]; then
+            if [ "''${SOPS_SHELL_KEY_NAME:-}" != breakglass ] || [ ! -r "''${SOPS_AGE_KEY_FILE:-}" ]; then
               printf 'Run this command inside: nix develop .#sops\n' >&2
               exit 1
             fi
@@ -195,7 +194,7 @@
       };
     };
 
-  sops.file.creation_rules = recovery [
+  sops.file.creation_rules = [
     {
       key_groups = [
         { age = [ ]; }

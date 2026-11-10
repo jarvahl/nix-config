@@ -78,33 +78,3 @@ Run executable runbooks with `mdsh`, for example:
 ```sh
 mdsh .agents/skills/sops/references/create-recovery-key.md
 ```
-
-
-## SOPS recovery shell
-
-Unlock an encrypted recovery age identity for SOPS:
-
-```sh
-nix develop .#sops
-```
-
-By default it unlocks the recovery identity from `./breakglass.age`. Override with:
-
-```sh
-SOPS_KEYS_FILE=/path/to/breakglass.age nix develop .#sops
-```
-
-The shell requires Linux with a running systemd user manager. Each session
-gets a private runtime directory, removed by systemd when its shell exits,
-including after SIGKILL. Run Terranix commands inside this shell:
-
-```sh
-nix run .#terranix.plan
-nix run .#terranix.apply
-nix run .#sops-import-from-terranix
-```
-
-Terranix reuses the unlocked key and exports secrets from `terranix.sops.yaml`
-to its command environment, with uppercase path segments joined by underscores.
-After applying Terranix, `sops-import-from-terranix` imports outputs named
-`sops__<aspect>__<host-or-user>__<key>__<path>` into the matching host or user SOPS file.

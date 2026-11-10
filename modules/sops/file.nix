@@ -16,7 +16,9 @@ let
     else
       value;
 
-  keyGroup = lib.mapAttrs (name: value: if name == "age" then ageKeys value else value);
+  keyGroup = lib.mapAttrs (
+    name: value: if name == "age" then lib.unique (ageKeys value ++ [ "breakglass" ]) else value
+  );
 in
 {
   options.sops.file = {

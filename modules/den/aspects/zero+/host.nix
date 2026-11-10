@@ -1,7 +1,6 @@
 {
   den,
   lib,
-  recovery,
   ...
 }:
 let
@@ -117,7 +116,7 @@ lib.mkMerge [
     };
 
     sops.file = {
-      creation_rules = recovery [
+      creation_rules = [
         {
           key_groups = [
             { age = [ host ]; }

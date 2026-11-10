@@ -4,7 +4,7 @@
 /config.tf.json
 /terraform.tfstate
 /terraform.tfstate.backup
-recovery.key
-.keys/
 .pre-commit-config.yaml
 .direnv/
+breakglass.age
+.keys/

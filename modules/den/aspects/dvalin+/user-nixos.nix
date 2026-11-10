@@ -1,4 +1,4 @@
-{ recovery, ... }:
+{ ... }:
 let
   host = "dvalin";
 in
@@ -9,7 +9,7 @@ in
   };
 
   sops.file = {
-    creation_rules = recovery [
+    creation_rules = [
       {
         key_groups = [
           { age = [ "nixos@${host}" ]; }

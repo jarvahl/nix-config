@@ -1,4 +1,4 @@
-{ den, recovery, ... }:
+{ den, ... }:
 let
   host = "dvalin";
   user = "jarvahl";
@@ -45,7 +45,7 @@ in
   };
 
   sops.file = {
-    creation_rules = recovery [
+    creation_rules = [
       {
         key_groups = [
           { age = [ "${user}@${host}" ]; }
