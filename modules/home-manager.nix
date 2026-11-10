@@ -7,7 +7,7 @@ lib.mkMerge [
     };
   }
   {
-    agent-files.skills.home-manager = {
+    skills.home-manager = {
       description = "Use when configuring Home Manager modules through Hjem or registering external homeModules; not for standalone Home Manager setups.";
       instructions = { references, ... }: ''
         # Home Manager modules in Hjem

@@ -72,7 +72,7 @@
         };
     };
 
-  agent-files.skills.pi = {
+  skills.pi = {
     description = "Use when configuring Pi or adding Pi extensions; not for unrelated coding-agent configuration.";
     instructions =
       { references, ... }:

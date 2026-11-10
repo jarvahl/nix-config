@@ -1,4 +1,4 @@
-<!-- DO-NOT-EDIT. This file was auto-generated using github:jarvahl/agent-files. Use nix run .#write-files to regenerate it. -->
+<!-- DO-NOT-EDIT. This file was auto-generated using local skills modules. Use nix run .#write-files to regenerate it. -->
 
 # Declare and consume SOPS secrets
 

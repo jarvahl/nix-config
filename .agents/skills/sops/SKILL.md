@@ -3,7 +3,7 @@ name: "sops"
 description: "Use when managing SOPS secrets, age keys, or recovery in this repository; not for general encryption."
 ---
 
-<!-- DO-NOT-EDIT. This file was auto-generated using github:jarvahl/agent-files. Use nix run .#write-files to regenerate it. -->
+<!-- DO-NOT-EDIT. This file was auto-generated using local skills modules. Use nix run .#write-files to regenerate it. -->
 
 # SOPS
 

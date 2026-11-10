@@ -3,7 +3,7 @@ name: "pi"
 description: "Use when configuring Pi or adding Pi extensions; not for unrelated coding-agent configuration."
 ---
 
-<!-- DO-NOT-EDIT. This file was auto-generated using github:jarvahl/agent-files. Use nix run .#write-files to regenerate it. -->
+<!-- DO-NOT-EDIT. This file was auto-generated using local skills modules. Use nix run .#write-files to regenerate it. -->
 
 # Pi
 

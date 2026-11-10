@@ -165,7 +165,7 @@ lib.mkMerge [
     };
   }
   {
-    agent-files.skills.sops = {
+    skills.sops = {
       description = "Use when managing SOPS secrets, age keys, or recovery in this repository; not for general encryption.";
       instructions = { references, ... }: ''
         # SOPS
