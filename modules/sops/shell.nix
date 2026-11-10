@@ -3,36 +3,28 @@
   perSystem = { pkgs, sopsShellUnlock, ... }: {
     _module.args.sopsShellUnlock = pkgs.writeText "unlock-sops-shell.sh" ''
       encrypted_keys="''${SOPS_KEYS_FILE:-$PWD/breakglass.age}"
+      runtime_dir="''${XDG_RUNTIME_DIR:-''${TMPDIR:-/tmp}}"
+      key="$(mktemp "$runtime_dir/sops-key.XXXXXX")"
+
+      cleanup() {
+        rm -f "$key"
+      }
+
+      trap cleanup EXIT HUP INT TERM
+      umask 077
 
       if [ ! -f "$encrypted_keys" ]; then
         echo "missing encrypted SOPS identity: $encrypted_keys" >&2
         return 1
       fi
-      if [ -z "''${XDG_RUNTIME_DIR:-}" ] || [ ! -d "$XDG_RUNTIME_DIR" ]; then
-        echo "SOPS shell requires XDG_RUNTIME_DIR and systemd --user" >&2
+
+      if ! ${pkgs.age}/bin/age -d "$encrypted_keys" > "$key"; then
+        echo "failed to unlock breakglass identity" >&2
         return 1
       fi
 
-      shell_identity="$(${pkgs.util-linux}/bin/getino --print-pid "$$")" || return 1
-      key_unit="sops-$(< /proc/sys/kernel/random/uuid)"
-
-      if ! ${pkgs.systemd}/bin/systemd-run --user --quiet --collect \
-        --unit="$key_unit" \
-        --service-type=exec \
-        --property="RuntimeDirectory=$key_unit" \
-        --property=RuntimeDirectoryMode=0700 \
-        ${pkgs.util-linux}/bin/waitpid --exited "$shell_identity"
-      then
-        return 1
-      fi
-
-      key="$XDG_RUNTIME_DIR/$key_unit/key"
-      if ! (
-        umask 077
-        ${pkgs.age}/bin/age -d "$encrypted_keys" > "$key"
-      ) || ! ${pkgs.age}/bin/age-keygen -y "$key" >/dev/null; then
-        echo "failed to unlock recovery identity" >&2
-        ${pkgs.systemd}/bin/systemctl --user stop "$key_unit"
+      if ! ${pkgs.age}/bin/age-keygen -y "$key" >/dev/null; then
+        echo "decrypted value is not an age identity" >&2
         return 1
       fi
 
