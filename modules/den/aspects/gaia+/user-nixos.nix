@@ -45,7 +45,7 @@ in
     };
   };
 
-  sopsFile = {
+  sops.file = {
     creation_rules = recovery [
       {
         key_groups = [

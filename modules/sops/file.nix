@@ -5,7 +5,7 @@
   ...
 }:
 let
-  cfg = config.sopsFile;
+  cfg = config.sops.file;
 
   ageKeys = map (key: cfg.keys.${key} or key);
 
@@ -19,7 +19,7 @@ let
   keyGroup = lib.mapAttrs (name: value: if name == "age" then ageKeys value else value);
 in
 {
-  options.sopsFile = {
+  options.sops.file = {
     creation_rules = lib.mkOption {
       default = [ ];
       type = lib.types.listOf (

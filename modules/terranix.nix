@@ -195,7 +195,7 @@
       };
     };
 
-  sopsFile.creation_rules = recovery [
+  sops.file.creation_rules = recovery [
     {
       key_groups = [
         { age = [ ]; }

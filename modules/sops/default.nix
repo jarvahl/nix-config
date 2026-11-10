@@ -22,7 +22,7 @@ lib.mkMerge [
         }
       ) rules;
 
-    sopsFile = {
+    sops.file = {
       creation_rules = [
         {
           key_groups = [
@@ -339,7 +339,7 @@ lib.mkMerge [
           ## Checks and safety
 
           Verify the encrypted file contains the requested name and its recipients match
-          the intended host/user. Update creation rules through the existing `sopsFile`
+          the intended host/user. Update creation rules through the existing `sops.file`
           declarations; changing a rule alone does not re-encrypt an existing file.
           Never put decrypted values in Nix expressions, logs, or the Nix store.
           Pass secret paths through the consumer's supported runtime file mechanism.

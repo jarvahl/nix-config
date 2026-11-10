@@ -116,7 +116,7 @@ lib.mkMerge [
       hosts.x86_64-linux.${host}.secrets.file = ./host.sops.yaml;
     };
 
-    sopsFile = {
+    sops.file = {
       creation_rules = recovery [
         {
           key_groups = [

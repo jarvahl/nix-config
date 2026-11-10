@@ -8,7 +8,7 @@ in
     secrets.file = ./user-nixos.sops.yaml;
   };
 
-  sopsFile = {
+  sops.file = {
     creation_rules = recovery [
       {
         key_groups = [
