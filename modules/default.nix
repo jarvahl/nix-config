@@ -19,17 +19,7 @@
 
   readme."nix-config" = mkReadmeSection 0 "";
 
-  sops.file = {
-    creation_rules = [
-      {
-        key_groups = [
-          { age = [ "breakglass" ]; }
-        ];
-        path_regex = "pairing\\.sops\\.yaml$";
-      }
-    ];
-    keys.breakglass = "age17dkg84wglz4nq2523fayp528qr82njr2znlwc6fvdhzy8k3pg3gsusgx2q";
-  };
+  sops.file.keys.breakglass = "age17dkg84wglz4nq2523fayp528qr82njr2znlwc6fvdhzy8k3pg3gsusgx2q";
 
   systems = inputs.nixpkgs.lib.systems.flakeExposed;
 }
