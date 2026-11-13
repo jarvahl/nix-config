@@ -1,0 +1,11 @@
+diff --git a/package.json b/package.json
+--- a/package.json
++++ b/package.json
+@@ -11,7 +11,7 @@
+   },
+   "dependencies": {
+-    "better-sqlite3": "^11.8.1",
++    "better-sqlite3": "^13.0.3",
+     "@shog-lab/pi-utils": "*",
+     "proper-lockfile": "^4.1.2"
+   },

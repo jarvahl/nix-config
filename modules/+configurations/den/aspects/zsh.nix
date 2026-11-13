@@ -1,0 +1,109 @@
+{ den, inputs, ... }:
+{
+  flake-file.inputs.zsh-nix = {
+    inputs = {
+      flake-file.follows = "flake-file";
+      flake-parts.follows = "flake-parts";
+      git-hooks-nix.follows = "git-hooks-nix";
+      home-manager.follows = "hjem-hm-modules/home-manager";
+      import-tree.follows = "import-tree";
+      nixpkgs.follows = "nixpkgs";
+      treefmt-nix.follows = "treefmt-nix";
+    };
+    url = "github:jarvahl/zsh.nix";
+  };
+
+  den.aspects.zsh = {
+    includes = with den.aspects; [ zsh-integration ];
+
+    hjem = { ... }: {
+      programs.zsh = {
+        enable = true;
+
+        bundle = {
+          enable = true;
+          executableName = "zsh";
+          autosuggestion.enable = true;
+          syntaxHighlighting.integrations.patina.enable = true;
+          completion = {
+            enable = true;
+            integrations.fzf.enable = true;
+          };
+          history.integrations.fzf.enable = true;
+          vi.enable = true;
+
+          imports = [
+            ({ lib, pkgs, ... }: {
+              zsh.rc = lib.mkOrder 29 ''
+                ZSH_CACHE_DIR="''${XDG_CACHE_HOME:-$HOME/.cache}/oh-my-zsh"
+                mkdir -p "$ZSH_CACHE_DIR/completions"
+                chmod u+w "$ZSH_CACHE_DIR"/completions/*(.N) 2>/dev/null || true
+
+                fpath=(
+                  "$ZSH_CACHE_DIR/completions"
+                  "${pkgs.nix-zsh-completions}/share/zsh/site-functions"
+                  "${pkgs.zsh-completions}/share/zsh/site-functions"
+                  $fpath
+                )
+
+                zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
+                zstyle ':completion:*' menu select
+                zstyle ':completion:*' list-colors "''${(s.:.)LS_COLORS}"
+              '';
+
+              zsh.startPlugins.syntax-highlighting = {
+                after = [ "autosuggestions" ];
+                package = pkgs.zsh-fast-syntax-highlighting;
+                source = "share/zsh/plugins/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh";
+              };
+            })
+          ];
+
+          initConfig = ''
+            PROMPT="%B%F{magenta}#%f%b "
+          '';
+        };
+      };
+    };
+  };
+
+  den.aspects.zsh-integration = {
+    nixos =
+      {
+        config,
+        lib,
+        user,
+        ...
+      }:
+      let
+        shell = "${config.hjem.users.${user.userName}.programs.zsh.bundle.package}/bin/zsh";
+      in
+      {
+        environment.shells = [ shell ];
+        users.users.${user.userName}.shell = lib.mkForce shell;
+      };
+  };
+
+  den.default.nixos.hjem.extraModules = [
+    inputs.zsh-nix.homeManagerModules.default
+    (
+      { config, lib, ... }:
+      let
+        cfg = config.programs.zsh;
+      in
+      {
+        imports = [
+          (lib.mkAliasOptionModule [ "programs" "zsh" "enable" ] [ "rum" "programs" "zsh" "enable" ])
+          (lib.mkAliasOptionModule [ "programs" "zsh" "initContent" ] [ "rum" "programs" "zsh" "initConfig" ])
+        ];
+
+        config = lib.mkIf cfg.enable {
+          rum.programs.zsh = {
+            initConfig = lib.mkBefore cfg.bundle.initConfig;
+            package = cfg.bundle.package;
+          };
+        };
+      }
+    )
+  ];
+}

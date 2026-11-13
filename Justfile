@@ -1,0 +1,67 @@
+# DO-NOT-EDIT. This file was auto-generated using github:jarvahl/just-file.
+# Use `nix run .#write-files` to regenerate it.
+
+# Schedule configuration for next boot
+[no-exit-message]
+boot host=`hostname`:
+    #!/usr/bin/env bash
+    set -euo pipefail
+
+
+    nixos-rebuild boot \
+        --flake ".#{{host}}" \
+        -L \
+        --elevate=sudo \
+        --accept-flake-config
+
+# Build configuration for host
+[no-exit-message]
+build host=`hostname`:
+    #!/usr/bin/env bash
+    set -euo pipefail
+
+
+    nixos-rebuild build \
+        --flake ".#{{host}}" \
+        -L \
+        --show-trace \
+        --accept-flake-config
+
+default:
+    just --list
+
+# Apply configuration to host
+[no-exit-message]
+switch host=`hostname`:
+    #!/usr/bin/env bash
+    set -euo pipefail
+
+    printf '\033[0;32m------------------------\033[0m\n'
+    printf '\033[1;32m\uf444 switch \033[0;32m%s\033[0m\n' "{{host}}"
+    printf '\033[0;32m------------------------\033[0m\n'
+
+    nixos-rebuild switch \
+        --flake ".#{{host}}" \
+        -L \
+        --elevate=sudo --show-trace \
+        --accept-flake-config
+
+    printf '\n'
+
+# Build and run host in an ephemeral VM
+[no-exit-message]
+vm host=`hostname`:
+    #!/usr/bin/env bash
+    set -euo pipefail
+
+    tmp="$(mktemp -d)"
+    trap 'rm -rf "$tmp"' EXIT
+    export NIX_DISK_IMAGE="$tmp/disk.qcow2"
+
+    nixos-rebuild build-vm \
+        --flake ".#{{host}}" \
+        -L \
+        --show-trace \
+        --accept-flake-config
+
+    "./result/bin/run-{{host}}-vm"

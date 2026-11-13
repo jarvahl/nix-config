@@ -1,0 +1,76 @@
+# DO-NOT-EDIT. This file was auto-generated from sops-file config.
+# Edit Nix sources and regenerate it.
+
+%YAML 1.1
+---
+creation_rules:
+- key_groups:
+  - age:
+    - - age17dkg84wglz4nq2523fayp528qr82njr2znlwc6fvdhzy8k3pg3gsusgx2q
+  path_regex: terranix\.sops\.yaml$
+- key_groups:
+  - age:
+    - - age17dkg84wglz4nq2523fayp528qr82njr2znlwc6fvdhzy8k3pg3gsusgx2q
+  path_regex: terraform\.tfstate\.sops\.json$
+- key_groups:
+  - age:
+    - age1wxm2g87tj35cthkl02lx3jzefkkfxkpr4kseyrzpuwhwkpfwm34smhjuuz
+    - - age17dkg84wglz4nq2523fayp528qr82njr2znlwc6fvdhzy8k3pg3gsusgx2q
+  path_regex: modules/\+configurations/den/aspects/zero\+/host\.sops\.yaml$
+- key_groups:
+  - age:
+    - age1gfhnnsfzf839uvyr3nf6r3cl85zk4hvewkjpfpncxe8y7dxraeeqyr4y82
+    - - age17dkg84wglz4nq2523fayp528qr82njr2znlwc6fvdhzy8k3pg3gsusgx2q
+  path_regex: 
+    modules/\+configurations/den/aspects/zero\+/user-jarvahl\.sops\.yaml$
+- key_groups:
+  - age:
+    - age1g54ya2lf87wg9verfd5aqk8xrptgmed7dn2v3850wjxt330jwfkskngg04
+    - - age17dkg84wglz4nq2523fayp528qr82njr2znlwc6fvdhzy8k3pg3gsusgx2q
+  path_regex: modules/\+configurations/den/aspects/gaia\+/host\.sops\.yaml$
+- key_groups:
+  - age:
+    - age1l0qjp2htt794ugmkwyuxlttxzskmk0d9yrxtr2ru75707k5djd6smpgntq
+    - - age17dkg84wglz4nq2523fayp528qr82njr2znlwc6fvdhzy8k3pg3gsusgx2q
+  path_regex: 
+    modules/\+configurations/den/aspects/gaia\+/user-jarvahl\.sops\.yaml$
+- key_groups:
+  - age:
+    - age183kk96xwp5c4w0qznxklmuqu0rmyt74chxr6snmwp8qeuts2zfgsygp6dg
+    - - age17dkg84wglz4nq2523fayp528qr82njr2znlwc6fvdhzy8k3pg3gsusgx2q
+  path_regex: 
+    modules/\+configurations/den/aspects/gaia\+/user-nixos\.sops\.yaml$
+- key_groups:
+  - age:
+    - age1dtpml670fkfe63gnrc5qn29aye00h3al2yhrte88m9q58rszsatqjpxskz
+    - - age17dkg84wglz4nq2523fayp528qr82njr2znlwc6fvdhzy8k3pg3gsusgx2q
+  path_regex: modules/\+configurations/den/aspects/dvalin\+/host\.sops\.yaml$
+- key_groups:
+  - age:
+    - age15ny8fkpgznutmkze50rcvceq400r6nq68n2vpdsq3muuq6vcwqmqlspkng
+    - - age17dkg84wglz4nq2523fayp528qr82njr2znlwc6fvdhzy8k3pg3gsusgx2q
+  path_regex: 
+    modules/\+configurations/den/aspects/dvalin\+/user-jarvahl\.sops\.yaml$
+- key_groups:
+  - age:
+    - age1uj0ultfy0sxxty4jrczl7ajwwg42tefqqpzjedl246eghy7yjdjqfp6ysz
+    - - age17dkg84wglz4nq2523fayp528qr82njr2znlwc6fvdhzy8k3pg3gsusgx2q
+  path_regex: 
+    modules/\+configurations/den/aspects/dvalin\+/user-nixos\.sops\.yaml$
+- key_groups:
+  - age:
+    - age1muvk3n4qdla548vsgqmpg2xr2tnrkv70aeykncmvttrg2dlfzyustnyawd
+    - - age17dkg84wglz4nq2523fayp528qr82njr2znlwc6fvdhzy8k3pg3gsusgx2q
+  path_regex: modules/\+configurations/den/aspects/cargo\+/host\.sops\.yaml$
+- key_groups:
+  - age:
+    - age13wj39r09ax4j0ekzhqx9h7ha0e2k20j45262ydcsx2az0qatlcesxp6230
+    - - age17dkg84wglz4nq2523fayp528qr82njr2znlwc6fvdhzy8k3pg3gsusgx2q
+  path_regex: 
+    modules/\+configurations/den/aspects/cargo\+/user-jarvahl\.sops\.yaml$
+- key_groups:
+  - age:
+    - age1d3qae5nevuu0vrt33ehjck00tyt6ym23gdjf9r5fatxaplh6yg6szgzeqx
+    - - age17dkg84wglz4nq2523fayp528qr82njr2znlwc6fvdhzy8k3pg3gsusgx2q
+  path_regex: 
+    modules/\+configurations/den/aspects/cargo\+/user-nixos\.sops\.yaml$
