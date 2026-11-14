@@ -65,9 +65,6 @@ lib.mkMerge [
 
             environment.systemPackages = [ pkgs.networkmanager ];
 
-            # Keep zero running with the lid closed while connected to external power.
-            services.logind.settings.Login.HandleLidSwitchExternalPower = "ignore";
-
             swapDevices = [
               { device = "/dev/disk/by-uuid/ef842ad0-2a1b-4e24-a71b-61bb49cc4c55"; }
             ];
@@ -117,11 +114,7 @@ lib.mkMerge [
             (with den.aspects; [
               # ui
               foot
-              (hyperland hyperland.autologin)
-              hypridle
               linger
-              quickshell
-              swaybg
             ])
             ++ (with den.aspects; [
               # tools
