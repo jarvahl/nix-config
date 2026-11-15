@@ -10,7 +10,6 @@ lib.mkMerge [
         includes = (
           with den.aspects;
           [
-            matrix
             ssh
             tailscale
             (tailscale.tags [ "services" ])

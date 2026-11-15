@@ -13,7 +13,7 @@ in
   imports = [ terranix.flakeModule ];
 
   perSystem =
-    { pkgs, self', ... }:
+    { pkgs, ... }:
     let
       exportSecrets = pkgs.writeText "terranix-export-secrets.sh" ''
         secrets="$PWD/terranix.sops.yaml"
@@ -167,7 +167,6 @@ in
           package = pkgs.opentofu.withPlugins (plugins: [
             plugins.hashicorp_random
             plugins.tailscale_tailscale
-            self'.packages.terraform-provider-matrix
           ]);
           prefixText = ''
             if [ "''${SOPS_SHELL_KEY_NAME:-}" != breakglass ] || [ ! -r "''${SOPS_AGE_KEY_FILE:-}" ]; then
