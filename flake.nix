@@ -91,15 +91,11 @@
     };
     pi = {
       url = "github:lukasl-dev/pi.nix";
-      inputs = {
-        bun2nix.inputs.treefmt-nix.follows = "treefmt-nix";
-        bun2nix-x86_64-darwin.inputs = {
-          nixpkgs.follows = "nixpkgs";
-          treefmt-nix.follows = "treefmt-nix";
-        };
-        flake-parts.follows = "flake-parts";
-        nixpkgs.follows = "nixpkgs";
-      };
+      inputs.flake-parts.follows = "flake-parts";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.bun2nix.inputs.treefmt-nix.follows = "treefmt-nix";
+      inputs.bun2nix-x86_64-darwin.inputs.nixpkgs.follows = "nixpkgs";
+      inputs.bun2nix-x86_64-darwin.inputs.treefmt-nix.follows = "treefmt-nix";
     };
     sops-file = {
       url = "github:jarvahl/sops-file";
