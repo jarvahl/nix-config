@@ -13,6 +13,8 @@ lib.mkMerge [
             # system
             comma
             fonts
+            gnome
+            lid-switch
             podman
             ssh
             tailscale
