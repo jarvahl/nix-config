@@ -27,6 +27,12 @@ with den.lib;
                 }
                 {
                   _args = [
+                    "SUPER + RETURN"
+                    (mkLuaInline ''hl.dsp.exec_cmd("${pkgs.foot}/bin/foot")'')
+                  ];
+                }
+                {
+                  _args = [
                     "SUPER + C"
                     (mkLuaInline "hl.dsp.window.close()")
                   ];
@@ -97,6 +103,8 @@ with den.lib;
               general = {
                 border_size = 0;
                 gaps_in = 8;
+                resize_corner = true;
+                resize_on_border = true;
                 gaps_out = {
                   bottom = 48;
                   left = 45;

@@ -126,7 +126,11 @@ lib.mkMerge [
               development
               firefox
               herdr
+              hyperland
+              hypridle
               pi
+              quickshell
+              swaybg
             ])
             ++ (with den.aspects; [
               # accounts
