@@ -12,6 +12,7 @@ lib.mkMerge [
           [
             # system
             comma
+            firefox
             fonts
             gnome
             lid-switch
