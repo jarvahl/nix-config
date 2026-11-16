@@ -30,15 +30,16 @@
           "${pi-core-skill-tool}/pi-core-skill-tool/index.ts"
           "${pi-diff-review}/pi-diff-review/index.ts"
           "${pi-firefox-bridge}/pi-firefox-bridge/index.ts"
-          "${pi-memory}/pi-memory/dist/extensions/memory/index.js"
-          "${pi-memory}/pi-memory/dist/extensions/skill-evolution/index.js"
+          "${pi-memory}/pi-memory/index.ts"
           "${pi-ponytail}/pi-ponytail/index.js"
           "${pi-prompt-timer}/pi-prompt-timer/index.ts"
           "${pi-self-compact}/pi-self-compact/index.ts"
           "${pi-web-access}/pi-web-access/index.ts"
           "${pi-session}/pi-session/index.ts"
         ];
-        skills = with self'.packages; [ "${pi-memory}/pi-memory/skills" ];
+        settings = {
+          defaultTools = [ "+codemode" ];
+        };
       };
     };
 }

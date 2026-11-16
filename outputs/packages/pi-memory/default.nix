@@ -1,39 +1,28 @@
 {
-  buildNpmPackage,
-  fetchurl,
+  fetchFromGitHub,
   lib,
+  stdenvNoCC,
 }:
 
-buildNpmPackage {
+stdenvNoCC.mkDerivation {
   pname = "pi-memory";
-  version = "0.15.1";
+  version = "0.4.2";
 
-  src = fetchurl {
-    hash = "sha256-l2aItlHXaJezRac/+ejJx674097UwV7kHLS5vHrMjWo=";
-    url = "https://registry.npmjs.org/@shog-lab/pi-memory/-/pi-memory-0.15.1.tgz";
+  src = fetchFromGitHub {
+    owner = "jayzeng";
+    repo = "pi-memory";
+    rev = "768b8b9798e364ef0ee09b80cc9203a63afa8e92";
+    hash = "sha256-20hbBZ3loTvpun+CTUp2dRU77eKtSw4J2bS8rvsRGgM=";
   };
 
-  sourceRoot = "package";
-  npmDepsHash = "sha256-JAiz2h35bzn0M5eCHWj7xrQjRbsVjjEywBbzBiwfKPs=";
-  dontNpmBuild = true;
-  npmFlags = [ "--legacy-peer-deps" ];
-  patches = [ ./better-sqlite3.patch ];
-
-  postPatch = ''
-    cp ${./package-lock.json} package-lock.json
-  '';
-
   installPhase = ''
-    runHook preInstall
     mkdir -p "$out/pi-memory"
-    cp -r dist skills package.json bin "$out/pi-memory/"
-    cp -r node_modules "$out/pi-memory/"
-    runHook postInstall
+    cp index.ts "$out/pi-memory/"
   '';
 
   meta = {
-    description = "Persistent, inspectable memory with hybrid retrieval and knowledge-graph triples for Pi";
-    homepage = "https://github.com/shog-lab/pi-mind";
+    description = "Persistent Markdown memory extension for Pi with optional qmd search";
+    homepage = "https://github.com/jayzeng/pi-memory";
     license = lib.licenses.mit;
   };
 }
