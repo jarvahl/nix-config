@@ -22,12 +22,14 @@
       programs.pi.coding-agent = {
         enable = true;
         environment = {
+          FIREFOX_AGENT_BRIDGE_BROWSER.value = "${self'.packages.firefox-agent-bridge}/bin/browser";
           PI_SKIP_VERSION_CHECK.value = "1";
           PI_TELEMETRY.value = "0";
         };
         extensions = with self'.packages; [
           "${pi-core-skill-tool}/pi-core-skill-tool/index.ts"
           "${pi-diff-review}/pi-diff-review/index.ts"
+          "${pi-firefox-bridge}/pi-firefox-bridge/index.ts"
           "${pi-memory}/pi-memory/dist/extensions/memory/index.js"
           "${pi-memory}/pi-memory/dist/extensions/skill-evolution/index.js"
           "${pi-ponytail}/pi-ponytail/index.js"

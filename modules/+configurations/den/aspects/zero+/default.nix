@@ -124,6 +124,7 @@ lib.mkMerge [
               clipboard
               console
               development
+              firefox
               herdr
               pi
             ])
