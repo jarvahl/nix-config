@@ -28,6 +28,7 @@ in
       url = "github:nix-community/flakelight";
     };
 
+    flake.overlays.default = outputs.overlays.default;
     flakelight.outputs = outputs;
   };
 }

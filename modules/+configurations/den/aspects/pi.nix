@@ -66,6 +66,7 @@ lib.mkMerge [
             "${pi-diff-review}/pi-diff-review/index.ts"
             "${pi-memory}/pi-memory/index.ts"
             "${pi-ponytail}/pi-ponytail/index.js"
+            "${pi-permission-modes}/pi-permission-modes/index.ts"
             "${pi-prompt-timer}/pi-prompt-timer/index.ts"
             "${pi-self-compact}/pi-self-compact/index.ts"
             "${pi-web-access}/pi-web-access/index.ts"
@@ -113,6 +114,7 @@ lib.mkMerge [
       {
         config,
         lib,
+        pkgs,
         ...
       }:
       {
@@ -122,6 +124,7 @@ lib.mkMerge [
 
         programs.hypruse = {
           enable = true;
+          package = pkgs.hypruse;
 
           env = {
             HYPRUSE_BACKGROUND = "1";
