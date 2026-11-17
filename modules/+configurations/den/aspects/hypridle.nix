@@ -5,8 +5,8 @@
       enable = true;
       settings.listener = [
         {
-          "on-resume" = "${pkgs.hyprland}/bin/hyprctl dispatch dpms on";
-          "on-timeout" = "${pkgs.hyprland}/bin/hyprctl dispatch dpms off";
+          "on-resume" = "${pkgs.hyprland}/bin/hyprctl dispatch 'hl.dsp.dpms({ action = \"on\" })'";
+          "on-timeout" = "${pkgs.hyprland}/bin/hyprctl dispatch 'hl.dsp.dpms({ action = \"off\" })'";
           timeout = 600;
         }
       ];
