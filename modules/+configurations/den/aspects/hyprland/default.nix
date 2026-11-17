@@ -107,8 +107,8 @@ with den.lib;
                 resize_on_border = true;
                 gaps_out = {
                   bottom = 48;
-                  left = 45;
-                  right = 45;
+                  left = 24;
+                  right = 24;
                   top = 0;
                 };
               };
