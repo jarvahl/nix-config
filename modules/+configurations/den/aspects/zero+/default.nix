@@ -140,6 +140,7 @@ lib.mkMerge [
             (with den.aspects; [
               # ui
               foot
+              heeler
               linger
             ])
             ++ (with den.aspects; [
