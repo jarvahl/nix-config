@@ -1,0 +1,5 @@
+{
+  "id": "volume",
+  "component": "VolumeIsland.qml",
+  "source": "VolumeSource.qml"
+}

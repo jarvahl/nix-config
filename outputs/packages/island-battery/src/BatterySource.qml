@@ -1,11 +1,11 @@
 import QtQuick
 import Quickshell
 import Quickshell.Services.UPower
-import ".." as Island
 
 Scope {
     id: root
 
+    property var api
     readonly property real rawPercent: UPower.displayDevice.percentage
     readonly property int percent: Math.round(rawPercent <= 1 ? rawPercent * 100 : rawPercent)
     readonly property string level: percent <= 20 ? "red" : percent <= 50 ? "orange" : "green"
@@ -27,7 +27,9 @@ Scope {
     }
 
     function show(reason) {
-        Island.Bus.show("battery", {
+        if (!root.api)
+            return;
+        root.api.show("battery", {
             label: label(reason),
             reason: reason,
             percent: percent,

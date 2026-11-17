@@ -1,0 +1,5 @@
+{
+  "id": "brightness",
+  "component": "BrightnessIsland.qml",
+  "source": "BrightnessSource.qml"
+}

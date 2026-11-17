@@ -6,14 +6,32 @@
         config,
         lib,
         pkgs,
+        self',
         ...
       }:
       let
-        quickshellConfig = builtins.path {
-          filter = path: type: type == "directory" || lib.hasSuffix ".qml" path;
-          name = "quickshell";
-          path = ./.;
-        };
+        widgetPackages = builtins.map (name: self'.packages.${name}) (
+          builtins.filter (name: lib.hasPrefix "island-" name && name != "island-shell") (
+            builtins.attrNames self'.packages
+          )
+        );
+        quickshellConfig = pkgs.runCommand "dynamic-island-config" { nativeBuildInputs = [ pkgs.jq ]; } ''
+          mkdir -p "$out/share/island"
+          cp -r ${self'.packages.island-shell}/share/island/. "$out/share/island/"
+          manifests="$TMPDIR/widgets.ndjson"
+          : > "$manifests"
+          for widget in ${lib.escapeShellArgs widgetPackages}; do
+            for manifest in "$widget"/share/island/*/plugin.json; do
+              [ -f "$manifest" ] || continue
+              base="file://$(dirname "$manifest")/"
+              jq -c --arg base "$base" '
+                .component = ($base + .component)
+                | if .source then .source = ($base + .source) else . end
+              ' "$manifest" >> "$manifests"
+            done
+          done
+          jq -s '.' "$manifests" > "$out/share/island/widgets.json"
+        '';
 
         launcherToggle = pkgs.writeShellScriptBin "launcher-toggle" ''
           config="$HOME/.config/quickshell/dynamic-island/Host.qml"
@@ -51,12 +69,16 @@
           restartTriggers = [ config.files.".config/quickshell/dynamic-island".source ];
 
           serviceConfig = {
-            Environment = "PATH=${
-              lib.makeBinPath [
-                pkgs.brightnessctl
-                pkgs.gtk3
-              ]
-            }:/etc/profiles/per-user/jarvahl/bin:/run/current-system/sw/bin";
+            Environment = [
+              "DYNAMIC_ISLAND_DEFAULT=clock"
+              "PATH=${
+                lib.makeBinPath [
+                  pkgs.brightnessctl
+                  pkgs.gtk3
+                ]
+              }:/etc/profiles/per-user/jarvahl/bin:/run/current-system/sw/bin"
+            ];
+            ExecCondition = ''${pkgs.runtimeShell} -c 'test "$XDG_CURRENT_DESKTOP" = Hyprland' '';
             ExecStart = "${pkgs.quickshell}/bin/qs -p ${
               config.files.".config/quickshell/dynamic-island".source
             }/Host.qml";

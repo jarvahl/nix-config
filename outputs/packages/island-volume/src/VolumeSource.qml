@@ -1,11 +1,11 @@
 import QtQuick
 import Quickshell
 import Quickshell.Services.Pipewire
-import ".." as Island
 
 Scope {
     id: root
 
+    property var api
     readonly property var sink: Pipewire.defaultAudioSink
     readonly property real volume: sink && sink.audio ? sink.audio.volume : 0
     readonly property bool muted: sink && sink.audio ? sink.audio.muted : false
@@ -18,10 +18,8 @@ Scope {
             return;
         }
 
-        Island.Bus.show("volume", {
-            value: root.volume,
-            muted: root.muted
-        });
+        if (root.api)
+            root.api.show("volume", { value: root.volume, muted: root.muted });
     }
 
     onSinkChanged: baselineReady = false

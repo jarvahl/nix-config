@@ -1,0 +1,5 @@
+{
+  "id": "battery",
+  "component": "BatteryIsland.qml",
+  "source": "BatterySource.qml"
+}
