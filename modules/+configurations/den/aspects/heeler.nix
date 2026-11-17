@@ -1,7 +1,7 @@
 { ... }:
 {
   den.aspects.heeler = {
-    nixos =
+    provides.to-hosts.nixos =
       { user, ... }:
       {
         users.users.${user.userName}.openssh.authorizedKeys.keys = [
