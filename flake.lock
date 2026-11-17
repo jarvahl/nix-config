@@ -403,6 +403,26 @@
         "type": "github"
       }
     },
+    "hypruse": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1794773129,
+        "narHash": "sha256-UbtfbOuNFXWU1Ov5aS7r1skhPEVrmW46F2tvfMdO1+s=",
+        "owner": "IlyasKhallouki",
+        "repo": "hypruse",
+        "rev": "1ca642dbe2662c0daf12e5c162c0aaa7d5e37c33",
+        "type": "github"
+      },
+      "original": {
+        "owner": "IlyasKhallouki",
+        "repo": "hypruse",
+        "type": "github"
+      }
+    },
     "import-tree": {
       "locked": {
         "lastModified": 1788467110,
@@ -658,6 +678,7 @@
         "hjem-hm-modules": "hjem-hm-modules",
         "hjem-rum": "hjem-rum",
         "home-manager": "home-manager",
+        "hypruse": "hypruse",
         "import-tree": "import-tree",
         "nix-index-database": "nix-index-database",
         "nix-unit": "nix-unit",

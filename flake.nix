@@ -64,6 +64,10 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    hypruse = {
+      url = "github:IlyasKhallouki/hypruse";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     import-tree = {
       url = "github:denful/import-tree";
     };
@@ -91,11 +95,15 @@
     };
     pi = {
       url = "github:lukasl-dev/pi.nix";
-      inputs.flake-parts.follows = "flake-parts";
-      inputs.nixpkgs.follows = "nixpkgs";
-      inputs.bun2nix.inputs.treefmt-nix.follows = "treefmt-nix";
-      inputs.bun2nix-x86_64-darwin.inputs.nixpkgs.follows = "nixpkgs";
-      inputs.bun2nix-x86_64-darwin.inputs.treefmt-nix.follows = "treefmt-nix";
+      inputs = {
+        bun2nix.inputs.treefmt-nix.follows = "treefmt-nix";
+        bun2nix-x86_64-darwin.inputs = {
+          nixpkgs.follows = "nixpkgs";
+          treefmt-nix.follows = "treefmt-nix";
+        };
+        flake-parts.follows = "flake-parts";
+        nixpkgs.follows = "nixpkgs";
+      };
     };
     sops-file = {
       url = "github:jarvahl/sops-file";

@@ -1,6 +1,11 @@
 { inputs, ... }:
 
 {
+  flake-file.inputs.hypruse = {
+    url = "github:IlyasKhallouki/hypruse";
+    inputs.nixpkgs.follows = "nixpkgs";
+  };
+
   flake-file.inputs.pi = {
     url = "github:lukasl-dev/pi.nix";
     inputs = {
@@ -40,6 +45,31 @@
         settings = {
           defaultTools = [ "+codemode" ];
         };
+      };
+    };
+
+  den.aspects.pi.hyperland.hjem =
+    {
+      config,
+      lib,
+      ...
+    }:
+    {
+      imports = [
+        inputs.hypruse.homeModules.default
+      ];
+
+      programs.hypruse = {
+        enable = true;
+
+        env = {
+          HYPRUSE_BACKGROUND = "1";
+        };
+      };
+
+      programs.pi.coding-agent.mcp.mcpServers.hypruse = {
+        command = lib.getExe config.programs.hypruse.package;
+        env = config.programs.hypruse.env;
       };
     };
 }
