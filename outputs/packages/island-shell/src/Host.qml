@@ -95,7 +95,9 @@ PanelWindow {
         api: widgetApi
         contentVisible: root.contentVisible
         horizontalPadding: root.activeIsland === "" ? 10 : root.horizontalPadding
-        verticalPadding: root.activeIsland === "" ? 6 : root.verticalPadding
+        verticalPadding: root.activeIsland === ""
+            ? 6
+            : root.activeIsland === "volume" ? 8 : root.verticalPadding
         topOffset: root.topOffset
         onLauncherRequested: root.toggleLauncher()
         onCloseRequested: root.closeActive()
