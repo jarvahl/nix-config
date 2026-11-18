@@ -50,9 +50,6 @@ lib.mkMerge [
             "${pi-web-access}/pi-web-access/index.ts"
             "${pi-session}/pi-session/index.ts"
           ];
-          skills = with self'.packages; [
-            "${pi-core-skill-tool}/pi-core-skill-tool/skills"
-          ];
           settings = {
             defaultTools = [ "+codemode" ];
             prompts = promptFiles;
