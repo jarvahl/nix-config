@@ -39,8 +39,6 @@ lib.mkMerge [
 
           Use `codemode` exclusively for every tool call. Do not call individual tools directly.
           Use Codemode to batch independent calls and to chain dependent calls when needed.
-          On LinkedIn, navigate through visible page controls, links, filters, and search fields;
-          do not navigate directly to page URLs.
         '';
 
         programs.pi.coding-agent = {
@@ -61,7 +59,7 @@ lib.mkMerge [
             "${pi-session}/pi-session/index.ts"
           ];
           settings = {
-            defaultTools = [ "codemode" ];
+            defaultTools = [ "+codemode" ];
             prompts = promptFiles;
           };
         };
