@@ -28,7 +28,8 @@ lib.mkMerge [
           builtins.attrNames (builtins.readDir ./prompts)
         );
 
-        promptFiles = map (name: ./prompts + "/${name}") promptNames;
+        promptDir = ./prompts;
+        promptFiles = map (name: "${promptDir}/${name}") promptNames;
       in
       {
         imports = [ inputs.pi.homeModules.default ];
