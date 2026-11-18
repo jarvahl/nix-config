@@ -34,7 +34,7 @@
         '';
 
         launcherToggle = pkgs.writeShellScriptBin "launcher-toggle" ''
-          config="$HOME/.config/quickshell/dynamic-island/Host.qml"
+          config="$HOME/.config/quickshell/dynamic-island/share/island/Host.qml"
           exec ${pkgs.quickshell}/bin/qs -p "$(${pkgs.coreutils}/bin/readlink -f "$config")" ipc --any-display call launcher toggle
         '';
       in
@@ -81,7 +81,7 @@
             ExecCondition = ''${pkgs.runtimeShell} -c 'test "$XDG_CURRENT_DESKTOP" = Hyprland' '';
             ExecStart = "${pkgs.quickshell}/bin/qs -p ${
               config.files.".config/quickshell/dynamic-island".source
-            }/Host.qml";
+            }/share/island/Host.qml";
             Restart = "on-failure";
           };
 
