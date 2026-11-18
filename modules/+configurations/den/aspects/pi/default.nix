@@ -101,9 +101,7 @@ lib.mkMerge [
           enable = true;
           package = pkgs.hypruse;
 
-          env = {
-            HYPRUSE_BACKGROUND = "1";
-          };
+          env = { };
         };
 
         programs.pi.coding-agent.mcp.mcpServers.hypruse = {
