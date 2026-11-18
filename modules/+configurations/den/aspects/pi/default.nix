@@ -34,6 +34,15 @@ lib.mkMerge [
       {
         imports = [ inputs.pi.homeModules.default ];
 
+        files.".pi/agent/APPEND_SYSTEM.md".text = ''
+          ## Tool-use policy
+
+          Use `codemode` exclusively for every tool call. Do not call individual tools directly.
+          Use Codemode to batch independent calls and to chain dependent calls when needed.
+          On LinkedIn, navigate through visible page controls, links, filters, and search fields;
+          do not navigate directly to page URLs.
+        '';
+
         programs.pi.coding-agent = {
           enable = true;
           environment = {
@@ -52,7 +61,7 @@ lib.mkMerge [
             "${pi-session}/pi-session/index.ts"
           ];
           settings = {
-            defaultTools = [ "+codemode" ];
+            defaultTools = [ "codemode" ];
             prompts = promptFiles;
           };
         };
@@ -62,11 +71,9 @@ lib.mkMerge [
     den.aspects.pi.firefox.hjem =
       { self', ... }:
       {
-        programs.pi.coding-agent = {
-          environment.FIREFOX_AGENT_BRIDGE_BROWSER.value = "${self'.packages.firefox-agent-bridge}/bin/browser";
-          extensions = with self'.packages; [
-            "${pi-firefox-bridge}/pi-firefox-bridge/index.ts"
-          ];
+        programs.pi.coding-agent.mcp.mcpServers.firefox = {
+          command = "${self'.packages.firefox-agent-mcp}/bin/firefox-agent-mcp";
+          env.FIREFOX_AGENT_BRIDGE_BROWSER = "${self'.packages.firefox-agent-bridge}/bin/browser";
         };
       };
   }

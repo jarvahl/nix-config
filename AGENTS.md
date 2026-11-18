@@ -1,6 +1,7 @@
 # Project rules
 
 - This flake is evaluated from the Git tree. After creating, moving, or renaming files that Nix must import, stage the new paths before `nix eval`, `nix flake check`, or `direnv reload` (`git add <path>`). Untracked files are invisible to flake evaluation.
+- For NixOS deployment tasks, use the `nixos-deployment` skill and select the appropriate deployment reference.
 - Do not stage generated/cache paths like `.direnv/`.
 - Keep Nix attribute keys sorted alphabetically within each attribute set.
 - Read `CONVENTIONS.md` when changing the repository structure or adding modules.

@@ -9,7 +9,7 @@ Edit the source declaration, not the generated file.
 | `AGENTS.md` | `AGENTS.md.nix` |
 | `README.md` | `README.md.nix` |
 | `.sops.yaml` | `.sops.yaml.nix` |
-| `.agents/skills/*` | `.agents/skills.nix` |
+| `.agents/skills/*` | Skill files maintained under `.agents/skills/` |
 
 Local file generators are imported by `modules/files.nix`.
 
