@@ -1,5 +1,4 @@
 import QtQuick
-import QtQuick.Effects
 
 Rectangle {
     id: root
@@ -13,60 +12,113 @@ Rectangle {
     property int horizontalPadding: 16
     property int verticalPadding: 12
     property int topOffset: 12
+    property real targetWidgetWidth: 100
+    property real targetWidgetHeight: 22
     objectName: "island"
 
     signal launcherRequested()
     signal closeRequested()
 
-    width: Math.min(parent.width, (activeWidget?.implicitWidth || 100) + 2 * horizontalPadding)
-    height: Math.min(parent.height - topOffset, (activeWidget?.implicitHeight || 22) + 2 * verticalPadding)
+    width: Math.min(parent.width, targetWidgetWidth + 2 * horizontalPadding)
+    height: Math.min(parent.height - topOffset, targetWidgetHeight + 2 * verticalPadding)
     color: "#08090b"
     border.color: activeId === "launcher" && activeWidget?.activeFocus ? "#35ffffff" : "#28ffffff"
-    border.width: 1
+    border.width: activeId === "" ? 0 : 1
     radius: Math.min(28, height / 2)
-    layer.enabled: true
-    layer.effect: MultiEffect {
-        shadowEnabled: true
-        shadowColor: "#48000000"
-        shadowBlur: 0.65
-        shadowVerticalOffset: 6
-    }
-    Behavior on width { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
-    Behavior on height { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
-    Behavior on radius { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
+    topLeftRadius: activeId === "" ? 0 : 22
+    topRightRadius: activeId === "" ? 0 : 22
+    Behavior on topLeftRadius { NumberAnimation { duration: 360; easing.type: Easing.InOutCubic } }
+    Behavior on topRightRadius { NumberAnimation { duration: 360; easing.type: Easing.InOutCubic } }
+    layer.enabled: false
+    Behavior on width { NumberAnimation { duration: 360; easing.type: Easing.InOutCubic } }
+    Behavior on height { NumberAnimation { duration: 360; easing.type: Easing.InOutCubic } }
     clip: true
 
-    Rectangle {
-        anchors { top: parent.top; left: parent.left; right: parent.right }
-        height: 1
-        radius: 1
-        color: "#18ffffff"
+    onActiveWidgetChanged: captureWidgetGeometry()
+
+    onContentVisibleChanged: {
+        if (contentVisible)
+            contentLayer.visible = true;
+        animateContent();
     }
 
-    Loader {
-        id: widgetLoader
-        anchors.centerIn: parent
-        opacity: root.contentVisible ? 1 : 0
-        scale: root.contentVisible ? 1 : 0.96
-        Behavior on opacity { NumberAnimation { duration: 160; easing.type: Easing.InOutCubic } }
-        Behavior on scale { NumberAnimation { duration: 240; easing.type: Easing.OutCubic } }
+    function animateContent() {
+        opacityAnimation.to = contentVisible ? 1 : 0;
+        opacityAnimation.restart();
+        scaleAnimation.to = contentVisible ? 1 : 0.96;
+        scaleAnimation.restart();
+    }
 
-        function loadWidget(url) {
-            if (url.toString() === "") {
-                source = "";
-                return;
-            }
-            setSource(url, { api: root.api, eventData: root.eventData });
+    function captureWidgetGeometry() {
+        if (!activeWidget)
+            return;
+
+        targetWidgetWidth = activeWidget.implicitWidth;
+        targetWidgetHeight = activeWidget.implicitHeight;
+    }
+
+    Item {
+        id: contentLayer
+        anchors.centerIn: parent
+        width: widgetLoader.implicitWidth
+        height: widgetLoader.implicitHeight
+        opacity: 1
+        scale: 1
+        visible: true
+
+        NumberAnimation {
+            id: opacityAnimation
+            target: contentLayer
+            property: "opacity"
+            duration: 320
+            easing.type: Easing.InOutCubic
         }
 
-        Component.onCompleted: loadWidget(root.widgetUrl)
-        onLoaded: if (root.activeId === "launcher" && item && item.reset) item.reset()
+        NumberAnimation {
+            id: scaleAnimation
+            target: contentLayer
+            property: "scale"
+            duration: 320
+            easing.type: Easing.InOutCubic
+        }
 
-        Connections {
-            target: root
-            function onWidgetUrlChanged() { widgetLoader.loadWidget(root.widgetUrl); }
-            function onApiChanged() { if (widgetLoader.item) widgetLoader.item.api = root.api; }
-            function onEventDataChanged() { if (widgetLoader.item) widgetLoader.item.eventData = root.eventData; }
+        Loader {
+            id: widgetLoader
+            anchors.fill: parent
+
+            function loadWidget(url) {
+                contentLayer.visible = root.contentVisible;
+                contentLayer.opacity = root.contentVisible ? 1 : 0;
+                contentLayer.scale = root.contentVisible ? 1 : 0.96;
+
+                if (url.toString() === "") {
+                    source = "";
+                    return;
+                }
+
+                setSource(url, { api: root.api, eventData: root.eventData });
+            }
+
+            Component.onCompleted: {
+                loadWidget(root.widgetUrl);
+                contentLayer.opacity = root.contentVisible ? 1 : 0;
+                contentLayer.scale = root.contentVisible ? 1 : 0.96;
+            }
+            onLoaded: {
+                contentLayer.visible = root.contentVisible;
+                contentLayer.opacity = root.contentVisible ? 1 : 0;
+                contentLayer.scale = root.contentVisible ? 1 : 0.96;
+                root.captureWidgetGeometry();
+                if (root.activeId === "launcher" && item && item.reset)
+                    item.reset();
+            }
+
+            Connections {
+                target: root
+                function onWidgetUrlChanged() { widgetLoader.loadWidget(root.widgetUrl); }
+                function onApiChanged() { if (widgetLoader.item) widgetLoader.item.api = root.api; }
+                function onEventDataChanged() { if (widgetLoader.item) widgetLoader.item.eventData = root.eventData; }
+            }
         }
     }
 
@@ -74,6 +126,8 @@ Rectangle {
         target: widgetLoader.item
         ignoreUnknownSignals: true
         function onCloseRequested() { root.closeRequested(); }
+        function onImplicitWidthChanged() { root.captureWidgetGeometry(); }
+        function onImplicitHeightChanged() { root.captureWidgetGeometry(); }
     }
 
     MouseArea {

@@ -106,10 +106,10 @@ with den.lib;
                 resize_corner = true;
                 resize_on_border = true;
                 gaps_out = {
-                  bottom = 48;
+                  bottom = 16;
                   left = 24;
                   right = 24;
-                  top = 0;
+                  top = 8;
                 };
               };
 

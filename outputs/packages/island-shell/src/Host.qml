@@ -30,8 +30,8 @@ PanelWindow {
         collapseTimer.stop();
         showTimer.stop();
         activeData = ({});
-        activeIsland = "launcher";
         contentVisible = false;
+        activeIsland = "launcher";
         launcherFocusAttempts = 0;
         showTimer.restart();
         launcherFocusTimer.restart();
@@ -55,9 +55,10 @@ PanelWindow {
     implicitWidth: Math.min(screen.width, 760)
     implicitHeight: Math.min(screen.height, 560)
     color: "transparent"
-    exclusiveZone: activeIsland === "" && activeWidget
-        ? activeWidget.implicitHeight + 2 * verticalPadding + topOffset
-        : registry.defaultPlugin?.reserve || 48
+    // Keep the reserved layout height fixed while the overlay morphs.
+    // Changing exclusiveZone during the animation makes Hyprland re-layout
+    // windows and produces visible flicker.
+    exclusiveZone: 30
     mask: Region { item: capsule }
 
     QtObject {
@@ -85,15 +86,16 @@ PanelWindow {
     IslandCapsule {
         id: capsule
         anchors.top: parent.top
-        anchors.topMargin: root.topOffset
+        anchors.topMargin: root.activeIsland === "" ? 0 : root.topOffset
         anchors.horizontalCenter: parent.horizontalCenter
+        Behavior on anchors.topMargin { NumberAnimation { duration: 360; easing.type: Easing.InOutCubic } }
         widgetUrl: root.activePlugin ? Qt.resolvedUrl(root.activePlugin.component) : ""
         activeId: root.activeIsland
         eventData: root.activeData
         api: widgetApi
         contentVisible: root.contentVisible
-        horizontalPadding: root.horizontalPadding
-        verticalPadding: root.verticalPadding
+        horizontalPadding: root.activeIsland === "" ? 10 : root.horizontalPadding
+        verticalPadding: root.activeIsland === "" ? 6 : root.verticalPadding
         topOffset: root.topOffset
         onLauncherRequested: root.toggleLauncher()
         onCloseRequested: root.closeActive()
@@ -105,9 +107,20 @@ PanelWindow {
             if (root.activeIsland === "launcher")
                 return;
             collapseTimer.stop();
+
+            // Keep an already visible notification alive while its value changes.
+            // Restarting the fade-in on every volume event causes the pill to
+            // flicker during key-repeat.
+            if (root.activeIsland === islandName) {
+                root.activeData = data;
+                root.contentVisible = true;
+                hideTimer.restart();
+                return;
+            }
+
+            root.contentVisible = false;
             root.activeData = data;
             root.activeIsland = islandName;
-            root.contentVisible = false;
             showTimer.restart();
             hideTimer.restart();
         }
@@ -115,7 +128,8 @@ PanelWindow {
 
     Timer {
         id: showTimer
-        interval: 100
+        // Let the capsule finish expanding before revealing the new widget.
+        interval: 360
         onTriggered: {
             root.contentVisible = true;
             if (root.activeIsland === "launcher")

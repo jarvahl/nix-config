@@ -74,7 +74,10 @@ Singleton {
         running: true
 
         stdout: StdioCollector {
-            onStreamFinished: root.selectDevice(this.text)
+            onStreamFinished: {
+                root.selectDevice(this.text);
+                currentProcess.running = root.deviceName !== "";
+            }
         }
 
         onExited: function(exitCode) {
@@ -95,6 +98,40 @@ Singleton {
         onLoaded: root.acceptCurrent(Number(text().trim()))
         onLoadFailed: function(error) {
             console.warn("Brightness: failed to read brightness:", error);
+        }
+    }
+
+    Process {
+        id: currentProcess
+
+        command: [
+            "brightnessctl",
+            "--class=backlight",
+            "--machine-readable",
+            "info"
+        ]
+        running: root.deviceName !== ""
+
+        stdout: StdioCollector {
+            onStreamFinished: {
+                const fields = this.text.trim().split(",");
+                if (fields.length >= 5) {
+                    root.acceptCurrent(Number(fields[2]));
+                    root.acceptMaximum(Number(fields[4]));
+                }
+            }
+        }
+    }
+
+    Timer {
+        // Some backlight sysfs files do not emit reliable change events.
+        // Poll brightnessctl itself so hardware-key changes always reach the UI.
+        interval: 150
+        repeat: true
+        running: root.deviceName !== ""
+        onTriggered: {
+            if (!currentProcess.running)
+                currentProcess.running = true;
         }
     }
 

@@ -16,7 +16,7 @@ Scope {
         onTriggered: {
             try {
                 check(shell.defaultWidgetId === "clock", "default widget was not configured");
-                check(shell.exclusiveZone === 58, "reservation changed");
+                check(shell.exclusiveZone === 30, "reservation changed");
                 const capsule = shell.contentItem.children.find(child => child.objectName === "island");
                 check(shell.mask !== null, "missing click-through mask");
                 if (step === 0) shell.pluginApi.show("volume", {});
