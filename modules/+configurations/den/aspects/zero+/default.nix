@@ -14,7 +14,6 @@ lib.mkMerge [
             comma
             firefox
             fonts
-            gnome
             lid-switch
             podman
             ssh
@@ -66,27 +65,16 @@ lib.mkMerge [
             networking.networkmanager.enable = true;
             networking.useDHCP = lib.mkDefault true;
 
-            services.displayManager = {
-              defaultSession = "hyprland-uwsm";
-              sessionPackages = lib.mkForce [
-                pkgs.gnome-session.sessions
-                (pkgs.writeTextFile {
-                  name = "hyprland-uwsm-session";
-                  destination = "/share/wayland-sessions/hyprland-uwsm.desktop";
-                  text = ''
-                    [Desktop Entry]
-                    Name=Hyprland (UWSM)
-                    Comment=Hyprland compositor managed by UWSM
-                    Exec=${lib.getExe pkgs.uwsm} start -F -- /run/current-system/sw/bin/Hyprland
-                    TryExec=${lib.getExe pkgs.uwsm}
-                    DesktopNames=Hyprland
-                    Type=Application
-                  '';
-                  derivationArgs = {
-                    passthru.providedSessions = [ "hyprland-uwsm" ];
-                  };
-                })
-              ];
+            services.greetd = {
+              enable = true;
+              settings = rec {
+                initial_session = {
+                  command = "${lib.getExe pkgs.uwsm} start -- hyprland-uwsm.desktop";
+                  user = "jarvahl";
+                };
+
+                default_session = initial_session;
+              };
             };
 
             environment.systemPackages = [ pkgs.networkmanager ];
