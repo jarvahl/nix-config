@@ -22,7 +22,7 @@ Scope {
                 if (step === 0) shell.pluginApi.show("volume", {});
                 else if (step === 1) {
                     check(shell.activeIsland === "volume", "volume not shown");
-                    check(shell.activeWidget.implicitWidth === 184 && shell.activeWidget.implicitHeight === 24, "volume geometry");
+                    check(shell.activeWidget.implicitWidth === 248 && shell.activeWidget.implicitHeight === 36, "volume geometry");
                     shell.activeWidget.implicitWidth = 300;
                     shell.activeWidget.implicitHeight = 52;
                 } else if (step === 2) {
