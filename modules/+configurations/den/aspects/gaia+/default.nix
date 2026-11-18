@@ -68,6 +68,7 @@ lib.mkMerge [
               development
               gh
               proxy
+              tmux
             ])
             ++ (with den.batteries; [
               (user-shell "zsh")
@@ -152,6 +153,7 @@ lib.mkMerge [
               gh
               glab
               proxy
+              tmux
             ])
             ++ (with den.batteries; [
               # batteries

@@ -112,6 +112,7 @@ lib.mkMerge [
               development
               gh
               linger
+              tmux
             ])
             ++ (with den.batteries; [
               (user-shell "zsh")

@@ -66,6 +66,7 @@ lib.mkMerge [
               console
               development
               gh
+              tmux
             ])
             ++ (with den.batteries; [
               (user-shell "zsh")
@@ -148,6 +149,7 @@ lib.mkMerge [
               # accounts
               certificates
               gh
+              tmux
             ])
             ++ (with den.batteries; [
               # batteries

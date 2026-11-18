@@ -148,6 +148,7 @@ lib.mkMerge [
               # accounts
               certificates
               gh
+              tmux
             ])
             ++ (with den.batteries; [
               # batteries
