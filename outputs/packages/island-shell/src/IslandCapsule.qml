@@ -21,8 +21,8 @@ Rectangle {
 
     width: Math.min(parent.width, targetWidgetWidth + 2 * horizontalPadding)
     height: Math.min(parent.height - topOffset, targetWidgetHeight + 2 * verticalPadding)
-    color: "#08090b"
-    border.color: activeId === "launcher" && activeWidget?.activeFocus ? "#35ffffff" : "#28ffffff"
+    color: "#272822"
+    border.color: activeId === "launcher" && activeWidget?.activeFocus ? "#a6e22e" : "#75715e"
     border.width: activeId === "" ? 0 : 1
     radius: Math.min(28, height / 2)
     topLeftRadius: activeId === "" ? 0 : 22

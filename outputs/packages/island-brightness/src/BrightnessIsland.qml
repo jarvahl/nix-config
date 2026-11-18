@@ -16,7 +16,7 @@ Item {
         anchors.left: parent.left
         anchors.verticalCenter: parent.verticalCenter
         text: "☀"
-        color: "#ffd60a"
+        color: "#e6db74"
         font.pixelSize: 21
     }
 
@@ -25,7 +25,7 @@ Item {
         anchors.leftMargin: 12
         anchors.top: parent.top
         text: "Display"
-        color: "#aeb0b6"
+        color: "#a6a6a0"
         font.pixelSize: 11
     }
 
@@ -33,7 +33,7 @@ Item {
         anchors.right: parent.right
         anchors.top: parent.top
         text: Math.round(root.value * 100) + "%"
-        color: "#f2f2f3"
+        color: "#f8f8f2"
         font.family: "FiraCode Nerd Font"
         font.pixelSize: 12
     }
@@ -45,13 +45,13 @@ Item {
         anchors.bottom: parent.bottom
         height: 6
         radius: 3
-        color: "#303238"
+        color: "#3e3d32"
 
         Rectangle {
             width: parent.width * root.value
             height: parent.height
             radius: parent.radius
-            color: "#ffd60a"
+            color: "#e6db74"
             Behavior on width { NumberAnimation { duration: 160; easing.type: Easing.OutCubic } }
         }
     }

@@ -22,26 +22,57 @@ Item {
         id: icon
         anchors.left: parent.left
         anchors.verticalCenter: parent.verticalCenter
-        text: root.muted ? "×" : "♫"
-        color: root.muted ? "#ff453a" : "#64d2ff"
-        font.pixelSize: 18
+        text: root.muted ? "󰖁" : "󰕾"
+        color: root.muted ? "#FF453A" : "#F2F2F7"
+        font.family: "FiraCode Nerd Font"
+        font.pixelSize: 19
     }
 
-    Text {
+    Rectangle {
+        id: track
         anchors.left: icon.right
-        anchors.leftMargin: 10
-        anchors.verticalCenter: parent.verticalCenter
-        text: root.muted ? "Muted" : "Volume"
-        color: "#f2f2f3"
-        font.pixelSize: 12
-    }
-
-    Text {
+        anchors.leftMargin: 12
         anchors.right: parent.right
         anchors.verticalCenter: parent.verticalCenter
-        text: root.muted ? "—" : Math.round(root.value * 100) + "%"
-        color: root.muted ? "#ff453a" : "#aeb0b6"
-        font.family: "FiraCode Nerd Font"
-        font.pixelSize: 12
+        height: 5
+        radius: 2.5
+        color: "#48484A"
+
+        Rectangle {
+            id: fill
+            width: parent.width * (root.muted ? 0 : Math.max(0, Math.min(1, root.value)))
+            height: parent.height
+            radius: parent.radius
+            color: root.muted ? "#FF453A" : "#F2F2F7"
+
+            Behavior on width {
+                NumberAnimation {
+                    duration: 180
+                    easing.type: Easing.OutCubic
+                }
+            }
+        }
+
+        Rectangle {
+            width: 8
+            height: 8
+            radius: 4
+            anchors.verticalCenter: parent.verticalCenter
+            x: Math.max(
+                0,
+                Math.min(
+                    parent.width - width,
+                    parent.width * (root.muted ? 0 : Math.max(0, Math.min(1, root.value))) - width / 2
+                )
+            )
+            color: root.muted ? "#FF453A" : "#FFFFFF"
+
+            Behavior on x {
+                NumberAnimation {
+                    duration: 180
+                    easing.type: Easing.OutCubic
+                }
+            }
+        }
     }
 }

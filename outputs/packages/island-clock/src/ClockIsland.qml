@@ -15,7 +15,7 @@ Item {
 
     Text {
         anchors.centerIn: parent
-        color: "#f2f2f3"
+        color: "#f8f8f2"
         font.family: "FiraCode Nerd Font"
         font.pixelSize: 13
         font.weight: Font.Medium
