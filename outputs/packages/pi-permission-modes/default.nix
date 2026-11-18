@@ -7,6 +7,8 @@
 stdenvNoCC.mkDerivation {
   dontBuild = true;
 
+  patches = [ ./shortcut.patch ];
+
   installPhase = ''
     mkdir -p "$out/pi-permission-modes"
     cp index.ts utils.ts "$out/pi-permission-modes/"
