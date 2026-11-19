@@ -23,14 +23,6 @@ lib.mkMerge [
   {
     den.aspects.pi.hjem =
       { self', ... }:
-      let
-        promptNames = lib.filter (name: lib.hasSuffix ".md" name) (
-          builtins.attrNames (builtins.readDir ./prompts)
-        );
-
-        promptDir = ./prompts;
-        promptFiles = map (name: "${promptDir}/${name}") promptNames;
-      in
       {
         imports = [ inputs.pi.homeModules.default ];
 
@@ -58,9 +50,16 @@ lib.mkMerge [
             "${pi-web-access}/pi-web-access/index.ts"
             "${pi-session}/pi-session/index.ts"
           ];
+          skills =
+            let
+              skillFiles = ((inputs.import-tree.initFilter (_: true)).match ".*/SKILL\\.md").leaves ./skills;
+            in
+            map builtins.dirOf skillFiles;
           settings = {
             defaultTools = [ "+codemode" ];
-            prompts = promptFiles;
+            prompts = (
+              (inputs.import-tree.initFilter (path: lib.hasSuffix ".md" (toString path))).leaves ./prompts
+            );
           };
         };
       };
