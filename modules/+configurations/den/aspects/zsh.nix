@@ -1,4 +1,4 @@
-{ den, ... }:
+{ ... }:
 {
   den.aspects.zsh = {
     hjem =
@@ -55,10 +55,6 @@
         };
       };
 
-    includes = with den.aspects; [ zsh-integration ];
-  };
-
-  den.aspects.zsh-integration = {
     nixos =
       {
         config,
