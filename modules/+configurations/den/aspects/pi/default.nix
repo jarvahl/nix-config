@@ -2,11 +2,6 @@
 
 lib.mkMerge [
   {
-    flake-file.inputs.hypruse = {
-      url = "github:IlyasKhallouki/hypruse";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     flake-file.inputs.pi = {
       url = "github:lukasl-dev/pi.nix";
       inputs = {
@@ -19,8 +14,7 @@ lib.mkMerge [
         nixpkgs.follows = "nixpkgs";
       };
     };
-  }
-  {
+
     den.aspects.pi.hjem =
       { self', ... }:
       {
@@ -90,6 +84,11 @@ lib.mkMerge [
       };
   }
   {
+    flake-file.inputs.hypruse = {
+      url = "github:IlyasKhallouki/hypruse";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     den.aspects.pi.hyperland.hjem =
       {
         config,
