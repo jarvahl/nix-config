@@ -89,21 +89,6 @@
         "type": "github"
       }
     },
-    "dag": {
-      "locked": {
-        "lastModified": 1786636402,
-        "narHash": "sha256-RI2Elc4c9SZt11z10bUeNirFF20vH0cAkIyLfr38Bjw=",
-        "owner": "denful",
-        "repo": "dag",
-        "rev": "81620ad3bcc943a4ac140d52b09812de8fea4394",
-        "type": "github"
-      },
-      "original": {
-        "owner": "denful",
-        "repo": "dag",
-        "type": "github"
-      }
-    },
     "den": {
       "locked": {
         "lastModified": 1791228708,
@@ -689,8 +674,7 @@
         "sops-file": "sops-file",
         "sops-nix": "sops-nix",
         "terranix": "terranix",
-        "treefmt-nix": "treefmt-nix",
-        "zsh-nix": "zsh-nix"
+        "treefmt-nix": "treefmt-nix"
       }
     },
     "sops-file": {
@@ -840,46 +824,6 @@
       "original": {
         "owner": "numtide",
         "repo": "treefmt-nix",
-        "type": "github"
-      }
-    },
-    "zsh-nix": {
-      "inputs": {
-        "dag": "dag",
-        "flake-file": [
-          "flake-file"
-        ],
-        "flake-parts": [
-          "flake-parts"
-        ],
-        "git-hooks-nix": [
-          "git-hooks-nix"
-        ],
-        "home-manager": [
-          "hjem-hm-modules",
-          "home-manager"
-        ],
-        "import-tree": [
-          "import-tree"
-        ],
-        "nixpkgs": [
-          "nixpkgs"
-        ],
-        "treefmt-nix": [
-          "treefmt-nix"
-        ]
-      },
-      "locked": {
-        "lastModified": 1794499268,
-        "narHash": "sha256-3AR1Wgu4EU/pewgPXpu7uP0+93jNp+7F6xYsPw8jMTI=",
-        "owner": "jarvahl",
-        "repo": "zsh.nix",
-        "rev": "d24946236169bec9d8ea4a2f8bc9918e81ac194b",
-        "type": "github"
-      },
-      "original": {
-        "owner": "jarvahl",
-        "repo": "zsh.nix",
         "type": "github"
       }
     }

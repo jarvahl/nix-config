@@ -1,70 +1,63 @@
-{ den, inputs, ... }:
+{ den, ... }:
 {
-  flake-file.inputs.zsh-nix = {
-    inputs = {
-      flake-file.follows = "flake-file";
-      flake-parts.follows = "flake-parts";
-      git-hooks-nix.follows = "git-hooks-nix";
-      home-manager.follows = "hjem-hm-modules/home-manager";
-      import-tree.follows = "import-tree";
-      nixpkgs.follows = "nixpkgs";
-      treefmt-nix.follows = "treefmt-nix";
-    };
-    url = "github:jarvahl/zsh.nix";
-  };
-
   den.aspects.zsh = {
-    includes = with den.aspects; [ zsh-integration ];
-
-    hjem = { ... }: {
-      programs.zsh = {
-        enable = true;
-
-        bundle = {
+    hjem =
+      { lib, pkgs, ... }:
+      let
+        fzfTab = pkgs.fetchFromGitHub {
+          hash = "sha256-WlmWLKHrLeptc5rqlHbKvthD73it9ij7IDT9QxN4jCc=";
+          owner = "Aloxaf";
+          repo = "fzf-tab";
+          rev = "e394092c17277c84cb3d234917c4ac1073102ba6";
+        };
+      in
+      {
+        rum.programs.zsh = {
           enable = true;
-          executableName = "zsh";
-          autosuggestion.enable = true;
-          syntaxHighlighting.integrations.patina.enable = true;
-          completion = {
-            enable = true;
-            integrations.fzf.enable = true;
-          };
-          history.integrations.fzf.enable = true;
-          vi.enable = true;
-
-          imports = [
-            ({ lib, pkgs, ... }: {
-              zsh.rc = lib.mkOrder 29 ''
-                ZSH_CACHE_DIR="''${XDG_CACHE_HOME:-$HOME/.cache}/oh-my-zsh"
-                mkdir -p "$ZSH_CACHE_DIR/completions"
-                chmod u+w "$ZSH_CACHE_DIR"/completions/*(.N) 2>/dev/null || true
-
-                fpath=(
-                  "$ZSH_CACHE_DIR/completions"
-                  "${pkgs.nix-zsh-completions}/share/zsh/site-functions"
-                  "${pkgs.zsh-completions}/share/zsh/site-functions"
-                  $fpath
-                )
-
-                zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
-                zstyle ':completion:*' menu select
-                zstyle ':completion:*' list-colors "''${(s.:.)LS_COLORS}"
-              '';
-
-              zsh.startPlugins.syntax-highlighting = {
-                after = [ "autosuggestions" ];
-                package = pkgs.zsh-fast-syntax-highlighting;
-                source = "share/zsh/plugins/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh";
-              };
-            })
-          ];
 
           initConfig = ''
+            ZSH_CACHE_DIR="''${XDG_CACHE_HOME:-$HOME/.cache}/oh-my-zsh"
+            mkdir -p "$ZSH_CACHE_DIR/completions"
+            chmod u+w "$ZSH_CACHE_DIR"/completions/*(.N) 2>/dev/null || true
+
+            fpath=(
+              "$ZSH_CACHE_DIR/completions"
+              "${pkgs.nix-zsh-completions}/share/zsh/site-functions"
+              "${pkgs.zsh-completions}/share/zsh/site-functions"
+              $fpath
+            )
+
+            zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
+            zstyle ':completion:*' menu select
+            zstyle ':completion:*' list-colors "''${(s.:.)LS_COLORS}"
+
+            HISTFILE="$HOME/.zsh_history"
+            HISTSIZE=10000
+            SAVEHIST=10000
+            [[ -d "''${HISTFILE:h}" ]] || mkdir -p "''${HISTFILE:h}"
+
+            autoload -Uz compinit
+            compinit
+
+            source "${pkgs.zsh-vi-mode}/share/zsh-vi-mode/zsh-vi-mode.plugin.zsh"
+            source "${pkgs.zsh-autosuggestions}/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
+
+            source <(${lib.getExe pkgs.fzf} --zsh)
+            source "${fzfTab}/fzf-tab.plugin.zsh"
+            enable-fzf-tab
+            source "${pkgs.zsh-fzf-history-search}/share/zsh-fzf-history-search/zsh-fzf-history-search.plugin.zsh"
+
+            source "${pkgs.oh-my-zsh}/share/oh-my-zsh/lib/git.zsh"
+            source "${pkgs.oh-my-zsh}/share/oh-my-zsh/plugins/git/git.plugin.zsh"
+
+            eval "$(${pkgs.zsh-patina}/bin/zsh-patina activate)"
+
             PROMPT="%B%F{magenta}#%f%b "
           '';
         };
       };
-    };
+
+    includes = with den.aspects; [ zsh-integration ];
   };
 
   den.aspects.zsh-integration = {
@@ -76,34 +69,11 @@
         ...
       }:
       let
-        shell = "${config.hjem.users.${user.userName}.programs.zsh.bundle.package}/bin/zsh";
+        shell = "${config.hjem.users.${user.userName}.rum.programs.zsh.package}/bin/zsh";
       in
       {
         environment.shells = [ shell ];
         users.users.${user.userName}.shell = lib.mkForce shell;
       };
   };
-
-  den.default.nixos.hjem.extraModules = [
-    inputs.zsh-nix.homeManagerModules.default
-    (
-      { config, lib, ... }:
-      let
-        cfg = config.programs.zsh;
-      in
-      {
-        imports = [
-          (lib.mkAliasOptionModule [ "programs" "zsh" "enable" ] [ "rum" "programs" "zsh" "enable" ])
-          (lib.mkAliasOptionModule [ "programs" "zsh" "initContent" ] [ "rum" "programs" "zsh" "initConfig" ])
-        ];
-
-        config = lib.mkIf cfg.enable {
-          rum.programs.zsh = {
-            initConfig = lib.mkBefore cfg.bundle.initConfig;
-            package = cfg.bundle.package;
-          };
-        };
-      }
-    )
-  ];
 }
