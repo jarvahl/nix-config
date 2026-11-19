@@ -2,7 +2,7 @@
 {
   den.aspects.zsh = {
     hjem =
-      { lib, pkgs, ... }:
+      { pkgs, ... }:
       let
         fzfTab = pkgs.fetchFromGitHub {
           hash = "sha256-WlmWLKHrLeptc5rqlHbKvthD73it9ij7IDT9QxN4jCc=";
@@ -42,9 +42,7 @@
             source "${pkgs.zsh-vi-mode}/share/zsh-vi-mode/zsh-vi-mode.plugin.zsh"
             source "${pkgs.zsh-autosuggestions}/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
 
-            source <(${lib.getExe pkgs.fzf} --zsh)
             source "${fzfTab}/fzf-tab.plugin.zsh"
-            enable-fzf-tab
             source "${pkgs.zsh-fzf-history-search}/share/zsh-fzf-history-search/zsh-fzf-history-search.plugin.zsh"
 
             source "${pkgs.oh-my-zsh}/share/oh-my-zsh/lib/git.zsh"
