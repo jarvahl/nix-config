@@ -17,9 +17,14 @@ inputs.import-tree ./modules
 
 By default it recursively finds `.nix` files and ignores paths containing `/_`.
 
-## Non-Nix assets
+## Filtering and outputs
 
-Use `initFilter` to replace the default `.nix` filter, `match` for a full-path regular expression, and `leaves` to return paths instead of a module:
+Use `.filter` to narrow the existing filter. Use `initFilter` to replace the
+default `.nix` filter. The `.match` argument is a regular expression matched
+against the full path.
+
+Calling a configured tree normally returns a Nix module. Use `.leaves` when
+the consumer needs the discovered paths instead:
 
 ```nix
 ((inputs.import-tree.initFilter (_: true))
