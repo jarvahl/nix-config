@@ -18,9 +18,6 @@ Local file generators are imported by `modules/files.nix`.
 - Use `default.nix` for the main module of a module directory.
 - Keep generated-file declarations close to their generated output.
 - Stage newly created files before evaluating the flake.
-- `import-tree` defaults to recursively discovering `.nix` modules; for
-  non-Nix assets, use `initFilter` with `match` or a path predicate and
-  `leaves` to obtain the discovered paths.
 
 ## Terranix
 
