@@ -30,6 +30,15 @@ lib.mkMerge [
 This keeps each extension independently discoverable and avoids one large
 attribute set whose parts have unrelated activation conditions.
 
+## Check batteries before adding system extensions
+
+Before adding a manual `.nixos` extension, check whether a Den battery already
+provides the same host-level behavior. For example, `den.batteries.user-shell`
+sets the user's login shell at the OS level, so an aspect that includes
+`(den.batteries.user-shell "zsh")` should not duplicate `users.users.<name>.shell`
+or `environment.shells` configuration unless it needs a custom wrapper or
+package.
+
 ## Keep scopes explicit
 
 Use the scope that owns the configuration:
