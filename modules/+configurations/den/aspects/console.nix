@@ -4,6 +4,7 @@
     bat
     eza
     fzf
+    rg
     zoxide
     zsh
   ];
