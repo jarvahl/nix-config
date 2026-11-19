@@ -56,6 +56,13 @@ den.aspects.example.nixos = {
 If a user aspect needs to contribute configuration to its host, use
 `provides.to-hosts.nixos`; see `user-to-host.md`.
 
+## Colocate feature inputs
+
+When an aspect extension requires a flake input, declare
+`flake-file.inputs.<name>` in the same top-level `lib.mkMerge` attrset as the
+consuming `den.aspects.<name>.<extension>`. Keep the declaration outside the
+returned `.hjem` or `.nixos` module body.
+
 ## Avoid manual inclusion
 
 If the aspect-extension policy discovers an extension automatically, do not
