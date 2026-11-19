@@ -55,19 +55,5 @@
         };
       };
 
-    nixos =
-      {
-        config,
-        lib,
-        user,
-        ...
-      }:
-      let
-        shell = "${config.hjem.users.${user.userName}.rum.programs.zsh.package}/bin/zsh";
-      in
-      {
-        environment.shells = [ shell ];
-        users.users.${user.userName}.shell = lib.mkForce shell;
-      };
   };
 }
