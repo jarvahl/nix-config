@@ -60,7 +60,7 @@ If the file exports an attribute set rather than a derivation, evaluate or build
 
 - Never use `--commit` unless the user explicitly asks for a commit.
 - Do not claim that a successful `nix-init` run proves the package is correct.
-- Verify licenses, hashes, dependency completeness, install phases, and runtime behavior manually.
+- Verify licenses, hashes, dependency completeness, and runtime behavior manually.
 - Do not expose access tokens in command lines or generated files. Configure private-source credentials through the user's approved secret mechanism.
 - Do not replace an existing package expression automatically.
 - If `nix run nixpkgs#nix-init` cannot resolve or is unavailable for the pinned environment, report the error and use the repository's approved fallback rather than silently switching sources.

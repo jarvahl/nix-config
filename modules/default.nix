@@ -1,4 +1,4 @@
-{ config, inputs, ... }:
+{ inputs, ... }:
 {
   flake-file.inputs = {
     flake-file.url = "github:denful/flake-file";
@@ -18,10 +18,4 @@
   };
 
   systems = inputs.nixpkgs.lib.systems.flakeExposed;
-
-  perSystem =
-    { pkgs, ... }:
-    {
-      packages = config.flakelight.outputs.packages.${pkgs.system};
-    };
 }

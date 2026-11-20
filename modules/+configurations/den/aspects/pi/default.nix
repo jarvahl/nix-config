@@ -44,16 +44,12 @@ lib.mkMerge [
             "${pi-web-access}/pi-web-access/index.ts"
             "${pi-session}/pi-session/index.ts"
           ];
-          skills =
-            let
-              skillFiles = ((inputs.import-tree.initFilter (_: true)).match ".*/SKILL\\.md").leaves ./skills;
-            in
-            map builtins.dirOf skillFiles;
+          skills = with self'.skills; [
+            "${import-tree}/import-tree"
+            "${nix-package-init}/nix-package-init"
+          ];
           settings = {
             defaultTools = [ "+codemode" ];
-            prompts = (
-              (inputs.import-tree.initFilter (path: lib.hasSuffix ".md" (toString path))).leaves ./prompts
-            );
           };
         };
       };
