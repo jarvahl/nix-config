@@ -15,7 +15,7 @@ Local file generators are imported by `modules/files.nix`.
 ## Nix modules
 
 - Keep attribute keys sorted alphabetically within each attribute set.
-- Use `default.nix` for the main module of a module directory.
+- Use `default.nix` as the entry point when a module is split into a directory with additional files.
 - Keep generated-file declarations close to their generated output.
 - Stage newly created files before evaluating the flake.
 

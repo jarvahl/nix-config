@@ -15,7 +15,26 @@ The default call discovers Nix modules:
 inputs.import-tree ./modules
 ```
 
-By default it recursively finds `.nix` files and ignores paths containing `/_`.
+By default it recursively finds eligible `.nix` files and ignores paths containing `/_`. Files whose names start with `_` are not imported. A file does not need to be named `default.nix`.
+
+## File and directory layout
+
+Use a flat file for a module that consists of one file:
+
+```text
+modules/foo.nix
+```
+
+When a module is split into a directory, use `default.nix` as its entry point:
+
+```text
+modules/foo/
+├── default.nix
+├── options.nix
+└── config.nix
+```
+
+A directory containing only `default.nix` can be flattened back to `foo.nix`.
 
 ## Filtering and outputs
 
