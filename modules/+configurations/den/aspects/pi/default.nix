@@ -50,6 +50,7 @@ lib.mkMerge [
           ];
           settings = {
             defaultTools = [ "+codemode" ];
+            prompts = [ ];
           };
         };
       };
