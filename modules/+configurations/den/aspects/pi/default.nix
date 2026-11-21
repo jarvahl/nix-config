@@ -45,8 +45,8 @@ lib.mkMerge [
             "${pi-session}/pi-session/index.ts"
           ];
           skills = with self'.skills; [
-            "${import-tree}/import-tree"
-            "${nix-package-init}/nix-package-init"
+            "${import-tree}"
+            "${nix-package-init}"
           ];
           settings = {
             defaultTools = [ "+codemode" ];
