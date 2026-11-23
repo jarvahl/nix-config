@@ -56,14 +56,14 @@
 
             if [ "''${1:-}" = "--help" ] || [ "''${1:-}" = "-h" ]; then
               echo "usage: nix run .#write-host-key [-- hostname]"
-              echo "installs a host age key from modules/+configurations/den/aspects/<host>/key.age"
+              echo "installs a host age key from modules/+configurations/aspects/<host>/key.age"
               echo
               echo "without an explicit hostname, uses: $(hostname)"
               exit 0
             fi
 
             host="''${1:-$(hostname)}"
-            key_file="''${HOST_KEY_FILE:-modules/+configurations/den/aspects/''${host}+/key.age}"
+            key_file="''${HOST_KEY_FILE:-modules/+configurations/aspects/''${host}+/key.age}"
             target="/var/lib/sops-outputs/key.txt"
 
             if [ -z "''${SOPS_AGE_KEY_FILE:-}" ] || [ ! -r "''${SOPS_AGE_KEY_FILE}" ]; then

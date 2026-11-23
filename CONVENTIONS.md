@@ -24,7 +24,7 @@ Local file generators are imported by `modules/files.nix`.
 Terranix modules live under:
 
 ```text
-modules/+configurations/den/aspects/*/_terranix/
+modules/+configurations/aspects/*/_terranix/
 ```
 
 The directory is imported explicitly into the global Terranix configuration.

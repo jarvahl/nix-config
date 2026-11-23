@@ -21,5 +21,9 @@
       url = "github:jarvahl/hjem-hm-modules";
     };
     hjem-rum.url = "github:snugnug/hjem-rum";
+    home-manager = {
+      inputs.nixpkgs.follows = "nixpkgs";
+      url = "github:nix-community/home-manager";
+    };
   };
 }
