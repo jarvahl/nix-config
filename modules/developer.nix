@@ -4,10 +4,8 @@
   ...
 }:
 {
-  flake-file.inputs = {
-    files.url = "github:mightyiam/files";
-    sops-file.url = "github:jarvahl/sops-file";
-  };
+  flake-file.inputs.files.url = "github:mightyiam/files";
+  flake-file.inputs.sops-file.url = "github:jarvahl/sops-file";
 
   imports = [
     "${inputs.files.outPath}/flake-module.nix"
@@ -30,6 +28,19 @@
         )
       );
       type = "app";
+    };
+
+    devShells.default = pkgs.mkShell {
+      packages = with pkgs; [
+        age
+        just
+        runme
+        sops
+      ];
+
+      shellHook = ''
+        ${config.pre-commit.shellHook}
+      '';
     };
   };
 }
