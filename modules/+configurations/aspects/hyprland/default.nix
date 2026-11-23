@@ -1,7 +1,6 @@
-{ den, inputs, ... }:
-with den.lib;
+{ inputs, ... }:
 {
-  den.aspects.hyperland = callable {
+  den.aspects.hyperland = {
     hjem =
       { lib, pkgs, ... }:
       let
