@@ -45,7 +45,8 @@ lib.mkMerge [
             "${pi-web-access}/pi-web-access/index.ts"
             "${pi-session}/pi-session/index.ts"
           ];
-          skills = with self'.skills; [
+          skills = with self'.packages; [
+            "${commit-planning}"
             "${import-tree}"
             "${nix-package-init}"
             "${retro}"
