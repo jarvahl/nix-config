@@ -23,7 +23,10 @@ lib.mkMerge [
         files.".pi/agent/APPEND_SYSTEM.md".text = ''
           ## Tool-use policy
 
-          Use `codemode` exclusively for every tool call. Do not call individual tools directly.
+          Use `codemode` for built-in and MCP tools; discover them with `ALL_TOOLS`,
+          `searchTools`, or `describeTool`. If a configured profile extension exposes a
+          direct-only tool that Codemode cannot access, use that tool directly when needed.
+          In particular, use `search-session` and `ask-session` directly for Pi session history.
           Use Codemode to batch independent calls and to chain dependent calls when needed.
         '';
 
@@ -36,10 +39,7 @@ lib.mkMerge [
           extensions = with self'.packages; [
             "${pi-core-skill-tool}/pi-core-skill-tool/index.ts"
             "${pi-diff-review}/pi-diff-review/index.ts"
-            "${pi-memory}/pi-memory/index.ts"
             "${pi-ponytail}/pi-ponytail/index.js"
-            "${pi-permission-modes}/pi-permission-modes/index.ts"
-            "${pi-prompt-timer}/pi-prompt-timer/index.ts"
             "${pi-self-compact}/pi-self-compact/index.ts"
             "${pi-web-access}/pi-web-access/index.ts"
             "${pi-session}/pi-session/index.ts"
@@ -49,6 +49,8 @@ lib.mkMerge [
             "${nix-package-init}"
           ];
           settings = {
+            defaultModel = "gpt-6-luna";
+            defaultProvider = "openai";
             defaultTools = [ "+codemode" ];
             prompts = [ ];
           };
