@@ -55,7 +55,7 @@ lib.mkMerge [
             "${skill-creator}"
           ];
           settings = {
-            defaultModel = "gpt-6-luna";
+            defaultModel = "gpt-5.6-luna";
             defaultProvider = "openai";
             defaultTools = [ "+codemode" ];
             prompts = [ ];
