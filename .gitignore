@@ -5,6 +5,7 @@
 breakglass.age
 .keys/
 /.terraform/
+/result
 /config.tf.json
 /terraform.tfstate
 /terraform.tfstate.backup
