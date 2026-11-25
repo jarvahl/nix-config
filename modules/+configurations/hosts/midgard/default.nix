@@ -1,5 +1,5 @@
 let
-  host = "dvalin";
+  host = "midgard";
 in
 { den, lib, ... }:
 
@@ -10,9 +10,14 @@ lib.mkMerge [
         includes = (
           with den.aspects;
           [
+            # system
+            comma
+            firefox
+            fonts
+            lid-switch
+            podman
             ssh
             tailscale
-            (tailscale.tags [ "services" ])
           ]
         );
 
@@ -21,56 +26,62 @@ lib.mkMerge [
             config,
             lib,
             modulesPath,
+            pkgs,
             ...
           }:
           {
+            boot.extraModulePackages = [ ];
             boot.initrd.availableKernelModules = [
               "xhci_pci"
-              "ahci"
-              "ehci_pci"
-              "usbhid"
+              "thunderbolt"
+              "nvme"
               "usb_storage"
               "sd_mod"
+              "sdhci_pci"
             ];
             boot.initrd.kernelModules = [ ];
-            boot.kernelModules = [ ];
-            boot.extraModulePackages = [ ];
-            boot.kernelParams = [ "nomodeset" ];
+            boot.kernelModules = [ "kvm-intel" ];
             boot.loader.efi.canTouchEfiVariables = true;
             boot.loader.systemd-boot.enable = true;
 
             fileSystems."/" = {
-              device = "/dev/disk/by-partlabel/disk-main-root";
+              device = "/dev/disk/by-uuid/264e6d66-3283-4c17-a589-caf6e6ca0f19";
               fsType = "ext4";
-              options = [ "x-initrd.mount" ];
             };
 
             fileSystems."/boot" = {
-              device = "/dev/disk/by-partlabel/disk-main-ESP";
+              device = "/dev/disk/by-uuid/546D-4F36";
               fsType = "vfat";
-              options = [ "umask=0077" ];
+              options = [
+                "fmask=0077"
+                "dmask=0077"
+              ];
             };
 
-            hardware.cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
+            hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
 
             imports = [ (modulesPath + "/installer/scan/not-detected.nix") ];
 
             networking.networkmanager.enable = true;
+            networking.useDHCP = lib.mkDefault true;
 
-            services.tailscale.services.openclaw = {
-              comment = "OpenClaw gateway";
-              port = 18789;
+            services.greetd = {
+              enable = true;
+              settings = rec {
+                initial_session = {
+                  command = "${lib.getExe pkgs.uwsm} start -- hyprland-uwsm.desktop";
+                  user = "jarvahl";
+                };
+
+                default_session = initial_session;
+              };
             };
 
-            users.users.nixos = {
-              extraGroups = [
-                "wheel"
-                "networkmanager"
-              ];
-              group = "users";
-              initialPassword = "nix";
-              isNormalUser = true;
-            };
+            environment.systemPackages = [ pkgs.networkmanager ];
+
+            swapDevices = [
+              { device = "/dev/disk/by-uuid/ef842ad0-2a1b-4e24-a71b-61bb49cc4c55"; }
+            ];
           };
       };
 
@@ -87,7 +98,7 @@ lib.mkMerge [
         }
       ];
 
-      keys.${host} = "age1dtpml670fkfe63gnrc5qn29aye00h3al2yhrte88m9q58rszsatqjpxskz";
+      keys.${host} = "age1wxm2g87tj35cthkl02lx3jzefkkfxkpr4kseyrzpuwhwkpfwm34smhjuuz";
     };
   }
 
@@ -105,16 +116,42 @@ lib.mkMerge [
     lib.mkMerge [
       {
         den.aspects."${user}@${host}" = {
+          hjem.files.".ssh/config.d/heimdall".text = ''
+            Host heimdall
+              HostName heimdall.tailbf412b.ts.net
+              User jarvahl
+              IdentityFile ~/.ssh/id_ed25519
+              IdentitiesOnly yes
+          '';
+
           includes =
             (with den.aspects; [
-              certificates
+              # ui
+              foot
+              heeler
+              linger
+            ])
+            ++ (with den.aspects; [
+              # tools
+              clipboard
               console
               development
+              firefox
+              herdr
+              hyperland
+              hypridle
+              pi
+              quickshell
+              swaybg
+            ])
+            ++ (with den.aspects; [
+              # accounts
+              certificates
               gh
-              linger
               tmux
             ])
             ++ (with den.batteries; [
+              # batteries
               (user-shell "zsh")
             ]);
         };
@@ -171,59 +208,7 @@ lib.mkMerge [
             }
           ];
 
-          keys."${user}@${host}" = "age15ny8fkpgznutmkze50rcvceq400r6nq68n2vpdsq3muuq6vcwqmqlspkng";
-        };
-      }
-    ]
-  )
-  (
-
-    let
-      host = "dvalin";
-      user = "nixos";
-      secretsFile = ./user-nixos.sops.yaml;
-    in
-    lib.mkMerge [
-      {
-        den.aspects."${user}@${host}" = { };
-      }
-      {
-        den.aspects."${user}@${host}".sops = {
-          hjem = {
-            sops.age.keyFile = ".config/sops/age/key.txt";
-            sops.defaultSopsFile = secretsFile;
-          };
-
-          provides.to-hosts.nixos =
-            { config, ... }:
-            {
-              sops.secrets."${user}/age_key" = {
-                group = "users";
-                mode = "0600";
-                owner = user;
-                path = "${config.users.users.${user}.home}/.config/sops/age/key.txt";
-                sopsFile = ./host.sops.yaml;
-              };
-            };
-        };
-      }
-      {
-        den.hosts.x86_64-linux.${host}.users.${user} = {
-          classes = [ "hjem" ];
-        };
-      }
-      {
-        sops.file = {
-          creation_rules = [
-            {
-              key_groups = [
-                { age = [ "${user}@${host}" ]; }
-              ];
-              path_regex = secretsFile;
-            }
-          ];
-
-          keys."${user}@${host}" = "age1uj0ultfy0sxxty4jrczl7ajwwg42tefqqpzjedl246eghy7yjdjqfp6ysz";
+          keys."${user}@${host}" = "age1gfhnnsfzf839uvyr3nf6r3cl85zk4hvewkjpfpncxe8y7dxraeeqyr4y82";
         };
       }
     ]

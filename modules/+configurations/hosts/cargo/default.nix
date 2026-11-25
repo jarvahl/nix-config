@@ -73,7 +73,7 @@ lib.mkMerge [
             ]);
           nixos = { lib, ... }: {
             users.users.${user}.openssh.authorizedKeys.keys = [
-              (lib.trim (builtins.readFile ../zero/jarvahl.pub))
+              (lib.trim (builtins.readFile ../midgard/jarvahl.pub))
             ];
           };
         };
