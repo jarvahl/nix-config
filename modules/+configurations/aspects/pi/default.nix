@@ -20,21 +20,20 @@ lib.mkMerge [
       {
         imports = [ inputs.pi.homeModules.default ];
 
+        hjem.files.".pi/agent/AGENTS.md".text =
+          let
+            inherit (builtins) lessThan readFile;
+            inherit (lib) concatStringsSep pipe sort;
+          in
+          pipe ((inputs.import-tree.initFilter (path: lib.hasSuffix ".md" (toString path))).leaves ./rules) [
+            (sort lessThan)
+            (map readFile)
+            (ruleContents: [ (readFile "${self'.packages.pi-karpathy-guidelines}/AGENTS.md") ] ++ ruleContents)
+            (concatStringsSep "\n\n")
+          ];
+
         programs.pi.coding-agent = {
           enable = true;
-          rules =
-            let
-              inherit (builtins) lessThan readFile toFile;
-              inherit (lib) concatStringsSep pipe sort;
-            in
-            toFile "pi-AGENTS.md" (
-              pipe ((inputs.import-tree.initFilter (path: lib.hasSuffix ".md" (toString path))).leaves ./rules) [
-                (sort lessThan)
-                (map readFile)
-                (ruleContents: [ (readFile "${self'.packages.pi-karpathy-guidelines}/AGENTS.md") ] ++ ruleContents)
-                (concatStringsSep "\n\n")
-              ]
-            );
           environment = {
             PI_SKIP_VERSION_CHECK.value = "1";
             PI_TELEMETRY.value = "0";
