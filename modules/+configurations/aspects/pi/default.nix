@@ -16,23 +16,25 @@ lib.mkMerge [
     };
 
     den.aspects.pi.hjem =
-      { self', ... }:
+      { lib, self', ... }:
       {
         imports = [ inputs.pi.homeModules.default ];
 
-        files.".pi/agent/AGENTS.md".source = "${self'.packages.pi-karpathy-guidelines}/AGENTS.md";
-
-        files.".pi/agent/APPEND_SYSTEM.md".text = ''
-          ## Tool-use policy
-
-          Prefer `codemode` for all available built-in and MCP tools. Discover tools with `ALL_TOOLS`,
-          `searchTools`, or `describeTool`; use Codemode to batch independent calls or chain
-          dependent calls. Use direct-only tools only when Codemode cannot access them, including
-          `search-session` and `ask-session` for Pi session history.
-        '';
-
         programs.pi.coding-agent = {
           enable = true;
+          rules =
+            let
+              inherit (builtins) lessThan readFile toFile;
+              inherit (lib) concatStringsSep pipe sort;
+            in
+            toFile "pi-AGENTS.md" (
+              pipe ((inputs.import-tree.initFilter (path: lib.hasSuffix ".md" (toString path))).leaves ./rules) [
+                (sort lessThan)
+                (map readFile)
+                (ruleContents: [ (readFile "${self'.packages.pi-karpathy-guidelines}/AGENTS.md") ] ++ ruleContents)
+                (concatStringsSep "\n\n")
+              ]
+            );
           environment = {
             PI_SKIP_VERSION_CHECK.value = "1";
             PI_TELEMETRY.value = "0";
