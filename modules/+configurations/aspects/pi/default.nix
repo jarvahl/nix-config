@@ -47,12 +47,13 @@ lib.mkMerge [
           skills = with self'.skills; [
             "${import-tree}"
             "${nix-package-init}"
+            "${self'.packages.pi-superpowers}/skills/brainstorming"
           ];
           settings = {
             defaultModel = "gpt-6-luna";
             defaultProvider = "openai";
             defaultTools = [ "+codemode" ];
-            prompts = [ ];
+            prompts = [ "${self'.packages.pi-superpowers}/prompts/brainstorm.md" ];
           };
         };
       };
