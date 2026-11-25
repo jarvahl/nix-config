@@ -20,14 +20,15 @@ lib.mkMerge [
       {
         imports = [ inputs.pi.homeModules.default ];
 
+        files.".pi/agent/AGENTS.md".source = "${self'.packages.pi-karpathy-guidelines}/AGENTS.md";
+
         files.".pi/agent/APPEND_SYSTEM.md".text = ''
           ## Tool-use policy
 
-          Use `codemode` for built-in and MCP tools; discover them with `ALL_TOOLS`,
-          `searchTools`, or `describeTool`. If a configured profile extension exposes a
-          direct-only tool that Codemode cannot access, use that tool directly when needed.
-          In particular, use `search-session` and `ask-session` directly for Pi session history.
-          Use Codemode to batch independent calls and to chain dependent calls when needed.
+          Prefer `codemode` for all available built-in and MCP tools. Discover tools with `ALL_TOOLS`,
+          `searchTools`, or `describeTool`; use Codemode to batch independent calls or chain
+          dependent calls. Use direct-only tools only when Codemode cannot access them, including
+          `search-session` and `ask-session` for Pi session history.
         '';
 
         programs.pi.coding-agent = {
@@ -47,13 +48,14 @@ lib.mkMerge [
           skills = with self'.skills; [
             "${import-tree}"
             "${nix-package-init}"
-            "${self'.packages.pi-superpowers}/skills/brainstorming"
+            "${retro}"
+            "${skill-creator}"
           ];
           settings = {
             defaultModel = "gpt-6-luna";
             defaultProvider = "openai";
             defaultTools = [ "+codemode" ];
-            prompts = [ "${self'.packages.pi-superpowers}/prompts/brainstorm.md" ];
+            prompts = [ ];
           };
         };
       };
