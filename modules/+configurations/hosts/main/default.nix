@@ -1,6 +1,6 @@
 { den, lib, ... }:
 let
-  host = "gaia";
+  host = "main";
 in
 lib.mkMerge [
   {
@@ -17,7 +17,6 @@ lib.mkMerge [
             comma
             fonts
             podman
-            proxy
             ssh
           ]);
         nixos = { lib, ... }: {
@@ -41,7 +40,7 @@ lib.mkMerge [
         }
       ];
 
-      keys.${host} = "age1g54ya2lf87wg9verfd5aqk8xrptgmed7dn2v3850wjxt330jwfkskngg04";
+      keys.${host} = "age1muvk3n4qdla548vsgqmpg2xr2tnrkv70aeykncmvttrg2dlfzyustnyawd";
     };
   }
 
@@ -66,7 +65,6 @@ lib.mkMerge [
               console
               development
               gh
-              proxy
               tmux
             ])
             ++ (with den.batteries; [
@@ -74,7 +72,7 @@ lib.mkMerge [
             ]);
           nixos = { lib, ... }: {
             users.users.${user}.openssh.authorizedKeys.keys = [
-              (lib.trim (builtins.readFile ../midgard/jarvahl.pub))
+              (lib.trim (builtins.readFile ../asgard/jarvahl.pub))
             ];
           };
         };
@@ -131,7 +129,7 @@ lib.mkMerge [
             }
           ];
 
-          keys."${user}@${host}" = "age1l0qjp2htt794ugmkwyuxlttxzskmk0d9yrxtr2ru75707k5djd6smpgntq";
+          keys."${user}@${host}" = "age13wj39r09ax4j0ekzhqx9h7ha0e2k20j45262ydcsx2az0qatlcesxp6230";
         };
       }
     ]
@@ -150,8 +148,6 @@ lib.mkMerge [
               # accounts
               certificates
               gh
-              glab
-              proxy
               tmux
             ])
             ++ (with den.batteries; [
@@ -212,7 +208,7 @@ lib.mkMerge [
             }
           ];
 
-          keys."${user}@${host}" = "age183kk96xwp5c4w0qznxklmuqu0rmyt74chxr6snmwp8qeuts2zfgsygp6dg";
+          keys."${user}@${host}" = "age1d3qae5nevuu0vrt33ehjck00tyt6ym23gdjf9r5fatxaplh6yg6szgzeqx";
         };
       }
     ]
