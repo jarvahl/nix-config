@@ -70,6 +70,7 @@ lib.mkMerge [
             "${skill-creator}"
           ];
           settings = {
+            codemode.mode = "only";
             defaultModel = "gpt-5.6-luna";
             defaultProvider = "openai";
             defaultTools = [ "+codemode" ];
