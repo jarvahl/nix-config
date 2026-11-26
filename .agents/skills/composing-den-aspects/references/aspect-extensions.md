@@ -1,30 +1,22 @@
-# Aspect extensions
+# Conditional aspect configuration
 
-The aspect-extension policy treats a child aspect as an extension when its
-name is also an existing aspect name and its value is an attribute set.
-
-Conceptually, an extension is declared like this:
+This repository does not use a reflective global aspect-extension scanner.
+Conditional behavior belongs in the owning aspect's class module.
 
 ```nix
-den.aspects.parent.child = {
-  hjem = {
-    # Configuration that belongs to the child integration.
+den.aspects.parent.hjem =
+  { user, ... }:
+  lib.mkIf (user.hasAspect den.aspects.child) {
+    # Configuration enabled when child is present in the resolved user tree.
   };
-};
 ```
 
-The policy includes the child extension when both conditions are true:
+Use `host.hasAspect` for `.nixos` configuration and `user.hasAspect` for
+`.hjem` configuration. These lookups happen after Den resolves the aspect tree,
+so generated aspects are visible.
 
-1. the parent aspect is active;
-2. the extension aspect is active.
+`hasAspect` must not be used in `includes`: the include graph is what Den uses
+to construct the tree, and reading the tree there creates a cycle.
 
-This allows a feature to be enabled by composing its aspects rather than by
-adding a special case to the parent aspect.
-
-## Practical rules
-
-- Name the child according to the feature it provides.
-- Keep the extension in a separate top-level attrset.
-- Put user configuration under `.hjem` and host configuration under `.nixos`.
-- Do not manually add an automatically discovered extension to `includes`.
-- Read the policy implementation before changing its activation behavior.
+Use `provides` only when configuration must be routed between entities. It is
+not an aspect-discovery mechanism.

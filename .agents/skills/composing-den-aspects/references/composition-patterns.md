@@ -1,70 +1,34 @@
 # Den aspect composition
 
-## Separate independent extensions
+## Conditional configuration
 
-When a module defines a base aspect and several optional extensions, keep each
-extension in its own top-level attrset. Use `lib.mkMerge` to compose them:
-
-```nix
-{ lib, ... }:
-
-lib.mkMerge [
-  {
-    den.aspects.example.hjem = {
-      # Base user configuration.
-    };
-  }
-  {
-    den.aspects.example.feature-a.hjem = {
-      # Optional feature A.
-    };
-  }
-  {
-    den.aspects.example.feature-b.nixos = {
-      # Optional host feature B.
-    };
-  }
-]
-```
-
-This keeps each extension independently discoverable and avoids one large
-attribute set whose parts have unrelated activation conditions.
-
-## Check batteries before adding system extensions
-
-Before adding a manual `.nixos` extension, check whether a Den battery already
-provides the same host-level behavior. For example, `den.batteries.user-shell`
-sets the user's login shell at the OS level, so an aspect that includes
-`(den.batteries.user-shell "zsh")` should not duplicate `users.users.<name>.shell`
-or `environment.shells` configuration unless it needs a custom wrapper or
-package.
-
-## Keep scopes explicit
-
-Use the scope that owns the configuration:
+Put conditions in the class module that owns the configuration:
 
 ```nix
-den.aspects.example.hjem = {
-  # Home Manager/Hjem configuration for a user.
-};
-
-den.aspects.example.nixos = {
-  # NixOS configuration for a host.
-};
+den.aspects.example.hjem =
+  { user, ... }:
+  lib.mkIf (user.hasAspect den.aspects.feature) {
+    # Hjem configuration.
+  };
 ```
 
-If a user aspect needs to contribute configuration to its host, use
-`provides.to-hosts.nixos`; see `user-to-host.md`.
+For host configuration use `host.hasAspect` in `.nixos` modules.
 
-## Colocate feature inputs
+## Providers
 
-When an aspect extension requires a flake input, declare
-`flake-file.inputs.<name>` in the same top-level `lib.mkMerge` attrset as the
-consuming `den.aspects.<name>.<extension>`. Keep the declaration outside the
-returned `.hjem` or `.nixos` module body.
+Use `provides.to-hosts.*` and `provides.to-users.*` for configuration that
+must cross entity boundaries. Do not use providers to discover aspects.
 
-## Avoid manual inclusion
+## Resolved-tree access
 
-If the aspect-extension policy discovers an extension automatically, do not
-also add it manually to `includes`. Manual inclusion can duplicate or bypass
-the intended activation condition.
+For static references use `hasAspect`. For generated or metadata-driven cases,
+inspect `host.aspects`, `user.aspects`, or `home.aspects` from inside a class
+module. Do not enumerate `den.aspects` during module evaluation.
+
+## Scope
+
+- `.hjem` owns user/home configuration.
+- `.nixos` owns host/system configuration.
+- Keep independent features in separate top-level attrsets.
+- Keep SOPS declarations beside the extension that consumes them.
+- Keep attribute keys alphabetically sorted.

@@ -17,7 +17,6 @@
       # batteries
       includes = with den.batteries; [
         define-user
-        hjem
         hostname
         inputs'
         primary-user

@@ -1,4 +1,4 @@
-{ lib, ... }:
+{ den, lib, ... }:
 let
   sshMultiplexingDirectory = ".ssh/.multiplexing";
 in
@@ -29,40 +29,44 @@ lib.mkMerge [
         permissions = "0700";
         type = "directory";
       };
-
-      nixos.services.openssh = {
-        enable = true;
-        ports = [
-          22
-          2222
-        ];
-        settings = {
-          KbdInteractiveAuthentication = true;
-          PasswordAuthentication = true;
-          PermitRootLogin = "no";
-          X11Forwarding = false;
-        };
-      };
     };
   }
   {
-    den.aspects.ssh.sops.nixos =
-      { config, ... }:
-      {
-        sops.secrets."ssh/key" = {
-          group = "root";
-          mode = "0600";
-          owner = "root";
-          path = "/etc/ssh/ssh_host_ed25519_key";
-          restartUnits = [ "sshd.service" ];
-        };
-
-        services.openssh.hostKeys = [
+    den.aspects.ssh = {
+      nixos =
+        { config, host, ... }:
+        lib.mkMerge [
           {
-            path = config.sops.secrets."ssh/key".path;
-            type = "ed25519";
+            services.openssh = {
+              enable = true;
+              ports = [
+                22
+                2222
+              ];
+              settings = {
+                KbdInteractiveAuthentication = true;
+                PasswordAuthentication = true;
+                PermitRootLogin = "no";
+                X11Forwarding = false;
+              };
+            };
           }
+          (lib.mkIf (host.hasAspect den.aspects.sops) {
+            sops.secrets."ssh/key" = {
+              group = "root";
+              mode = "0600";
+              owner = "root";
+              path = "/etc/ssh/ssh_host_ed25519_key";
+              restartUnits = [ "sshd.service" ];
+            };
+            services.openssh.hostKeys = [
+              {
+                path = config.sops.secrets."ssh/key".path;
+                type = "ed25519";
+              }
+            ];
+          })
         ];
-      };
+    };
   }
 ]

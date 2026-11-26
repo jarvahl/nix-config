@@ -1,7 +1,9 @@
-{ ... }:
-{
-  den.aspects.sudo = {
-    nixos.security.sudo.wheelNeedsPassword = false;
-    user.extraGroups = [ "wheel" ];
-  };
-}
+{ lib, ... }:
+lib.mkMerge [
+  {
+    den.aspects.sudo.nixos.security.sudo.wheelNeedsPassword = false;
+  }
+  {
+    den.aspects.sudo.user.extraGroups = [ "wheel" ];
+  }
+]

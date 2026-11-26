@@ -1,4 +1,9 @@
-{ inputs, lib, ... }:
+{
+  den,
+  inputs,
+  lib,
+  ...
+}:
 
 lib.mkMerge [
   {
@@ -15,12 +20,21 @@ lib.mkMerge [
       };
     };
 
+  }
+  {
+    den.aspects.pi.nixos =
+      { ... }:
+      {
+        hjem.extraModules = [
+          inputs.pi.homeModules.default
+          inputs.hypruse.homeModules.default
+        ];
+      };
+
     den.aspects.pi.hjem =
       { lib, self', ... }:
       {
-        imports = [ inputs.pi.homeModules.default ];
-
-        hjem.files.".pi/agent/AGENTS.md".text =
+        files.".pi/agent/AGENTS.md".text =
           let
             inherit (builtins) lessThan readFile;
             inherit (lib) concatStringsSep pipe sort;
@@ -63,9 +77,9 @@ lib.mkMerge [
       };
   }
   {
-    den.aspects.pi.firefox.hjem =
-      { self', ... }:
-      {
+    den.aspects.pi.hjem =
+      { self', user, ... }:
+      lib.mkIf (user.hasAspect den.aspects.firefox) {
         programs.pi.coding-agent.mcp.mcpServers.firefox = {
           command = "${self'.packages.firefox-agent-mcp}/bin/firefox-agent-mcp";
           env.FIREFOX_AGENT_BRIDGE_BROWSER = "${self'.packages.firefox-agent-bridge}/bin/browser";
@@ -73,19 +87,26 @@ lib.mkMerge [
       };
   }
   {
-    den.aspects.pi.herdr.hjem =
-      { config, pkgs, ... }:
-      let
-        herdrSkill =
-          pkgs.runCommand "herdr-skill" { nativeBuildInputs = [ config.programs.herdr.package ]; }
-            ''
-              mkdir -p "$out/herdr"
-              herdr --skill > "$out/herdr/SKILL.md"
-            '';
-      in
+    den.aspects.pi.hjem =
       {
-        programs.pi.coding-agent.skills = [ "${herdrSkill}/herdr" ];
-      };
+        config,
+        pkgs,
+        user,
+        ...
+      }:
+      lib.mkIf (user.hasAspect den.aspects.herdr) (
+        let
+          herdrSkill =
+            pkgs.runCommand "herdr-skill" { nativeBuildInputs = [ config.programs.herdr.package ]; }
+              ''
+                mkdir -p "$out/herdr"
+                herdr --skill > "$out/herdr/SKILL.md"
+              '';
+        in
+        {
+          programs.pi.coding-agent.skills = [ "${herdrSkill}/herdr" ];
+        }
+      );
   }
   {
     flake-file.inputs.hypruse = {
@@ -93,18 +114,15 @@ lib.mkMerge [
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    den.aspects.pi.hyperland.hjem =
+    den.aspects.pi.hjem =
       {
         config,
         lib,
         pkgs,
+        user,
         ...
       }:
-      {
-        imports = [
-          inputs.hypruse.homeModules.default
-        ];
-
+      lib.mkIf (user.hasAspect den.aspects.hyperland) {
         programs.hypruse = {
           enable = true;
           package = pkgs.hypruse;

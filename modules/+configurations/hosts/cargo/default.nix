@@ -46,7 +46,7 @@ lib.mkMerge [
   }
 
   {
-    den.aspects.${host}.sops.nixos = {
+    den.aspects.${host}.nixos = {
       sops.age.keyFile = "/var/lib/sops-outputs/key.txt";
       sops.defaultSopsFile = ./host.sops.yaml;
     };
@@ -79,7 +79,7 @@ lib.mkMerge [
         };
       }
       {
-        den.aspects."${user}@${host}".sops = {
+        den.aspects."${user}@${host}" = {
           hjem = {
             sops.age.keyFile = ".config/sops/age/key.txt";
             sops.defaultSopsFile = secretsFile;
@@ -99,7 +99,7 @@ lib.mkMerge [
         };
       }
       {
-        den.aspects."${user}@${host}".sops.nixos =
+        den.aspects."${user}@${host}".nixos =
           { config, lib, ... }:
           {
             sops.secrets."${user}/hashed_password" = {
@@ -158,7 +158,7 @@ lib.mkMerge [
         };
       }
       {
-        den.aspects."${user}@${host}".sops = {
+        den.aspects."${user}@${host}" = {
           hjem = {
             sops.age.keyFile = ".config/sops/age/key.txt";
             sops.defaultSopsFile = secretsFile;
@@ -178,7 +178,7 @@ lib.mkMerge [
         };
       }
       {
-        den.aspects."${user}@${host}".sops.nixos =
+        den.aspects."${user}@${host}".nixos =
           { config, lib, ... }:
           {
             sops.secrets."${user}/hashed_password" = {

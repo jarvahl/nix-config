@@ -1,7 +1,7 @@
-{ inputs, ... }:
-{
-  den.aspects.hyperland = {
-    hjem =
+{ inputs, lib, ... }:
+lib.mkMerge [
+  {
+    den.aspects.hyperland.hjem =
       { lib, pkgs, ... }:
       let
         toLua = lib.generators.toLua { };
@@ -151,8 +151,9 @@
           systemd.enable = false;
         };
       };
-
-    nixos = { pkgs, ... }: {
+  }
+  {
+    den.aspects.hyperland.nixos = { pkgs, ... }: {
       hjem.extraModules = [
         (inputs.home-manager + "/modules/services/window-managers/hyprland")
         (inputs.home-manager + "/modules/misc/xdg/portal.nix")
@@ -185,6 +186,8 @@
       services.udev.packages = [ pkgs.brightnessctl ];
     };
 
-    user.extraGroups = [ "video" ];
-  };
-}
+  }
+  {
+    den.aspects.hyperland.user.extraGroups = [ "video" ];
+  }
+]
