@@ -4,7 +4,9 @@
   lib,
   ...
 }:
-
+let
+  inherit (den.aspects) firefox herdr hyperland;
+in
 lib.mkMerge [
   {
     flake-file.inputs.pi = {
@@ -79,7 +81,7 @@ lib.mkMerge [
   {
     den.aspects.pi.hjem =
       { self', user, ... }:
-      lib.mkIf (user.hasAspect den.aspects.firefox) {
+      lib.mkIf (user.hasAspect firefox) {
         programs.pi.coding-agent.mcp.mcpServers.firefox = {
           command = "${self'.packages.firefox-agent-mcp}/bin/firefox-agent-mcp";
           env.FIREFOX_AGENT_BRIDGE_BROWSER = "${self'.packages.firefox-agent-bridge}/bin/browser";
@@ -94,7 +96,7 @@ lib.mkMerge [
         user,
         ...
       }:
-      lib.mkIf (user.hasAspect den.aspects.herdr) (
+      lib.mkIf (user.hasAspect herdr) (
         let
           herdrSkill =
             pkgs.runCommand "herdr-skill" { nativeBuildInputs = [ config.programs.herdr.package ]; }
@@ -122,7 +124,7 @@ lib.mkMerge [
         user,
         ...
       }:
-      lib.mkIf (user.hasAspect den.aspects.hyperland) {
+      lib.mkIf (user.hasAspect hyperland) {
         programs.hypruse = {
           enable = true;
           package = pkgs.hypruse;

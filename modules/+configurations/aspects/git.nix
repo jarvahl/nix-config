@@ -1,5 +1,7 @@
 { den, lib, ... }:
-
+let
+  inherit (den.aspects) certificates;
+in
 lib.mkMerge [
   {
     den.aspects.git.hjem =
@@ -10,7 +12,7 @@ lib.mkMerge [
           format.pretty = "oneline";
           log.decorate = "short";
         };
-        environment.sessionVariables = lib.mkIf (user.hasAspect den.aspects.certificates) {
+        environment.sessionVariables = lib.mkIf (user.hasAspect certificates) {
           GIT_SSL_CAINFO = "/etc/ssl/certs/ca-certificates.crt";
         };
       };
@@ -18,7 +20,7 @@ lib.mkMerge [
   {
     den.aspects.git.provides.to-users.hjem =
       { user, ... }:
-      lib.mkIf (user.hasAspect den.aspects.certificates) {
+      lib.mkIf (user.hasAspect certificates) {
         rum.programs.git.settings.http.sslCAInfo = "/etc/ssl/certs/ca-certificates.crt";
       };
   }

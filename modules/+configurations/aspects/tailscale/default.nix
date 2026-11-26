@@ -3,6 +3,9 @@
   lib,
   ...
 }:
+let
+  inherit (den.aspects) sops;
+in
 lib.mkMerge [
   {
     den.aspects.tailscale.includes = with den.aspects; [ (tailscale.tags [ "host" ]) ];
@@ -66,7 +69,7 @@ lib.mkMerge [
   {
     den.aspects.tailscale.nixos =
       { config, host, ... }:
-      lib.mkIf (host.hasAspect den.aspects.sops) {
+      lib.mkIf (host.hasAspect sops) {
         sops.secrets."tailscale/auth_key" = {
           mode = "0600";
           path = "/run/secrets/tailscale/auth_key";

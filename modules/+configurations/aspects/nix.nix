@@ -1,5 +1,6 @@
 { den, lib, ... }:
 let
+  inherit (den.aspects) certificates proxy;
   nixExperimentalFeatures = [
     "nix-command"
     "flakes"
@@ -30,13 +31,13 @@ in
           persistent = true;
         };
       }
-      (lib.mkIf (host.hasAspect den.aspects.certificates) {
+      (lib.mkIf (host.hasAspect certificates) {
         nix.settings.ssl-cert-file = "/etc/ssl/certs/ca-certificates.crt";
         systemd.services.nix-daemon.serviceConfig.Environment = [
           "NIX_SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt"
         ];
       })
-      (lib.mkIf (host.hasAspect den.aspects.proxy) {
+      (lib.mkIf (host.hasAspect proxy) {
         sops.secrets = {
           "proxy/http" = { };
           "proxy/https" = { };

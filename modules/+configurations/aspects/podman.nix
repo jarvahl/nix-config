@@ -1,4 +1,7 @@
 { den, lib, ... }:
+let
+  inherit (den.aspects) certificates proxy;
+in
 lib.mkMerge [
   {
     den.aspects.podman.nixos =
@@ -16,13 +19,13 @@ lib.mkMerge [
             };
           };
         }
-        (lib.mkIf (host.hasAspect den.aspects.certificates) {
+        (lib.mkIf (host.hasAspect certificates) {
           systemd.user.services.podman.serviceConfig.Environment = [
             "CURL_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt"
             "SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt"
           ];
         })
-        (lib.mkIf (host.hasAspect den.aspects.proxy) {
+        (lib.mkIf (host.hasAspect proxy) {
           sops.secrets = {
             "proxy/http" = { };
             "proxy/https" = { };

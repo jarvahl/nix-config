@@ -1,5 +1,6 @@
 { den, lib, ... }:
 let
+  inherit (den.aspects) sops;
   sshMultiplexingDirectory = ".ssh/.multiplexing";
 in
 lib.mkMerge [
@@ -51,7 +52,7 @@ lib.mkMerge [
               };
             };
           }
-          (lib.mkIf (host.hasAspect den.aspects.sops) {
+          (lib.mkIf (host.hasAspect sops) {
             sops.secrets."ssh/key" = {
               group = "root";
               mode = "0600";

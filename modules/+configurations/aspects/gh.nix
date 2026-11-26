@@ -1,4 +1,7 @@
 { den, lib, ... }:
+let
+  inherit (den.aspects) proxy sops;
+in
 lib.mkMerge [
   {
     den.aspects.gh = {
@@ -12,7 +15,7 @@ lib.mkMerge [
   {
     den.aspects.gh.hjem =
       { config, user, ... }:
-      lib.mkIf (user.hasAspect den.aspects.sops) {
+      lib.mkIf (user.hasAspect sops) {
         sops.secrets."github/ssh_key" = {
           mode = "0600";
           path = "${config.home.homeDirectory}/.ssh/id_ed25519_github";
@@ -29,7 +32,7 @@ lib.mkMerge [
   {
     den.aspects.gh.hjem =
       { osConfig, user, ... }:
-      lib.mkIf (user.hasAspect den.aspects.proxy) {
+      lib.mkIf (user.hasAspect proxy) {
         programs.ssh.settings."github.com".ProxyCommand =
           "${osConfig.sops.templates.ssh-github-proxy.path} %h %p";
       };
@@ -42,7 +45,7 @@ lib.mkMerge [
         pkgs,
         ...
       }:
-      lib.mkIf (host.hasAspect den.aspects.proxy) {
+      lib.mkIf (host.hasAspect proxy) {
         sops.secrets."proxy/https" = { };
 
         sops.templates.ssh-github-proxy = {
