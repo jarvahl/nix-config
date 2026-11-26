@@ -1,8 +1,7 @@
+{ den, lib, ... }:
 let
   host = "gaia";
 in
-{ den, lib, ... }:
-
 lib.mkMerge [
   {
     den = {

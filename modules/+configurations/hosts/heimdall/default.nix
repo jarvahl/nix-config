@@ -1,8 +1,7 @@
+{ den, lib, ... }:
 let
   host = "heimdall";
 in
-{ den, lib, ... }:
-
 lib.mkMerge [
   {
     den = {
