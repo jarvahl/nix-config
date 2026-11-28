@@ -61,7 +61,7 @@ lib.mkMerge [
               port = 18789;
             };
 
-            users.users.nixos = {
+            users.users.agent = {
               extraGroups = [
                 "wheel"
                 "networkmanager"
@@ -98,7 +98,7 @@ lib.mkMerge [
   }
   (
     let
-      user = "jarvahl";
+      user = "agent";
       secretsFile = ./user-${user}.sops.yaml;
     in
     lib.mkMerge [
@@ -171,58 +171,6 @@ lib.mkMerge [
           ];
 
           keys."${user}@${host}" = "age15ny8fkpgznutmkze50rcvceq400r6nq68n2vpdsq3muuq6vcwqmqlspkng";
-        };
-      }
-    ]
-  )
-  (
-
-    let
-      host = "bifrost";
-      user = "nixos";
-      secretsFile = ./user-nixos.sops.yaml;
-    in
-    lib.mkMerge [
-      {
-        den.aspects."${user}@${host}" = { };
-      }
-      {
-        den.aspects."${user}@${host}" = {
-          hjem = {
-            sops.age.keyFile = ".config/sops/age/key.txt";
-            sops.defaultSopsFile = secretsFile;
-          };
-
-          provides.to-hosts.nixos =
-            { config, ... }:
-            {
-              sops.secrets."${user}/age_key" = {
-                group = "users";
-                mode = "0600";
-                owner = user;
-                path = "${config.users.users.${user}.home}/.config/sops/age/key.txt";
-                sopsFile = ./host.sops.yaml;
-              };
-            };
-        };
-      }
-      {
-        den.hosts.x86_64-linux.${host}.users.${user} = {
-          classes = [ "hjem" ];
-        };
-      }
-      {
-        sops.file = {
-          creation_rules = [
-            {
-              key_groups = [
-                { age = [ "${user}@${host}" ]; }
-              ];
-              path_regex = secretsFile;
-            }
-          ];
-
-          keys."${user}@${host}" = "age1uj0ultfy0sxxty4jrczl7ajwwg42tefqqpzjedl246eghy7yjdjqfp6ysz";
         };
       }
     ]
