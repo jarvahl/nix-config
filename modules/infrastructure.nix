@@ -114,9 +114,9 @@ in
                   exit 1
                 fi
                 if [ "$entity" = host ]; then
-                  target="modules/+configurations/aspects/''${aspect}/host.sops.yaml"
+                  target="modules/+configurations/aspects/''${aspect}/secrets.sops.yaml"
                 else
-                  target="modules/+configurations/aspects/''${aspect}/user-''${entity}.sops.yaml"
+                  target="modules/+configurations/aspects/''${aspect}/''${entity}/secrets.sops.yaml"
                 fi
                 if [ ! -f "$target" ]; then
                   printf 'SOPS output target does not exist: %s\n' "$target" >&2
